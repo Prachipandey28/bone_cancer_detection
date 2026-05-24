@@ -36,6 +36,36 @@
                 },
                 "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779644954.jpeg",
                 "notes": ""
+            },
+            {
+                "case_id": "SCAN-45823",
+                "timestamp": "2026-05-24 23:33:44",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779645823.jpg",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            },
+            {
+                "case_id": "SCAN-45861",
+                "timestamp": "2026-05-24 23:34:21",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779645861.jpeg",
+                "notes": ""
             }
         ]
     },

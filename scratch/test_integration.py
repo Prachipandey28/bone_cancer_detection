@@ -11,8 +11,8 @@ urllib.request.install_opener(opener)
 
 # 1. Login as the newly created doctor account
 login_payload = {
-    "username": "radiologist@clinical.com",
-    "password": "radiology2026"
+    "username": "prachipandey1528@gmail.com",
+    "password": "prachi15"
 }
 print(f"[TEST] Attempting login: {login_payload['username']}")
 login_req = urllib.request.Request(
@@ -31,7 +31,7 @@ except Exception as e:
     raise
 
 # 2. Perform predictive scan with custom patient details (Multipart Form-Data manually crafted)
-test_image_path = "/Users/avinashpandey/bone_cancer_detection/static/test_xray.jpg"
+test_image_path = "/Users/avinashpandey/bone_cancer_detection/static/uploads/scan_prachipandey1528_gmail_com_1779645703.jpeg"
 print(f"[TEST] Staging upload image: {test_image_path}")
 
 if not os.path.exists(test_image_path):
