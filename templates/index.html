@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OsteoScan — Bone Cancer Detection</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:        #060c14;
+      --surface:   #0d1a26;
+      --surface2:  #122033;
+      --border:    #1e3347;
+      --accent:    #00d4ff;
+      --accent2:   #0077aa;
+      --danger:    #ff4d6d;
+      --safe:      #00e5a0;
+      --text:      #c8dce8;
+      --muted:     #5a7a8e;
+      --mono:      'Space Mono', monospace;
+      --sans:      'DM Sans', sans-serif;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background grid ────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 56px;
+      animation: fadeDown .6s ease both;
+    }
+
+    .logo-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 32px rgba(0,212,255,.25);
+      flex-shrink: 0;
+    }
+
+    .logo-text h1 {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text p {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .status-pill {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--safe);
+      box-shadow: 0 0 8px var(--safe);
+      animation: pulse 2s infinite;
+    }
+    .dot.offline { background: var(--danger); box-shadow: 0 0 8px var(--danger); animation: none; }
+
+    /* ── Upload zone ─────────────────────────────────────────────── */
+    .upload-card {
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: 20px;
+      padding: 56px 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .3s, background .3s, transform .2s;
+      animation: fadeUp .6s ease .1s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(0,212,255,.07), transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .4s;
+    }
+
+    .upload-card:hover, .upload-card.drag-over {
+      border-color: var(--accent);
+      background: var(--surface2);
+      transform: translateY(-2px);
+    }
+
+    .upload-card:hover::after, .upload-card.drag-over::after { opacity: 1; }
+
+    .upload-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+
+    .upload-card h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .upload-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .upload-card p span {
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    #fileInput { display: none; }
+
+    .btn-analyze {
+      margin-top: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #000;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .5px;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity .2s, transform .2s, box-shadow .3s;
+      box-shadow: 0 4px 20px rgba(0,212,255,.25);
+    }
+
+    .btn-analyze:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,212,255,.4); }
+    .btn-analyze:active { transform: translateY(0); }
+    .btn-analyze:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+    /* ── Preview ─────────────────────────────────────────────────── */
+    #previewSection {
+      display: none;
+      margin-top: 32px;
+      animation: fadeUp .4s ease both;
+    }
+
+    .preview-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    #previewImg {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--surface2);
+    }
+
+    .preview-meta { flex: 1; }
+
+    .preview-meta h3 {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    #fileName {
+      font-size: 15px;
+      color: #fff;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    #fileSize {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── Result panel ───────────────────────────────────────────── */
+    #resultSection {
+      display: none;
+      margin-top: 28px;
+      animation: fadeUp .5s ease both;
+    }
+
+    .result-card {
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .result-header {
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .result-header.cancer { background: linear-gradient(135deg, rgba(255,77,109,.18), rgba(255,77,109,.05)); border-bottom: 1px solid rgba(255,77,109,.3); }
+    .result-header.normal { background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,229,160,.04)); border-bottom: 1px solid rgba(0,229,160,.25); }
+
+    .verdict-badge {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .verdict-badge.cancer { background: rgba(255,77,109,.2); border: 2px solid var(--danger); }
+    .verdict-badge.normal { background: rgba(0,229,160,.15); border: 2px solid var(--safe); }
+
+    .verdict-text h2 {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .verdict-text h2.cancer { color: var(--danger); }
+    .verdict-text h2.normal { color: var(--safe); }
+
+    .verdict-text p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .conf-wrap { margin-left: auto; text-align: right; }
+
+    .conf-num {
+      font-family: var(--mono);
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .conf-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* Class probabilities */
+    .prob-section {
+      padding: 24px 28px;
+      background: var(--surface);
+    }
+
+    .prob-section h3 {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .prob-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .prob-row:last-child { margin-bottom: 0; }
+
+    .prob-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      width: 80px;
+      flex-shrink: 0;
+      text-transform: capitalize;
+    }
+
+    .prob-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .prob-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .8s cubic-bezier(.25,.8,.25,1);
+      width: 0%;
+    }
+
+    .prob-bar-fill.cancer { background: linear-gradient(90deg, #c1003b, var(--danger)); }
+    .prob-bar-fill.normal { background: linear-gradient(90deg, #007a55, var(--safe)); }
+
+    .prob-pct {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      width: 48px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Scanned image result ────────────────────────────────────── */
+    .result-image-row {
+      padding: 0 28px 24px;
+      background: var(--surface);
+    }
+
+    #resultImg {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #000;
+    }
+
+    /* ── Loading spinner ─────────────────────────────────────────── */
+    #loadingSection {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+      animation: fadeUp .3s ease both;
+    }
+
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    #loadingSection p {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Error banner ────────────────────────────────────────────── */
+    #errorBanner {
+      display: none;
+      background: rgba(255,77,109,.1);
+      border: 1px solid rgba(255,77,109,.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--danger);
+      animation: fadeUp .3s ease both;
+    }
+
+    /* ── Disclaimer ──────────────────────────────────────────────── */
+    .disclaimer {
+      margin-top: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      animation: fadeUp .6s ease .3s both;
+    }
+
+    .disclaimer strong { color: var(--text); }
+
+    /* ── Reset link ──────────────────────────────────────────────── */
+    .reset-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: border-color .2s, color .2s;
+    }
+
+    .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Animations ──────────────────────────────────────────────── */
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeUp   { from { opacity: 0; transform: translateY(16px);  } to { opacity: 1; transform: none; } }
+    @keyframes spin     { to { transform: rotate(360deg); } }
+    @keyframes pulse    { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+    @media (max-width: 580px) {
+      .preview-wrap { flex-direction: column; }
+      #previewImg { width: 100%; height: 200px; }
+      .result-header { flex-wrap: wrap; }
+      .conf-wrap { margin-left: 0; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-icon">🦴</div>
+    <div class="logo-text">
+      <h1>OsteoScan</h1>
+      <p>Bone Cancer Detection · YOLOv8</p>
+    </div>
+    <div class="status-pill">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">Checking...</span>
+    </div>
+  </header>
+
+  <!-- Upload Card -->
+  <div class="upload-card" id="dropZone">
+    <span class="upload-icon">🩻</span>
+    <h2>Upload an X-ray Image</h2>
+    <p>
+      Drag &amp; drop or click to select a bone X-ray<br/>
+      <span>Supported: JPG · PNG · BMP · WEBP · max 16 MB</span>
+    </p>
+    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.webp" />
+    <br/>
+    <button class="btn-analyze" id="analyzeBtn" disabled>
+      <span>⚡</span> Analyze X-ray
+    </button>
+  </div>
+
+  <!-- Preview -->
+  <div id="previewSection">
+    <div class="preview-wrap">
+      <img id="previewImg" src="" alt="Preview" />
+      <div class="preview-meta">
+        <h3>Selected File</h3>
+        <div id="fileName">—</div>
+        <div id="fileSize">—</div>
+        <button class="reset-btn" onclick="resetAll()">✕ Clear &amp; reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loadingSection">
+    <div class="spinner"></div>
+    <p>Running inference — please wait…</p>
+  </div>
+
+  <!-- Error -->
+  <div id="errorBanner"></div>
+
+  <!-- Result -->
+  <div id="resultSection">
+    <div class="result-card">
+      <div class="result-header" id="resultHeader">
+        <div class="verdict-badge" id="verdictBadge"></div>
+        <div class="verdict-text">
+          <h2 id="verdictTitle"></h2>
+          <p id="verdictSub"></p>
+        </div>
+        <div class="conf-wrap">
+          <div class="conf-num" id="confNum"></div>
+          <div class="conf-label">Confidence</div>
+        </div>
+      </div>
+
+      <div class="result-image-row">
+        <img id="resultImg" src="" alt="Analyzed image" />
+      </div>
+
+      <div class="prob-section">
+        <h3>Class Probabilities</h3>
+        <div id="probBars"></div>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="resetAll()">↩ Analyze another image</button>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <strong>⚕️ Medical Disclaimer:</strong>
+    This tool is intended for <strong>research and educational purposes only</strong>.
+    It is <em>not</em> a certified medical device and must not be used as a substitute
+    for professional medical diagnosis. Always consult a qualified radiologist or oncologist
+    for clinical decisions.
+  </div>
+
+</div>
+
+<script>
+  // ── state ──────────────────────────────────────────────────────────────────
+  let selectedFile = null;
+
+  // ── DOM refs ───────────────────────────────────────────────────────────────
+  const dropZone    = document.getElementById('dropZone');
+  const fileInput   = document.getElementById('fileInput');
+  const analyzeBtn  = document.getElementById('analyzeBtn');
+  const previewSec  = document.getElementById('previewSection');
+  const previewImg  = document.getElementById('previewImg');
+  const fileName    = document.getElementById('fileName');
+  const fileSize    = document.getElementById('fileSize');
+  const loadingSec  = document.getElementById('loadingSection');
+  const errorBanner = document.getElementById('errorBanner');
+  const resultSec   = document.getElementById('resultSection');
+  const statusDot   = document.getElementById('statusDot');
+  const statusText  = document.getElementById('statusText');
+
+  // ── health check ───────────────────────────────────────────────────────────
+  async function checkHealth() {
+    try {
+      const res = await fetch('/health');
+      const data = await res.json();
+      if (data.model_loaded) {
+        statusDot.classList.remove('offline');
+        statusText.textContent = 'Model ready';
+      } else {
+        statusDot.classList.add('offline');
+        statusText.textContent = 'Model not loaded';
+      }
+    } catch {
+      statusDot.classList.add('offline');
+      statusText.textContent = 'Server offline';
+    }
+  }
+  checkHealth();
+
+  // ── drag & drop ────────────────────────────────────────────────────────────
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+  });
+
+  // ── file selection ─────────────────────────────────────────────────────────
+  function handleFile(f) {
+    selectedFile = f;
+    fileName.textContent = f.name;
+    fileSize.textContent = formatBytes(f.size);
+
+    const reader = new FileReader();
+    reader.onload = e => { previewImg.src = e.target.result; };
+    reader.readAsDataURL(f);
+
+    previewSec.style.display = 'block';
+    analyzeBtn.disabled = false;
+    errorBanner.style.display = 'none';
+    resultSec.style.display = 'none';
+  }
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  }
+
+  // ── analyze ────────────────────────────────────────────────────────────────
+  analyzeBtn.addEventListener('click', analyze);
+
+  async function analyze() {
+    if (!selectedFile) return;
+
+    analyzeBtn.disabled = true;
+    loadingSec.style.display = 'block';
+    resultSec.style.display = 'none';
+    errorBanner.style.display = 'none';
+
+    const fd = new FormData();
+    fd.append('file', selectedFile);
+
+    try {
+      const res = await fetch('/predict', { method: 'POST', body: fd });
+      const data = await res.json();
+
+      loadingSec.style.display = 'none';
+
+      if (!res.ok || data.error) {
+        showError(data.error || 'Server error');
+        analyzeBtn.disabled = false;
+        return;
+      }
+
+      renderResult(data);
+    } catch (err) {
+      loadingSec.style.display = 'none';
+      showError('Network error — is the Flask server running?');
+      analyzeBtn.disabled = false;
+    }
+  }
+
+  // ── render result ──────────────────────────────────────────────────────────
+  function renderResult(data) {
+    const pred    = data.prediction.toLowerCase();
+    const isCancer = pred === 'cancer';
+    const conf    = data.confidence;
+    const cls     = isCancer ? 'cancer' : 'normal';
+
+    // Header
+    const hdr = document.getElementById('resultHeader');
+    hdr.className = `result-header ${cls}`;
+
+    document.getElementById('verdictBadge').className = `verdict-badge ${cls}`;
+    document.getElementById('verdictBadge').textContent = isCancer ? '⚠️' : '✅';
+
+    const vt = document.getElementById('verdictTitle');
+    vt.className = cls;
+    vt.textContent = isCancer ? 'Cancer Detected' : 'No Cancer Detected';
+
+    document.getElementById('verdictSub').textContent =
+      isCancer
+        ? 'The model flagged malignant bone patterns in this X-ray.'
+        : 'The model found no malignant indicators in this X-ray.';
+
+    document.getElementById('confNum').textContent = conf.toFixed(1) + '%';
+
+    // Result image
+    document.getElementById('resultImg').src = 'data:image/png;base64,' + data.image_b64;
+
+    // Probability bars
+    const bars = document.getElementById('probBars');
+    bars.innerHTML = '';
+    for (const [label, prob] of Object.entries(data.class_probabilities)) {
+      const pct = (prob * 100).toFixed(1);
+      const barCls = label.toLowerCase() === 'cancer' ? 'cancer' : 'normal';
+      bars.innerHTML += `
+        <div class="prob-row">
+          <div class="prob-label">${label}</div>
+          <div class="prob-bar-bg">
+            <div class="prob-bar-fill ${barCls}" data-pct="${pct}"></div>
+          </div>
+          <div class="prob-pct">${pct}%</div>
+        </div>`;
+    }
+
+    resultSec.style.display = 'block';
+
+    // Animate bars after paint
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.querySelectorAll('.prob-bar-fill').forEach(el => {
+          el.style.width = el.dataset.pct + '%';
+        });
+      });
+    });
+  }
+
+  // ── error ──────────────────────────────────────────────────────────────────
+  function showError(msg) {
+    errorBanner.textContent = '⚠ ' + msg;
+    errorBanner.style.display = 'block';
+  }
+
+  // ── reset ──────────────────────────────────────────────────────────────────
+  function resetAll() {
+    selectedFile = null;
+    fileInput.value = '';
+    previewImg.src = '';
+    previewSec.style.display = 'none';
+    resultSec.style.display = 'none';
+    errorBanner.style.display = 'none';
+    loadingSec.style.display = 'none';
+    analyzeBtn.disabled = true;
+  }
+</script>
+</body>
+</html>
