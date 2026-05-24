@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>OstScan AI — Clinical Gateway Authentication</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg-darker: #03070d;
+            --bg-dark: #070e17;
+            --bg-panel: rgba(13, 25, 41, 0.7);
+            --border-glow: rgba(0, 240, 255, 0.15);
+            --border-glow-active: rgba(0, 240, 255, 0.4);
+            
+            /* Accents */
+            --cyan: #00f0ff;
+            --cyan-dim: #00a8b5;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --rose-bg: rgba(244, 63, 94, 0.08);
+            --amber: #f59e0b;
+            
+            /* Typography */
+            --font-main: 'Inter', sans-serif;
+            --font-header: 'Space Grotesk', sans-serif;
+            --font-mono: 'Orbitron', monospace;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Tech Background Mesh & Radial Gradients */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 55%),
+                radial-gradient(circle at 10% 10%, rgba(244, 63, 94, 0.02) 0%, transparent 40%),
+                #03070d;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Immersive Floating Orbiting Particles */
+        .rotating-orb {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border: 1px dashed rgba(0, 240, 255, 0.06);
+            border-radius: 50%;
+            z-index: 1;
+            animation: spin 30s linear infinite;
+            pointer-events: none;
+        }
+
+        .rotating-orb::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--cyan);
+            top: 50%;
+            left: -5px;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Glass Login Container */
+        .login-card {
+            position: relative;
+            z-index: 10;
+            width: 440px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 240, 255, 0.05);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            transition: height 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Logo Header */
+        .login-header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .logo-badge {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid var(--cyan);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        .login-header h2 {
+            font-family: var(--font-header);
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .login-header p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            max-width: 300px;
+            line-height: 1.4;
+        }
+
+        /* Input Controls */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+        }
+
+        .input-group label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(3, 7, 13, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 11px 14px 11px 40px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+        }
+
+        /* Action Buttons */
+        .btn-login {
+            width: 100%;
+            background: var(--cyan);
+            border: 1px solid var(--cyan);
+            color: #03070d;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-header);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+            margin-top: 6px;
+            outline: none;
+        }
+
+        .btn-login:hover {
+            background: #fff;
+            border-color: #fff;
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Toggling Switch Info Link */
+        .auth-switch {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .auth-switch a {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* Error Notification Banner */
+        .error-notification {
+            background: var(--rose-bg);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--rose);
+            font-size: 11px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: shake 0.5s ease both;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-3px); }
+            40%, 80% { transform: translateX(3px); }
+        }
+
+        /* Ambient Diagnostic Corner lines on Card */
+        .corner-line {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid var(--cyan);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .corner-line.tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+        .corner-line.tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+        .corner-line.bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+        .corner-line.br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+        /* Animation blocks */
+        .auth-block {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeIn 0.4s ease both;
+        }
+
+        .auth-block.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="rotating-orb"></div>
+
+<div class="login-card">
+    <div class="corner-line tl"></div>
+    <div class="corner-line tr"></div>
+    <div class="corner-line bl"></div>
+    <div class="corner-line br"></div>
+
+    <!-- Badge logo -->
+    <div class="login-header">
+        <div class="logo-badge">🩻</div>
+        <h2 id="portalTitle">CLINICAL GATEWAY</h2>
+        <p id="portalSubText">OstScan AI Bone Radiography Diagnostic Suite Session Authorization</p>
+    </div>
+
+    <!-- ── SIGN IN BLOCK ── -->
+    <div class="auth-block" id="signInBlock">
+        <!-- Error container -->
+        {% if error %}
+        <div class="error-notification">
+            <span style="font-size: 14px;">⚠️</span>
+            <div>{{ error }}</div>
+        </div>
+        {% endif %}
+
+        <form action="/login" method="POST" style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="input-group">
+                <label for="loginUsername">Email / Name</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" class="input-field" name="username" id="loginUsername" placeholder="e.g. user@domain.com" required autocomplete="username"/>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="loginPassword">Gateway Passcode</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" class="input-field" name="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password"/>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">Request Access</button>
+        </form>
+
+        <div class="auth-switch">
+            Don't have an account? <a onclick="toggleTab('register')">Create Account</a>
+        </div>
+    </div>
+
+    <!-- ── SIGN UP BLOCK ── -->
+    <div class="auth-block" id="signUpBlock">
+        <!-- Error container -->
+        {% if register_error %}
+        <div class="error-notification">
+            <span style="font-size: 14px;">⚠️</span>
+            <div>{{ register_error }}</div>
+        </div>
+        {% endif %}
+
+        <form action="/register" method="POST" style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="input-group">
+                <label for="regName">Full Name</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🧑‍⚕️</span>
+                    <input type="text" class="input-field" name="name" id="regName" placeholder="Dr. Avinash Pandey" required autocomplete="name"/>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="regEmail">Email Address</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✉️</span>
+                    <input type="email" class="input-field" name="email" id="regEmail" placeholder="doctor@clinical.com" required autocomplete="email"/>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="regPassword">Gateway Passcode</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" class="input-field" name="password" id="regPassword" placeholder="Create Passcode" required autocomplete="new-password"/>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">Register & Initialize</button>
+        </form>
+
+        <div class="auth-switch">
+            Already registered? <a onclick="toggleTab('login')">Sign In</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const signInBlock = document.getElementById('signInBlock');
+    const signUpBlock = document.getElementById('signUpBlock');
+    const portalTitle = document.getElementById('portalTitle');
+    const portalSubText = document.getElementById('portalSubText');
+
+    function toggleTab(mode) {
+        if (mode === 'register') {
+            signInBlock.classList.remove('active');
+            signUpBlock.classList.add('active');
+            portalTitle.textContent = "CREATE ACCOUNT";
+            portalSubText.textContent = "Initialize a persistent clinician account to authorize diagnostic telemetry";
+        } else {
+            signUpBlock.classList.remove('active');
+            signInBlock.classList.add('active');
+            portalTitle.textContent = "CLINICAL GATEWAY";
+            portalSubText.textContent = "OstScan AI Bone Radiography Diagnostic Suite Session Authorization";
+        }
+    }
+
+    // Auto toggle tab on load if backend returned a registration error
+    {% if active_tab == 'register' %}
+    toggleTab('register');
+    {% else %}
+    toggleTab('login');
+    {% endif %}
+</script>
+</body>
+</html>

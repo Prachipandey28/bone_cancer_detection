@@ -7,7 +7,8 @@ Directory layout expected:
   bone_cancer_app/
   ├── app.py
   ├── templates/
-  │   └── index.html
+  │   ├── index.html
+  │   └── login.html
   └── weights/
       └── best.pt          ← your trained YOLOv8 weights
 
@@ -18,10 +19,13 @@ Run:
 
 import io
 import os
+import json
+import time
 import base64
+import datetime
 import traceback
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from PIL import Image
 from ultralytics import YOLO
 
@@ -30,10 +34,12 @@ MODEL_PATH = os.environ.get("MODEL_PATH", "weights/best.pt")
 UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "bmp", "webp"}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
+USERS_FILE = "users.json"
 
 # ── app setup ─────────────────────────────────────────────────────────────────
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
+app.secret_key = "ostscan-secure-session-key-2026"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ── load model once at startup ────────────────────────────────────────────────
@@ -57,14 +63,192 @@ def image_to_base64(pil_img: Image.Image) -> str:
     return base64.b64encode(buf.getvalue()).decode()
 
 
+def load_users() -> dict:
+    if not os.path.exists(USERS_FILE):
+        # Create an empty file if it doesn't exist
+        save_users({})
+        return {}
+    try:
+        with open(USERS_FILE, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[WARN] Could not read user database: {e}")
+        return {}
+
+
+def save_users(users: dict):
+    try:
+        with open(USERS_FILE, "w") as f:
+            json.dump(users, f, indent=4)
+    except Exception as e:
+        print(f"[WARN] Could not write user database: {e}")
+
+
 # ── routes ────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
     return render_template("index.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if session.get("logged_in"):
+        return redirect(url_for("index"))
+        
+    error = None
+    if request.method == "POST":
+        # Support both form data and JSON requests
+        if request.is_json:
+            data = request.get_json()
+            username = data.get("username", "") # can be email or name
+            password = data.get("password", "")
+        else:
+            username = request.form.get("username", "")
+            password = request.form.get("password", "")
+            
+        username_query = username.lower().strip()
+        password_query = password.strip()
+        
+        users = load_users()
+        user_found = None
+        user_email = None
+        
+        # Check by email key
+        if username_query in users:
+            user_found = users[username_query]
+            user_email = username_query
+        else:
+            # Check by Name field (case insensitive match)
+            for email_key, user_data in users.items():
+                if user_data.get("name", "").lower().strip() == username_query:
+                    user_found = user_data
+                    user_email = email_key
+                    break
+                    
+        if user_found and user_found.get("password") == password_query:
+            session["logged_in"] = True
+            session["username"] = user_found.get("name")
+            session["email"] = user_email
+            if request.is_json:
+                return jsonify({"status": "success", "message": "Authenticated"})
+            return redirect(url_for("index"))
+        else:
+            error = "Invalid email/name or passcode."
+            if request.is_json:
+                return jsonify({"status": "error", "message": error}), 401
+                
+    return render_template("login.html", error=error)
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if session.get("logged_in"):
+        return redirect(url_for("index"))
+        
+    register_error = None
+    if request.method == "POST":
+        # Support both form data and JSON requests
+        if request.is_json:
+            data = request.get_json()
+            name = data.get("name", "")
+            email = data.get("email", "")
+            password = data.get("password", "")
+        else:
+            name = request.form.get("name", "")
+            email = request.form.get("email", "")
+            password = request.form.get("password", "")
+            
+        name = name.strip()
+        email = email.lower().strip()
+        password = password.strip()
+        
+        if not name or not email or not password:
+            register_error = "All fields (Name, Email, Passcode) are required."
+            if request.is_json:
+                return jsonify({"status": "error", "message": register_error}), 400
+            return render_template("login.html", register_error=register_error, active_tab="register")
+            
+        users = load_users()
+        if email in users:
+            register_error = "This email address is already registered."
+            if request.is_json:
+                return jsonify({"status": "error", "message": register_error}), 400
+            return render_template("login.html", register_error=register_error, active_tab="register")
+            
+        # Register the user
+        users[email] = {
+            "name": name,
+            "password": password
+        }
+        save_users(users)
+        
+        # Log in the user automatically
+        session["logged_in"] = True
+        session["username"] = name
+        session["email"] = email
+        
+        if request.is_json:
+            return jsonify({"status": "success", "message": "Account registered successfully."})
+        return redirect(url_for("index"))
+        
+    return render_template("login.html", active_tab="register")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+@app.route("/history", methods=["GET"])
+def history():
+    if not session.get("logged_in"):
+        return jsonify({"error": "Unauthorized session. Please login."}), 401
+        
+    email = session.get("email")
+    users = load_users()
+    if email in users:
+        records = users[email].get("history", [])
+        # Return sorted by newest first (reverse chronological)
+        return jsonify(records[::-1])
+    return jsonify([])
+
+
+@app.route("/history/notes", methods=["POST"])
+def history_notes():
+    if not session.get("logged_in"):
+        return jsonify({"error": "Unauthorized session. Please login."}), 401
+        
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing payload"}), 400
+        
+    case_id = data.get("case_id")
+    notes = data.get("notes", "").strip()
+    
+    if not case_id:
+        return jsonify({"error": "Case ID is required"}), 400
+        
+    email = session.get("email")
+    users = load_users()
+    
+    if email in users and "history" in users[email]:
+        for record in users[email]["history"]:
+            if record["case_id"] == case_id:
+                record["notes"] = notes
+                save_users(users)
+                return jsonify({"status": "success", "message": "Notes saved to case history."})
+                
+    return jsonify({"error": "Case record not found."}), 404
 
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    if not session.get("logged_in"):
+        return jsonify({"error": "Unauthorized session. Please login."}), 401
+
     if "file" not in request.files:
         return jsonify({"error": "No file provided"}), 400
 
@@ -76,10 +260,24 @@ def predict():
     if model is None:
         return jsonify({"error": "Model not loaded. Place best.pt in ./weights/"}), 503
 
+    # Patient metadata values
+    patient_name = request.form.get("patientName", "PAT-TEMP").strip()
+    patient_age = request.form.get("patientAge", "—").strip()
+    anatomical_site = request.form.get("anatomicalSite", "Other / General").strip()
+
     try:
         # Read and convert image
         img_bytes = file.read()
         pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+
+        # Save visual file to static uploads folder for persistent history
+        file_ext = file.filename.rsplit(".", 1)[1].lower() if "." in file.filename else "png"
+        timestamp_sec = int(time.time())
+        safe_email = session.get("email", "anonymous").replace("@", "_").replace(".", "_")
+        filename = f"scan_{safe_email}_{timestamp_sec}.{file_ext}"
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        pil_img.save(filepath, "PNG")
+        image_url = f"/static/uploads/{filename}"
 
         # Run inference
         results = model(pil_img, verbose=False)
@@ -102,11 +300,38 @@ def predict():
         thumb.thumbnail((512, 512))
         img_b64 = image_to_base64(thumb)
 
+        # Construct and log case history
+        case_id = f"SCAN-{timestamp_sec % 100000:05d}"
+        formatted_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        history_record = {
+            "case_id": case_id,
+            "timestamp": formatted_time,
+            "patient_name": patient_name,
+            "patient_age": patient_age,
+            "anatomical_site": anatomical_site,
+            "prediction": top1_label,
+            "confidence": round(top1_conf * 100, 2),
+            "class_probabilities": class_probs,
+            "image_url": image_url,
+            "notes": ""
+        }
+
+        email = session.get("email")
+        users = load_users()
+        if email in users:
+            if "history" not in users[email]:
+                users[email]["history"] = []
+            users[email]["history"].append(history_record)
+            save_users(users)
+
         return jsonify({
             "prediction": top1_label,
             "confidence": round(top1_conf * 100, 2),
             "class_probabilities": class_probs,
             "image_b64": img_b64,
+            "image_url": image_url,
+            "case_id": case_id,
             "status": "success",
         })
 

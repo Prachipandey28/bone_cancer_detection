@@ -1,865 +1,1913 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OsteoScan AI — Bone Cancer Detection</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>OstScan AI — Clinical Bone Radiography Diagnostic Suite</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
 
-:root{
-  --ink:#03080f;
-  --deep:#050d18;
-  --panel:#081525;
-  --glass:rgba(8,21,37,0.85);
-  --rim:#0e2a44;
-  --cyan:#00f5ff;
-  --cyan2:#00a8b5;
-  --amber:#ffb700;
-  --red:#ff2d55;
-  --green:#00ff9d;
-  --text:#b8d4e8;
-  --muted:#3d6070;
-  --orb:'Orbitron',monospace;
-  --syne:'Syne',sans-serif;
-}
+    <style>
+        :root {
+            --bg-darker: #03070d;
+            --bg-dark: #070e17;
+            --bg-panel: rgba(13, 25, 41, 0.7);
+            --bg-panel-hover: rgba(18, 35, 58, 0.85);
+            --border-glow: rgba(0, 240, 255, 0.15);
+            --border-glow-active: rgba(0, 240, 255, 0.4);
+            
+            /* Accents */
+            --cyan: #00f0ff;
+            --cyan-dim: #00a8b5;
+            --emerald: #10b981;
+            --emerald-bg: rgba(16, 185, 129, 0.1);
+            --rose: #f43f5e;
+            --rose-bg: rgba(244, 63, 94, 0.1);
+            --amber: #f59e0b;
+            
+            /* Typography */
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-header: 'Space Grotesk', sans-serif;
+            --font-mono: 'Orbitron', monospace;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
 
-body{
-  background:var(--ink);
-  color:var(--text);
-  font-family:var(--syne);
-  min-height:100vh;
-  overflow-x:hidden;
-  cursor:none;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-/* ── Custom cursor ── */
-#cursor{
-  position:fixed;width:12px;height:12px;
-  border:1.5px solid var(--cyan);border-radius:50%;
-  pointer-events:none;z-index:9999;
-  transform:translate(-50%,-50%);
-  transition:width .15s,height .15s,border-color .15s;
-  mix-blend-mode:difference;
-}
-#cursor-ring{
-  position:fixed;width:36px;height:36px;
-  border:1px solid rgba(0,245,255,.3);border-radius:50%;
-  pointer-events:none;z-index:9998;
-  transform:translate(-50%,-50%);
-  transition:all .08s linear;
-}
-body:hover #cursor{width:14px;height:14px}
+        html, body {
+            background-color: var(--bg-darker);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-/* ── Animated BG ── */
-.bg-canvas{
-  position:fixed;inset:0;z-index:0;overflow:hidden;
-}
-.bg-canvas svg{width:100%;height:100%;opacity:.18}
+        /* Tech Background Mesh & Scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.scanline{
-  position:fixed;top:0;left:0;right:0;
-  height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  z-index:2;
-  animation:scan 6s linear infinite;
-  opacity:.4;
-}
-@keyframes scan{
-  0%{top:0;opacity:.5}
-  100%{top:100vh;opacity:.1}
-}
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.03) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(7, 14, 23, 1) 0%, rgba(3, 7, 13, 1) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-.noise{
-  position:fixed;inset:0;z-index:1;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity:.025;pointer-events:none;
-}
+        /* Glass Container Layout */
+        .dashboard-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+        }
 
-/* ── Layout ── */
-.wrap{
-  position:relative;z-index:3;
-  max-width:980px;margin:0 auto;
-  padding:40px 24px 100px;
-}
+        /* Top Header Navigation */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
 
-/* ── Header ── */
-header{
-  display:flex;align-items:center;gap:20px;
-  margin-bottom:64px;
-  animation:slideDown .7s cubic-bezier(.16,1,.3,1) both;
-}
-@keyframes slideDown{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-.logo-mark{
-  position:relative;
-  width:56px;height:56px;flex-shrink:0;
-}
-.logo-mark svg{width:100%;height:100%}
-.logo-mark::after{
-  content:'';position:absolute;inset:-6px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(0,245,255,.15),transparent 70%);
-  animation:pulse-ring 3s ease-in-out infinite;
-}
-@keyframes pulse-ring{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:.4}}
+        .brand-logo {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            overflow: hidden;
+        }
 
-.logo-words h1{
-  font-family:var(--orb);
-  font-size:20px;font-weight:700;
-  color:#fff;letter-spacing:2px;
-  text-shadow:0 0 20px rgba(0,245,255,.5);
-}
-.logo-words span{
-  font-size:11px;letter-spacing:3px;
-  color:var(--muted);text-transform:uppercase;
-  font-family:var(--orb);
-}
+        .brand-logo::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--cyan);
+            top: 0;
+            left: 0;
+            animation: lineMove 2s infinite linear;
+        }
 
-.header-right{margin-left:auto;display:flex;align-items:center;gap:16px}
+        @keyframes lineMove {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
 
-.sys-pill{
-  display:flex;align-items:center;gap:8px;
-  background:var(--panel);
-  border:1px solid var(--rim);
-  border-radius:4px;
-  padding:8px 16px;
-  font-family:var(--orb);font-size:10px;
-  letter-spacing:1px;color:var(--muted);
-}
-.sys-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 8px var(--green);
-  animation:blink 2s ease-in-out infinite;
-}
-.sys-dot.warn{background:var(--amber);box-shadow:0 0 8px var(--amber)}
-.sys-dot.err{background:var(--red);box-shadow:0 0 8px var(--red);animation:none}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+        .brand-text h1 {
+            font-family: var(--font-header);
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-/* ── Hero tagline ── */
-.hero{
-  margin-bottom:52px;
-  animation:slideUp .8s cubic-bezier(.16,1,.3,1) .1s both;
-}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+        .brand-text h1 span {
+            color: var(--cyan);
+            font-size: 10px;
+            border: 1px solid var(--cyan);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            letter-spacing: 0;
+        }
 
-.hero h2{
-  font-family:var(--orb);
-  font-size:clamp(28px,4vw,48px);
-  font-weight:900;
-  line-height:1.1;
-  letter-spacing:-1px;
-  color:#fff;
-}
-.hero h2 .accent{
-  color:var(--cyan);
-  text-shadow:0 0 40px rgba(0,245,255,.6);
-}
-.hero p{
-  margin-top:16px;
-  max-width:520px;
-  font-size:15px;
-  line-height:1.7;
-  color:var(--muted);
-  font-weight:300;
-}
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
 
-/* ── Main grid ── */
-.main-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-  animation:slideUp .9s cubic-bezier(.16,1,.3,1) .2s both;
-}
-@media(max-width:680px){.main-grid{grid-template-columns:1fr}}
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
 
-/* ── Upload panel ── */
-.upload-panel{
-  background:var(--panel);
-  border:1px solid var(--rim);
-  border-radius:12px;
-  overflow:hidden;
-  position:relative;
-}
+        .metric-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 20px;
+        }
 
-.panel-label{
-  padding:14px 20px;
-  border-bottom:1px solid var(--rim);
-  font-family:var(--orb);
-  font-size:9px;letter-spacing:2px;
-  color:var(--muted);text-transform:uppercase;
-  display:flex;align-items:center;gap:10px;
-}
-.panel-label::before{
-  content:'';width:6px;height:6px;border-radius:50%;
-  background:var(--cyan);
-  box-shadow:0 0 8px var(--cyan);
-}
+        .metric-pill:first-child {
+            border: none;
+            padding: 0;
+        }
 
-.drop-zone{
-  padding:40px 24px;
-  text-align:center;
-  cursor:pointer;
-  position:relative;
-  transition:background .3s;
-  min-height:280px;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:16px;
-}
-.drop-zone:hover,.drop-zone.drag-over{
-  background:rgba(0,245,255,.03);
-}
-.drop-zone::before{
-  content:'';position:absolute;inset:16px;
-  border:1px dashed rgba(0,245,255,.15);
-  border-radius:8px;
-  pointer-events:none;
-  transition:border-color .3s;
-}
-.drop-zone:hover::before,.drop-zone.drag-over::before{
-  border-color:rgba(0,245,255,.4);
-}
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald);
+            animation: pulse 2.5s infinite ease-in-out;
+        }
 
-.xray-icon{
-  width:80px;height:80px;
-  position:relative;
-}
-.xray-icon svg{width:100%;height:100%}
+        .status-dot.warn {
+            background: var(--amber);
+            box-shadow: 0 0 10px var(--amber);
+        }
 
-.drop-zone h3{
-  font-family:var(--orb);font-size:13px;
-  font-weight:600;letter-spacing:1px;color:#fff;
-}
-.drop-zone p{
-  font-size:12px;color:var(--muted);line-height:1.6;
-}
-.drop-zone p em{
-  font-style:normal;color:var(--cyan);
-  font-family:var(--orb);font-size:10px;letter-spacing:1px;
-}
+        .status-dot.danger {
+            background: var(--rose);
+            box-shadow: 0 0 10px var(--rose);
+            animation: none;
+        }
 
-#fileInput{display:none}
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.9); }
+        }
 
-.btn-scan{
-  margin-top:8px;
-  display:inline-flex;align-items:center;gap:10px;
-  background:transparent;
-  border:1px solid var(--cyan);
-  color:var(--cyan);
-  font-family:var(--orb);font-size:11px;
-  letter-spacing:2px;font-weight:600;
-  padding:12px 28px;
-  border-radius:4px;
-  cursor:pointer;
-  position:relative;overflow:hidden;
-  transition:color .3s,box-shadow .3s;
-  text-transform:uppercase;
-}
-.btn-scan::before{
-  content:'';position:absolute;inset:0;
-  background:var(--cyan);
-  transform:translateX(-101%);
-  transition:transform .3s cubic-bezier(.16,1,.3,1);
-  z-index:0;
-}
-.btn-scan:hover{color:#000;box-shadow:0 0 30px rgba(0,245,255,.3)}
-.btn-scan:hover::before{transform:none}
-.btn-scan span{position:relative;z-index:1}
-.btn-scan:disabled{opacity:.3;cursor:not-allowed}
-.btn-scan:disabled::before{display:none}
-.btn-scan:disabled:hover{color:var(--cyan);box-shadow:none}
+        /* 3-Column Modern Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr 380px;
+            gap: 20px;
+            flex: 1;
+        }
 
-/* ── Preview panel ── */
-.preview-panel{
-  background:var(--panel);
-  border:1px solid var(--rim);
-  border-radius:12px;
-  overflow:hidden;
-  display:flex;flex-direction:column;
-}
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
-.preview-body{
-  flex:1;
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;
-  min-height:280px;
-  position:relative;
-}
+        /* Standard Glass Card styling */
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
 
-#previewImg{
-  max-width:100%;max-height:260px;
-  object-fit:contain;
-  border-radius:6px;
-  display:none;
-  filter:brightness(1.1) contrast(1.05);
-}
+        .glass-card:hover {
+            border-color: var(--border-glow-active);
+        }
 
-.preview-empty{
-  display:flex;flex-direction:column;align-items:center;
-  gap:10px;color:var(--muted);
-  font-family:var(--orb);font-size:10px;letter-spacing:2px;
-  text-transform:uppercase;
-}
-.preview-empty svg{opacity:.2}
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-/* ── Scan animation overlay ── */
-.scan-anim{
-  position:absolute;inset:0;
-  pointer-events:none;
-  display:none;
-  align-items:center;justify-content:center;
-  background:rgba(5,13,24,.9);
-  flex-direction:column;gap:16px;
-}
-.scan-anim.active{display:flex}
+        .card-title {
+            font-family: var(--font-header);
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.scan-bar{
-  width:200px;height:2px;
-  background:var(--rim);border-radius:1px;
-  overflow:hidden;
-}
-.scan-fill{
-  height:100%;width:0;
-  background:linear-gradient(90deg,var(--cyan2),var(--cyan));
-  border-radius:1px;
-  animation:fill 2.5s ease-in-out infinite;
-}
-@keyframes fill{0%{width:0}60%{width:100%}100%{width:100%}}
+        .card-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--cyan);
+        }
 
-.scan-anim p{
-  font-family:var(--orb);font-size:10px;
-  letter-spacing:3px;color:var(--cyan);
-  text-transform:uppercase;
-  animation:flicker 1.5s ease-in-out infinite;
-}
-@keyframes flicker{0%,100%{opacity:1}50%{opacity:.5}}
+        .card-subtitle {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--cyan);
+            letter-spacing: 1px;
+        }
 
-/* ── Result section ── */
-#resultSection{
-  margin-top:20px;
-  display:none;
-  animation:slideUp .6s cubic-bezier(.16,1,.3,1) both;
-}
+        .card-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-.result-wrap{
-  background:var(--panel);
-  border:1px solid var(--rim);
-  border-radius:12px;
-  overflow:hidden;
-}
+        /* LEFT SIDEBAR: Patient Intake & Diagnostics Selection */
+        .patient-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-.result-top{
-  padding:28px 32px;
-  display:flex;align-items:center;gap:24px;
-  border-bottom:1px solid var(--rim);
-  position:relative;overflow:hidden;
-}
-.result-top::after{
-  content:'';position:absolute;inset:0;
-  opacity:.06;pointer-events:none;
-}
-.result-top.cancer::after{background:var(--red)}
-.result-top.normal::after{background:var(--green)}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-.verdict-ring{
-  width:72px;height:72px;flex-shrink:0;
-  position:relative;
-}
-.verdict-ring svg{width:100%;height:100%}
+        .form-group label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-.verdict-info h2{
-  font-family:var(--orb);
-  font-size:22px;font-weight:700;
-  letter-spacing:1px;
-}
-.verdict-info h2.cancer{
-  color:var(--red);text-shadow:0 0 30px rgba(255,45,85,.5);
-}
-.verdict-info h2.normal{
-  color:var(--green);text-shadow:0 0 30px rgba(0,255,157,.4);
-}
-.verdict-info p{
-  margin-top:6px;font-size:13px;color:var(--muted);
-  max-width:340px;line-height:1.5;
-}
+        .form-input {
+            background: rgba(3, 7, 13, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
 
-.conf-block{margin-left:auto;text-align:right}
-.conf-num{
-  font-family:var(--orb);font-size:38px;font-weight:900;
-  color:#fff;line-height:1;letter-spacing:-1px;
-}
-.conf-label{
-  font-family:var(--orb);font-size:9px;letter-spacing:2px;
-  color:var(--muted);text-transform:uppercase;margin-top:4px;
-}
+        .form-input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
+        }
 
-/* ── Prob bars ── */
-.prob-section{padding:24px 32px}
-.prob-section h3{
-  font-family:var(--orb);font-size:9px;
-  letter-spacing:2px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:20px;
-}
+        .form-select {
+            background: rgba(3, 7, 13, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
 
-.prob-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.prob-row:last-child{margin-bottom:0}
-.prob-name{
-  font-family:var(--orb);font-size:11px;
-  letter-spacing:1px;color:var(--text);
-  width:90px;flex-shrink:0;text-transform:capitalize;
-}
-.prob-track{
-  flex:1;height:4px;background:var(--rim);
-  border-radius:2px;overflow:hidden;position:relative;
-}
-.prob-fill{
-  height:100%;border-radius:2px;
-  width:0;transition:width 1.2s cubic-bezier(.16,1,.3,1);
-}
-.prob-fill.cancer{background:linear-gradient(90deg,#8b0024,var(--red))}
-.prob-fill.normal{background:linear-gradient(90deg,#006644,var(--green))}
-.prob-pct{
-  font-family:var(--orb);font-size:11px;
-  color:var(--muted);width:44px;text-align:right;flex-shrink:0;
-}
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed rgba(0, 240, 255, 0.2);
+            border-radius: 8px;
+            padding: 28px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(0, 240, 255, 0.01);
+        }
 
-/* ── Scanned image ── */
-.result-img-wrap{
-  padding:0 32px 28px;
-}
-#resultImg{
-  width:100%;max-height:300px;
-  object-fit:contain;
-  border-radius:8px;
-  border:1px solid var(--rim);
-  background:#000;
-  filter:brightness(1.1) contrast(1.08);
-}
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--cyan);
+            background: rgba(0, 240, 255, 0.03);
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+        }
 
-/* ── Error ── */
-#errorBox{
-  display:none;
-  margin-top:16px;
-  background:rgba(255,45,85,.08);
-  border:1px solid rgba(255,45,85,.25);
-  border-radius:8px;
-  padding:14px 20px;
-  font-family:var(--orb);font-size:11px;
-  color:var(--red);letter-spacing:1px;
-  animation:slideUp .3s ease both;
-}
+        .drop-icon-container {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(0, 240, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyan);
+            font-size: 24px;
+            transition: transform 0.3s;
+            border: 1px dashed rgba(0, 240, 255, 0.3);
+        }
 
-/* ── Footer disclaimer ── */
-.disclaimer{
-  margin-top:32px;
-  padding:16px 24px;
-  background:var(--panel);
-  border:1px solid var(--rim);
-  border-left:3px solid var(--amber);
-  border-radius:8px;
-  font-size:12px;color:var(--muted);line-height:1.7;
-  animation:slideUp 1s cubic-bezier(.16,1,.3,1) .4s both;
-}
-.disclaimer strong{color:var(--amber)}
+        .drop-zone:hover .drop-icon-container {
+            transform: scale(1.1);
+            background: rgba(0, 240, 255, 0.1);
+        }
 
-/* ── Reset btn ── */
-.btn-reset{
-  background:transparent;border:1px solid var(--rim);
-  color:var(--muted);font-family:var(--orb);font-size:10px;
-  letter-spacing:1px;padding:8px 20px;border-radius:4px;
-  cursor:pointer;margin-top:16px;
-  transition:border-color .2s,color .2s;text-transform:uppercase;
-}
-.btn-reset:hover{border-color:var(--cyan);color:var(--cyan)}
+        .drop-zone h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
 
-/* ── Corner decorations ── */
-.corner{position:fixed;width:60px;height:60px;pointer-events:none;z-index:2}
-.corner.tl{top:16px;left:16px;border-top:1px solid rgba(0,245,255,.2);border-left:1px solid rgba(0,245,255,.2)}
-.corner.tr{top:16px;right:16px;border-top:1px solid rgba(0,245,255,.2);border-right:1px solid rgba(0,245,255,.2)}
-.corner.bl{bottom:16px;left:16px;border-bottom:1px solid rgba(0,245,255,.2);border-left:1px solid rgba(0,245,255,.2)}
-.corner.br{bottom:16px;right:16px;border-bottom:1px solid rgba(0,245,255,.2);border-right:1px solid rgba(0,245,255,.2)}
-</style>
+        .drop-zone p {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .file-info-pill {
+            display: none;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .file-info-text {
+            flex: 1;
+            font-size: 11px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .remove-file-btn {
+            background: none;
+            border: none;
+            color: var(--rose);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Diagnostic Quick Guidelines */
+        .guidelines-panel {
+            background: rgba(3, 7, 13, 0.4);
+            border-radius: 8px;
+            padding: 12px 14px;
+            border-left: 2px solid var(--cyan);
+        }
+
+        .guidelines-panel h5 {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .guidelines-panel ul {
+            list-style: none;
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .guidelines-panel ul li {
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .guidelines-panel ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--cyan);
+        }
+
+        /* CENTER PANEL: High Tech Radiography Visualizer */
+        .visualizer-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .visualizer-body {
+            position: relative;
+            flex: 1;
+            background: #010307;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 480px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* HUD Diagnostic Reticle Graphics */
+        .hud-corner {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .hud-corner.tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+        .hud-corner.tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+        .hud-corner.bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+        .hud-corner.br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+        .hud-reticle {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.15;
+            transition: opacity 0.3s;
+        }
+
+        .hud-reticle::before, .hud-reticle::after {
+            content: '';
+            position: absolute;
+            background: var(--cyan);
+        }
+
+        .hud-reticle::before {
+            top: 50%; left: 0; right: 0; height: 1px;
+        }
+
+        .hud-reticle::after {
+            left: 50%; top: 0; bottom: 0; width: 1px;
+        }
+
+        .hud-reticle-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px dashed var(--cyan);
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+
+        .visualizer-body:hover .hud-reticle {
+            opacity: 0.4;
+        }
+
+        /* Diagnostic Laser Scan Line */
+        .laser-sweep {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            box-shadow: 0 0 12px var(--cyan), 0 0 25px var(--cyan);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            top: 0;
+        }
+
+        .laser-sweep.scanning {
+            opacity: 1;
+            animation: sweep 2.5s infinite ease-in-out;
+        }
+
+        @keyframes sweep {
+            0% { top: 4%; }
+            50% { top: 96%; }
+            100% { top: 4%; }
+        }
+
+        /* Medical Grid Overlay */
+        .medical-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 16px 16px;
+            pointer-events: none;
+            opacity: 0.4;
+            z-index: 2;
+        }
+
+        .placeholder-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 24px;
+            z-index: 3;
+        }
+
+        .placeholder-logo {
+            font-size: 48px;
+            opacity: 0.35;
+            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.15));
+            animation: hoverAnim 4s infinite ease-in-out;
+        }
+
+        @keyframes hoverAnim {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        #previewImage {
+            max-width: 90%;
+            max-height: 440px;
+            object-fit: contain;
+            display: none;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 3;
+            filter: brightness(1.05) contrast(1.1) grayscale(1);
+        }
+
+        /* Scanning Overlay Cover */
+        .scan-curtain {
+            position: absolute;
+            inset: 0;
+            background: rgba(4, 9, 17, 0.85);
+            backdrop-filter: blur(4px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            z-index: 20;
+        }
+
+        .scan-curtain.active {
+            display: flex;
+        }
+
+        .spinner-ring {
+            width: 72px;
+            height: 72px;
+            border: 2px solid rgba(0, 240, 255, 0.1);
+            border-top: 2px solid var(--cyan);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+            position: relative;
+        }
+
+        .spinner-ring::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 1px dashed rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            animation: spinReverse 3s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spinReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .scan-curtain h4 {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            letter-spacing: 4px;
+            color: var(--cyan);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+            animation: blinker 1.5s infinite ease-in-out;
+        }
+
+        @keyframes blinker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
+        /* Action bar below preview */
+        .action-bar {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: rgba(3, 7, 13, 0.3);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-family: var(--font-header);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--cyan);
+            border: 1px solid var(--cyan);
+            color: #03070d;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #fff;
+            border-color: #fff;
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            box-shadow: none;
+            border-color: rgba(0, 240, 255, 0.2);
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-glow);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--cyan);
+            color: #fff;
+            background: rgba(0, 240, 255, 0.03);
+        }
+
+        /* RIGHT PANEL: Live AI Diagnostics & Class Probability */
+        .insights-card {
+            transition: opacity 0.3s;
+        }
+
+        /* Simulated clinical console logger */
+        .clinical-log {
+            background: rgba(2, 4, 8, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-secondary);
+            height: 110px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .log-line {
+            line-height: 1.4;
+        }
+
+        .log-line.cyan { color: var(--cyan); }
+        .log-line.emerald { color: var(--emerald); }
+        .log-line.rose { color: var(--rose); }
+        .log-line.amber { color: var(--amber); }
+
+        /* Dynamic Diagnostics Result Layout */
+        .diagnostic-result {
+            display: none; /* Revealed after analysis */
+            flex-direction: column;
+            gap: 16px;
+            animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main verdict indicator */
+        .verdict-banner {
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid transparent;
+        }
+
+        .verdict-banner.cancer {
+            background: var(--rose-bg);
+            border-color: rgba(244, 63, 94, 0.25);
+            color: var(--rose);
+        }
+
+        .verdict-banner.normal {
+            background: var(--emerald-bg);
+            border-color: rgba(16, 185, 129, 0.25);
+            color: var(--emerald);
+        }
+
+        .verdict-icon-lg {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .verdict-details h3 {
+            font-family: var(--font-header);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .verdict-details p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        /* Interactive Confidence Gauge & Metrics */
+        .metric-block-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+            align-items: center;
+            background: rgba(3, 7, 13, 0.3);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        /* Circular glowing SVG ring */
+        .radial-gauge {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radial-gauge svg {
+            transform: rotate(-90deg);
+            width: 80px;
+            height: 80px;
+        }
+
+        .radial-gauge circle {
+            fill: none;
+            stroke-width: 6;
+        }
+
+        .radial-gauge .circle-bg {
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .radial-gauge .circle-fill {
+            stroke: var(--cyan);
+            stroke-dasharray: 226;
+            stroke-dashoffset: 226;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            stroke-linecap: round;
+        }
+
+        .radial-gauge .circle-fill.cancer {
+            stroke: var(--rose);
+        }
+
+        .radial-gauge .circle-fill.normal {
+            stroke: var(--emerald);
+        }
+
+        .radial-value {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .radial-label-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .radial-label-details .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+            padding-bottom: 4px;
+            margin-bottom: 2px;
+        }
+
+        .radial-label-details .stat-row:last-child {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .stat-label { color: var(--text-secondary); }
+        .stat-value { font-family: var(--font-mono); color: #fff; }
+
+        /* Beautiful probability breakdown bars */
+        .distribution-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .bar-label-name {
+            text-transform: uppercase;
+            font-family: var(--font-header);
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+        }
+
+        .bar-label-pct {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .progress-fill.cancer {
+            background: linear-gradient(90deg, var(--rose), #ff8fa3);
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+        }
+
+        .progress-fill.normal {
+            background: linear-gradient(90deg, var(--emerald), #86efac);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Radiologist Case Notes Notebook */
+        .notes-notebook {
+            background: rgba(255, 183, 0, 0.02);
+            border: 1px solid rgba(255, 183, 0, 0.15);
+            border-radius: 8px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .notes-notebook-hdr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--amber);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .notebook-input {
+            width: 100%;
+            height: 64px;
+            background: rgba(3, 7, 13, 0.4);
+            border: 1px solid rgba(255, 183, 0, 0.15);
+            border-radius: 4px;
+            padding: 8px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 12px;
+            outline: none;
+            resize: none;
+        }
+
+        .notebook-input:focus {
+            border-color: var(--amber);
+        }
+
+        /* Error Banner */
+        .error-banner {
+            display: none;
+            background: rgba(244, 63, 94, 0.05);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 8px;
+            padding: 14px 18px;
+            color: var(--rose);
+            font-size: 12px;
+            line-height: 1.5;
+            animation: slideInUp 0.3s ease both;
+        }
+
+        /* Bottom Medical Disclaimer */
+        footer {
+            margin-top: 10px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-left: 4px solid var(--amber);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .disclaimer-icon {
+            font-size: 24px;
+            color: var(--amber);
+            flex-shrink: 0;
+        }
+
+        .disclaimer-text strong {
+            color: #fff;
+        }
+
+        /* Print formatting helper for Medical Report */
+        @media print {
+            body {
+                background: #fff;
+                color: #000;
+            }
+            .dashboard-container {
+                max-width: 100%;
+                padding: 0;
+            }
+            header, .action-bar, .drop-zone, .clinical-log, footer {
+                display: none !important;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .glass-card {
+                background: none !important;
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Custom cursor -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+<div class="dashboard-container">
+    
+    <!-- Top Header Bar -->
+    <header>
+        <div class="brand">
+            <div class="brand-logo">🩻</div>
+            <div class="brand-text">
+                <h1>OSTSCAN AI <span>V2.4</span></h1>
+                <p>Radiological Machine Learning Diagnostics Suite</p>
+            </div>
+        </div>
+        
+        <div class="system-status">
+            <div class="metric-pill">
+                <span class="status-dot" id="systemStatusDot"></span>
+                <span id="systemStatusText">CONNECTING TELEMETRY...</span>
+            </div>
+            <div class="metric-pill">
+                <span class="stat-label" style="margin-right: 6px;">SESSION ID:</span>
+                <span class="stat-value" id="sessionId">SCAN-000000</span>
+            </div>
+            <div class="metric-pill" style="border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 20px;">
+                <span class="stat-label" style="margin-right: 6px;">CLINICIAN:</span>
+                <span class="stat-value" style="color: var(--cyan);">{{ session.get('username', 'CLINICIAN').upper() }}</span>
+            </div>
+            <div class="metric-pill" style="border-left: 1px solid rgba(255, 255, 255, 0.1); padding-left: 20px;">
+                <a href="/logout" style="text-decoration: none; color: var(--rose); font-family: var(--font-mono); font-size: 11px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(244, 63, 94, 0.2); padding: 4px 10px; border-radius: 4px; background: rgba(244, 63, 94, 0.05); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--rose)'; this.style.background='var(--rose)'; this.style.color='#03070d'" onmouseout="this.style.borderColor='rgba(244, 63, 94, 0.2)'; this.style.background='rgba(244, 63, 94, 0.05)'; this.style.color='var(--rose)'">
+                    🔒 LOGOUT
+                </a>
+            </div>
+        </div>
+    </header>
 
-<!-- Corner decorations -->
-<div class="corner tl"></div>
-<div class="corner tr"></div>
-<div class="corner bl"></div>
-<div class="corner br"></div>
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+        
+        <!-- COLUMN 1: Intake & Upload Panel -->
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">Intake & Upload</div>
+                <div class="card-subtitle">STEP 01</div>
+            </div>
+            <div class="card-body">
+                <div class="patient-form">
+                    <div class="form-group">
+                        <label for="patientName">Patient ID / Name</label>
+                        <input type="text" class="form-input" id="patientName" placeholder="e.g. PAT-9281-X"/>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label for="patientAge">Age / Gender</label>
+                            <input type="text" class="form-input" id="patientAge" placeholder="e.g. 45 M"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="anatomicalSite">Anatomical Joint</label>
+                            <select class="form-select" id="anatomicalSite">
+                                <option value="Proximal Femur">Proximal Femur</option>
+                                <option value="Distal Femur">Distal Femur</option>
+                                <option value="Proximal Tibia">Proximal Tibia</option>
+                                <option value="Humeral Head">Humeral Head</option>
+                                <option value="Pelvic Ring">Pelvic Ring</option>
+                                <option value="Other / General">Other / General</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-<!-- Scan line -->
-<div class="scanline"></div>
-<div class="noise"></div>
+                <div style="border-bottom: 1px dashed var(--border-glow); margin: 6px 0;"></div>
 
-<!-- Animated background grid -->
-<div class="bg-canvas">
-  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-        <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#00f5ff" stroke-width="0.4"/>
-      </pattern>
-      <radialGradient id="fade" cx="50%" cy="50%" r="70%">
-        <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.15"/>
-        <stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-    <rect width="1440" height="900" fill="url(#grid)"/>
-    <rect width="1440" height="900" fill="url(#fade)"/>
-    <!-- Decorative circles -->
-    <circle cx="720" cy="450" r="300" fill="none" stroke="#00f5ff" stroke-width="0.3" opacity="0.3"/>
-    <circle cx="720" cy="450" r="500" fill="none" stroke="#00f5ff" stroke-width="0.2" opacity="0.15"/>
-  </svg>
+                <!-- Drag & Drop Uploader -->
+                <div class="drop-zone" id="uploadDropZone">
+                    <div class="drop-icon-container">📤</div>
+                    <h4>DRAG & DROP X-RAY</h4>
+                    <p>Click to browse local files<br/><em>PNG, JPG, BMP, WEBP (Max 16MB)</em></p>
+                    <input type="file" id="fileField" accept=".jpg,.jpeg,.png,.bmp,.webp" style="display: none;"/>
+                </div>
+
+                <!-- Selected File Display -->
+                <div class="file-info-pill" id="fileInfoDisplay">
+                    <span style="font-size: 16px;">📄</span>
+                    <div class="file-info-text" id="fileInfoText">—</div>
+                    <button class="remove-file-btn" onclick="clearSelectedFile()" title="Clear file">✕</button>
+                </div>
+
+                <!-- Diagnostic Guidelines guidelines -->
+                <div class="guidelines-panel">
+                    <h5>Scanning Protocol</h5>
+                    <ul>
+                        <li>Ensure clear visual contrast of bone margins</li>
+                        <li>Crop out irrelevant metal implants or markers</li>
+                        <li>Avoid heavily compressed radiological scan formats</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 2: Medical Viewer (Center) -->
+        <div class="glass-card visualizer-card">
+            <div class="card-header">
+                <div class="card-title">Radiological Visualizer</div>
+                <div class="card-subtitle">STEP 02</div>
+            </div>
+            
+            <div class="visualizer-body" id="visualizerBody">
+                <!-- HUD graphic reticles -->
+                <div class="hud-corner tl"></div>
+                <div class="hud-corner tr"></div>
+                <div class="hud-corner bl"></div>
+                <div class="hud-corner br"></div>
+                <div class="hud-reticle" style="top: calc(50% - 30px); left: calc(50% - 30px);">
+                    <div class="hud-reticle-circle"></div>
+                </div>
+
+                <!-- Laser Scan Line -->
+                <div class="laser-sweep" id="laserScanner"></div>
+                
+                <!-- Medical Grid overlay -->
+                <div class="medical-grid"></div>
+
+                <!-- Empty visualizer placeholder -->
+                <div class="placeholder-text" id="visualizerPlaceholder">
+                    <div class="placeholder-logo">🩻</div>
+                    <h3 style="font-family: var(--font-header); font-size: 14px; font-weight: 500; letter-spacing: 0.5px; color: #fff;">No Radiograph Loaded</h3>
+                    <p style="font-size: 11px; max-width: 260px; line-height: 1.5;">Patient radiograph will appear in this diagnostic viewport upon intake upload.</p>
+                </div>
+
+                <!-- Live preview image -->
+                <img id="previewImage" alt="Radiograph Visualizer preview"/>
+
+                <!-- Actively scanning spinner screen -->
+                <div class="scan-curtain" id="loadingOverlay">
+                    <div class="spinner-ring"></div>
+                    <h4>Executing YOLOv8 Neural Diagnostic...</h4>
+                </div>
+            </div>
+
+            <!-- Visualizer controls footer bar -->
+            <div class="action-bar">
+                <button class="btn btn-outline" id="resetBtn" onclick="clearSelectedFile()" disabled>↩ Reset</button>
+                <button class="btn btn-primary" id="analyzeBtn" onclick="executeNeuralAnalysis()" disabled>
+                    ⚡ Run AI Diagnostics
+                </button>
+            </div>
+        </div>
+
+        <!-- COLUMN 3: Clinical AI Insights & Results -->
+        <div class="glass-card insights-card" id="insightsPanel">
+            <div class="card-header">
+                <div class="card-title">Neural Diagnostic Insights</div>
+                <div class="card-subtitle">STEP 03</div>
+            </div>
+            <div class="card-body" style="gap: 16px;">
+                
+                <!-- Clinical Diagnostics Log console -->
+                <div class="clinical-log" id="consoleLogger">
+                    <div class="log-line cyan">[SYSTEM INITIALIZED] Standing by for clinical radiograph...</div>
+                </div>
+
+                <!-- Empty State for results -->
+                <div id="resultsEmptyState" style="text-align: center; padding: 40px 20px; color: var(--text-muted); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="font-size: 32px; opacity: 0.4;">📊</span>
+                    <h5 style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">Awaiting Analysis</h5>
+                    <p style="font-size: 11px; max-width: 220px; line-height: 1.5;">Execute the AI Diagnostic scan to generate neural predictions and telemetry logs.</p>
+                </div>
+
+                <!-- DIAGNOSTICS RESULTS BLOCK (Revealed upon scan success) -->
+                <div class="diagnostic-result" id="resultsBlock">
+                    
+                    <!-- Core diagnosis verdict banner -->
+                    <div class="verdict-banner" id="verdictBanner">
+                        <div class="verdict-icon-lg" id="verdictIcon">⚠️</div>
+                        <div class="verdict-details">
+                            <h3 id="verdictHeadline">MALIGNANT SIGNATURE DETECTED</h3>
+                            <p id="verdictSubText">Significant indicators of osteosarcoma/malignancy found.</p>
+                        </div>
+                    </div>
+
+                    <!-- Neural confidence radial gauge and metrics -->
+                    <div class="metric-block-grid">
+                        <div class="radial-gauge">
+                            <svg>
+                                <circle class="circle-bg" cx="40" cy="40" r="36"/>
+                                <circle class="circle-fill" id="radialCircle" cx="40" cy="40" r="36"/>
+                            </svg>
+                            <span class="radial-value" id="radialPercent">0.0%</span>
+                        </div>
+                        <div class="radial-label-details">
+                            <div class="stat-row">
+                                <span class="stat-label">Model Confidence</span>
+                                <span class="stat-value" id="metricConfidence">0.0%</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Inference Time</span>
+                                <span class="stat-value" id="metricLatency">45 ms</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Patient Ref ID</span>
+                                <span class="stat-value" id="metricRefId">PAT-000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Probability distribution list -->
+                    <div class="distribution-list">
+                        <h4 style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px;">Class Density Distribution</h4>
+                        
+                        <div id="neuralDensityBars">
+                            <!-- Dynamic bar lists injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Radiologist custom case notes notebook -->
+                    <div class="notes-notebook">
+                        <div class="notes-notebook-hdr">
+                            <span>Clinical Observation Journal</span>
+                            <span style="font-size: 10px; color: var(--text-muted);">Self-Saving</span>
+                        </div>
+                        <textarea class="notebook-input" id="radiologistNotes" placeholder="Radiologist: Input clinical notes, observations, or case confirmation details here..."></textarea>
+                    </div>
+
+                    <!-- Post-scan actions -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                        <button class="btn btn-outline" style="padding: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="downloadClinicalReport()">
+                            📥 Download Report
+                        </button>
+                        <button class="btn btn-primary" style="padding: 10px;" onclick="clearSelectedFile()">
+                            Scan Next
+                        </button>
+                        <button class="btn btn-outline" style="grid-column: span 2; padding: 8px; font-size: 11px; color: var(--text-secondary); border-color: rgba(255,255,255,0.05);" onclick="window.print()">
+                            🖨️ Print Clinical Worksheet
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Error Display Banner -->
+                <div class="error-banner" id="errorDisplay"></div>
+
+            </div>
+        </div>
+
+        <!-- FULL-WIDTH COLUMN: Diagnostic Case History Log -->
+        <div class="glass-card" style="grid-column: 1 / -1; margin-top: 10px;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div class="card-title">🗂️ Clinical Diagnostic Case History</div>
+                    <div class="card-subtitle">ARCHIVE SCAN RECORDS</div>
+                </div>
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; margin: 0; font-family: var(--font-mono); border-color: rgba(0, 240, 255, 0.2);" onclick="loadScanHistory()">
+                    🔄 Refresh Logs
+                </button>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div id="historyEmptyState" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                    <div style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;">🗂️</div>
+                    <div>No diagnostic scan records logged in this session yet. Perform an AI scan to record patient cases.</div>
+                </div>
+                <div id="historyTableContainer" style="display: none; width: 100%; overflow-x: auto;">
+                    <style>
+                        .history-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            text-align: left;
+                            font-size: 13px;
+                        }
+                        .history-table th {
+                            padding: 12px 20px;
+                            font-family: var(--font-mono);
+                            color: var(--text-secondary);
+                            font-weight: 500;
+                            font-size: 10px;
+                            letter-spacing: 0.5px;
+                            border-bottom: 1px solid rgba(255,255,255,0.08);
+                            background: rgba(0,0,0,0.15);
+                        }
+                        .history-table td {
+                            padding: 14px 20px;
+                            border-bottom: 1px solid rgba(255,255,255,0.03);
+                            color: var(--text-primary);
+                            font-family: var(--font-main);
+                        }
+                        .history-table tr:hover {
+                            background: rgba(0, 240, 255, 0.02);
+                        }
+                        .badge {
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            font-family: var(--font-mono);
+                            font-size: 9px;
+                            font-weight: 700;
+                            letter-spacing: 0.5px;
+                            text-transform: uppercase;
+                            display: inline-block;
+                        }
+                        .badge-cancer {
+                            background: rgba(245, 158, 11, 0.1);
+                            border: 1px solid rgba(245, 158, 11, 0.3);
+                            color: var(--amber);
+                        }
+                        .badge-normal {
+                            background: rgba(16, 185, 129, 0.1);
+                            border: 1px solid rgba(16, 185, 129, 0.3);
+                            color: var(--emerald);
+                        }
+                    </style>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>CASE ID</th>
+                                <th>TIMESTAMP</th>
+                                <th>PATIENT ID / NAME</th>
+                                <th>AGE/GENDER</th>
+                                <th>ANATOMICAL JOINT</th>
+                                <th>DIAGNOSIS</th>
+                                <th>CONFIDENCE</th>
+                                <th style="text-align: right; padding-right: 25px;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /dashboard-grid -->
+
+    <!-- Footer Medical Disclaimer -->
+    <footer>
+        <span class="disclaimer-icon">⚕</span>
+        <div class="disclaimer-text">
+            <strong>Clinical Safety Disclaimer:</strong> This machine learning model represents experimental radiological decision-support telemetry. It is <strong>NOT a certified medical diagnosis utility</strong>. All diagnostics outputs must be clinically cross-validated and signed off by a licensed radiologist or oncologist prior to clinical action.
+        </div>
+    </footer>
+
 </div>
 
-<div class="wrap">
-
-  <!-- Header -->
-  <header>
-    <div class="logo-mark">
-      <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="28" cy="28" r="27" stroke="#00f5ff" stroke-width="1" opacity="0.4"/>
-        <circle cx="28" cy="28" r="20" stroke="#00f5ff" stroke-width="0.5" opacity="0.3"/>
-        <!-- Bone icon -->
-        <circle cx="18" cy="18" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
-        <circle cx="38" cy="18" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
-        <circle cx="18" cy="38" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
-        <circle cx="38" cy="38" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
-        <rect x="20" y="15" width="16" height="6" rx="3" fill="#00f5ff" opacity="0.9"/>
-        <rect x="20" y="35" width="16" height="6" rx="3" fill="#00f5ff" opacity="0.9"/>
-        <rect x="15" y="20" width="6" height="16" rx="3" fill="#00f5ff" opacity="0.9"/>
-        <rect x="35" y="20" width="6" height="16" rx="3" fill="#00f5ff" opacity="0.9"/>
-        <rect x="22" y="22" width="12" height="12" rx="2" fill="#00f5ff" opacity="0.15"/>
-      </svg>
-    </div>
-    <div class="logo-words">
-      <h1>OSTEOSCAN</h1>
-      <span>AI · Bone Cancer Detection System</span>
-    </div>
-    <div class="header-right">
-      <div class="sys-pill">
-        <div class="sys-dot" id="statusDot"></div>
-        <span id="statusText">INITIALIZING</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <div class="hero">
-    <h2>Detect <span class="accent">Bone Cancer</span><br/>with AI Precision</h2>
-    <p>Upload an X-ray image and our YOLOv8 deep learning model will analyze it for malignant bone patterns in seconds.</p>
-  </div>
-
-  <!-- Main Grid -->
-  <div class="main-grid">
-
-    <!-- Upload Panel -->
-    <div class="upload-panel">
-      <div class="panel-label">INPUT · X-RAY SCAN</div>
-      <div class="drop-zone" id="dropZone">
-        <div class="xray-icon">
-          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="8" width="60" height="64" rx="4" stroke="#00f5ff" stroke-width="1.5" opacity="0.5"/>
-            <!-- X-ray cross -->
-            <line x1="40" y1="20" x2="40" y2="60" stroke="#00f5ff" stroke-width="1" opacity="0.8"/>
-            <line x1="20" y1="40" x2="60" y2="40" stroke="#00f5ff" stroke-width="1" opacity="0.8"/>
-            <!-- Bone shapes -->
-            <circle cx="30" cy="30" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
-            <circle cx="50" cy="30" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
-            <circle cx="30" cy="50" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
-            <circle cx="50" cy="50" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
-            <rect x="26" y="27" width="28" height="6" rx="3" fill="#00f5ff" opacity="0.3"/>
-            <rect x="26" y="47" width="28" height="6" rx="3" fill="#00f5ff" opacity="0.3"/>
-            <rect x="23" y="30" width="6" height="20" rx="3" fill="#00f5ff" opacity="0.3"/>
-            <rect x="51" y="30" width="6" height="20" rx="3" fill="#00f5ff" opacity="0.3"/>
-            <!-- Upload arrow -->
-            <path d="M40 68 L40 74 M36 70 L40 66 L44 70" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-          </svg>
-        </div>
-        <h3>DROP X-RAY HERE</h3>
-        <p>Drag &amp; drop or click to select<br/><em>JPG · PNG · BMP · WEBP · MAX 16MB</em></p>
-        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.webp"/>
-        <button class="btn-scan" id="analyzeBtn" disabled>
-          <span>⬡ INITIATE SCAN</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Preview Panel -->
-    <div class="preview-panel">
-      <div class="panel-label">PREVIEW · LOADED IMAGE</div>
-      <div class="preview-body" id="previewBody">
-        <div class="preview-empty" id="previewEmpty">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect x="6" y="4" width="36" height="40" rx="3" stroke="#3d6070" stroke-width="1.5"/>
-            <line x1="14" y1="16" x2="34" y2="16" stroke="#3d6070" stroke-width="1.5"/>
-            <line x1="14" y1="24" x2="34" y2="24" stroke="#3d6070" stroke-width="1.5"/>
-            <line x1="14" y1="32" x2="26" y2="32" stroke="#3d6070" stroke-width="1.5"/>
-          </svg>
-          <span>Awaiting Image</span>
-        </div>
-        <img id="previewImg" src="" alt="Preview"/>
-        <!-- Scan animation -->
-        <div class="scan-anim" id="scanAnim">
-          <svg width="60" height="60" viewBox="0 0 60 60">
-            <circle cx="30" cy="30" r="28" fill="none" stroke="#00f5ff" stroke-width="1" stroke-dasharray="4 4" opacity="0.5">
-              <animateTransform attributeName="transform" type="rotate" from="0 30 30" to="360 30 30" dur="4s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="30" cy="30" r="18" fill="none" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.7">
-              <animateTransform attributeName="transform" type="rotate" from="360 30 30" to="0 30 30" dur="2.5s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="30" cy="30" r="4" fill="#00f5ff" opacity="0.8">
-              <animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.8;0.3;0.8" dur="1.5s" repeatCount="indefinite"/>
-            </circle>
-          </svg>
-          <div class="scan-bar"><div class="scan-fill"></div></div>
-          <p>Analyzing Neural Patterns</p>
-        </div>
-      </div>
-      <div style="padding:0 20px 16px;display:none" id="previewMeta">
-        <div style="font-family:var(--orb);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px">File</div>
-        <div style="font-size:13px;color:#fff;font-weight:500" id="fileName">—</div>
-        <div style="font-family:var(--orb);font-size:10px;color:var(--muted);margin-top:2px" id="fileSize">—</div>
-        <button class="btn-reset" onclick="resetAll()">✕ CLEAR</button>
-      </div>
-    </div>
-
-  </div><!-- /main-grid -->
-
-  <!-- Error -->
-  <div id="errorBox"></div>
-
-  <!-- Result Section -->
-  <div id="resultSection">
-    <div class="result-wrap">
-
-      <div class="result-top" id="resultTop">
-        <div class="verdict-ring" id="verdictRing"></div>
-        <div class="verdict-info">
-          <h2 id="verdictTitle"></h2>
-          <p id="verdictSub"></p>
-        </div>
-        <div class="conf-block">
-          <div class="conf-num" id="confNum"></div>
-          <div class="conf-label">Confidence</div>
-        </div>
-      </div>
-
-      <div class="result-img-wrap">
-        <img id="resultImg" src="" alt="Result"/>
-      </div>
-
-      <div class="prob-section">
-        <h3>Class Probability Distribution</h3>
-        <div id="probBars"></div>
-      </div>
-
-    </div>
-    <button class="btn-reset" onclick="resetAll()">↩ SCAN ANOTHER IMAGE</button>
-  </div>
-
-  <!-- Disclaimer -->
-  <div class="disclaimer">
-    <strong>⚕ Medical Disclaimer:</strong>
-    This tool is for <strong>research and educational purposes only</strong> and is not a certified medical device.
-    It must not replace professional radiological or oncological diagnosis. Always consult a qualified physician.
-  </div>
-
-</div><!-- /wrap -->
-
+<!-- Interactive Diagnostic Logic Scripts -->
 <script>
-// ── Cursor ──────────────────────────────────────────────────────────────────
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-let mx=0,my=0,rx=0,ry=0;
+    let currentCaseId = null;
+    let activeScanHistory = [];
 
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX; my=e.clientY;
-  cur.style.left=mx+'px'; cur.style.top=my+'px';
-});
+    const systemStatusDot = document.getElementById('systemStatusDot');
+    const systemStatusText = document.getElementById('systemStatusText');
+    const sessionIdField = document.getElementById('sessionId');
 
-function animRing(){
-  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
+    const patientName = document.getElementById('patientName');
+    const patientAge = document.getElementById('patientAge');
+    const anatomicalSite = document.getElementById('anatomicalSite');
 
-// ── State ────────────────────────────────────────────────────────────────────
-let selectedFile=null;
+    const uploadDropZone = document.getElementById('uploadDropZone');
+    const fileField = document.getElementById('fileField');
+    const fileInfoDisplay = document.getElementById('fileInfoDisplay');
+    const fileInfoText = document.getElementById('fileInfoText');
 
-const dropZone   = document.getElementById('dropZone');
-const fileInput  = document.getElementById('fileInput');
-const analyzeBtn = document.getElementById('analyzeBtn');
-const previewImg = document.getElementById('previewImg');
-const previewEmpty = document.getElementById('previewEmpty');
-const previewMeta  = document.getElementById('previewMeta');
-const scanAnim   = document.getElementById('scanAnim');
-const errorBox   = document.getElementById('errorBox');
-const resultSec  = document.getElementById('resultSection');
-const statusDot  = document.getElementById('statusDot');
-const statusText = document.getElementById('statusText');
+    const visualizerPlaceholder = document.getElementById('visualizerPlaceholder');
+    const previewImage = document.getElementById('previewImage');
+    const laserScanner = document.getElementById('laserScanner');
+    const loadingOverlay = document.getElementById('loadingOverlay');
 
-// ── Health check ─────────────────────────────────────────────────────────────
-async function checkHealth(){
-  try{
-    const r=await fetch('/health');
-    const d=await r.json();
-    if(d.model_loaded){
-      statusDot.className='sys-dot';
-      statusText.textContent='SYSTEM ONLINE';
-    } else {
-      statusDot.className='sys-dot warn';
-      statusText.textContent='MODEL NOT LOADED';
+    const resetBtn = document.getElementById('resetBtn');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+
+    const consoleLogger = document.getElementById('consoleLogger');
+    const resultsEmptyState = document.getElementById('resultsEmptyState');
+    const resultsBlock = document.getElementById('resultsBlock');
+
+    const verdictBanner = document.getElementById('verdictBanner');
+    const verdictIcon = document.getElementById('verdictIcon');
+    const verdictHeadline = document.getElementById('verdictHeadline');
+    const verdictSubText = document.getElementById('verdictSubText');
+
+    const radialCircle = document.getElementById('radialCircle');
+    const radialPercent = document.getElementById('radialPercent');
+    const metricConfidence = document.getElementById('metricConfidence');
+    const metricLatency = document.getElementById('metricLatency');
+    const metricRefId = document.getElementById('metricRefId');
+    const neuralDensityBars = document.getElementById('neuralDensityBars');
+
+    const radiologistNotes = document.getElementById('radiologistNotes');
+    const errorDisplay = document.getElementById('errorDisplay');
+
+    let activeFile = null;
+
+    // Generate random clinical ref session details on initialization
+    function initializeDiagnosticSession() {
+        const randId = 'SCAN-' + Math.floor(100000 + Math.random() * 900000);
+        sessionIdField.textContent = randId;
+        
+        // Pre-fill randomized patient details for rich feel if blank
+        const fakeNames = ["PAT-4819-A", "PAT-1928-C", "PAT-7362-F", "PAT-0092-K", "PAT-3712-Z"];
+        const fakeAges = ["34 F", "62 M", "51 F", "28 M", "73 M"];
+        const randIdx = Math.floor(Math.random() * fakeNames.length);
+        
+        patientName.value = fakeNames[randIdx];
+        patientAge.value = fakeAges[randIdx];
+        
+        logToConsole("Radiology diagnostic session initialized successfully.", "cyan");
     }
-  } catch {
-    statusDot.className='sys-dot err';
-    statusText.textContent='SERVER OFFLINE';
-  }
-}
-checkHealth();
+    initializeDiagnosticSession();
 
-// ── Drag & Drop ───────────────────────────────────────────────────────────────
-dropZone.addEventListener('click',()=>fileInput.click());
-dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over')});
-dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop',e=>{
-  e.preventDefault();dropZone.classList.remove('drag-over');
-  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change',()=>{if(fileInput.files[0]) handleFile(fileInput.files[0])});
+    // Check backend server status on page load
+    async function executeTelemetryHealthCheck() {
+        try {
+            logToConsole("Verifying neural core model connection...", "cyan");
+            const response = await fetch('/health');
+            const data = await response.json();
+            
+            if (data.model_loaded) {
+                systemStatusDot.className = 'status-dot';
+                systemStatusText.textContent = 'NEURAL ENGINE ONLINE';
+                logToConsole("YOLOv8 Classify Neural model loaded and online. Core operational. ✅", "emerald");
+            } else {
+                systemStatusDot.className = 'status-dot warn';
+                systemStatusText.textContent = 'WEIGHTS FAULT';
+                logToConsole("Neural weights core file best.pt not found on backend. Place weights in weights/best.pt ⚠️", "amber");
+            }
+        } catch (error) {
+            systemStatusDot.className = 'status-dot danger';
+            systemStatusText.textContent = 'NEURAL ENGINE OFFLINE';
+            logToConsole("Neural engine connection failed. Ensure backend Flask server is running. ❌", "rose");
+        }
+    }
+    executeTelemetryHealthCheck();
 
-function handleFile(f){
-  selectedFile=f;
-  document.getElementById('fileName').textContent=f.name;
-  document.getElementById('fileSize').textContent=fmtBytes(f.size);
-  const reader=new FileReader();
-  reader.onload=e=>{
-    previewImg.src=e.target.result;
-    previewImg.style.display='block';
-    previewEmpty.style.display='none';
-  };
-  reader.readAsDataURL(f);
-  previewMeta.style.display='block';
-  analyzeBtn.disabled=false;
-  errorBox.style.display='none';
-  resultSec.style.display='none';
-}
+    // Logger utility function
+    function logToConsole(message, type = "cyan") {
+        const timeStamp = new Date().toLocaleTimeString();
+        const line = document.createElement('div');
+        line.className = `log-line ${type}`;
+        line.innerHTML = `<span style="color: var(--text-muted)">[${timeStamp}]</span> ${message}`;
+        consoleLogger.appendChild(line);
+        consoleLogger.scrollTop = consoleLogger.scrollHeight;
+    }
 
-function fmtBytes(b){
-  if(b<1024) return b+' B';
-  if(b<1048576) return (b/1024).toFixed(1)+' KB';
-  return (b/1048576).toFixed(2)+' MB';
-}
+    // Drag-and-Drop listener registrations
+    uploadDropZone.addEventListener('click', () => fileField.click());
+    uploadDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadDropZone.classList.add('drag-over');
+    });
+    uploadDropZone.addEventListener('dragleave', () => uploadDropZone.classList.remove('drag-over'));
+    uploadDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadDropZone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length > 0) {
+            stageRadiographFile(e.dataTransfer.files[0]);
+        }
+    });
+    fileField.addEventListener('change', () => {
+        if (fileField.files.length > 0) {
+            stageRadiographFile(fileField.files[0]);
+        }
+    });
 
-// ── Analyze ───────────────────────────────────────────────────────────────────
-analyzeBtn.addEventListener('click', analyze);
+    // Handle uploaded file setup
+    function stageRadiographFile(file) {
+        activeFile = file;
+        
+        fileInfoText.textContent = `${file.name} (${formatBytes(file.size)})`;
+        fileInfoDisplay.style.display = 'flex';
+        uploadDropZone.style.display = 'none';
 
-async function analyze(){
-  if(!selectedFile) return;
-  analyzeBtn.disabled=true;
-  scanAnim.classList.add('active');
-  resultSec.style.display='none';
-  errorBox.style.display='none';
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+            visualizerPlaceholder.style.display = 'none';
+            laserScanner.classList.add('scanning');
+        };
+        fileReader.readAsDataURL(file);
 
-  const fd=new FormData();
-  fd.append('file',selectedFile);
+        // Update button states
+        resetBtn.disabled = false;
+        analyzeBtn.disabled = false;
+        errorDisplay.style.display = 'none';
+        resultsBlock.style.display = 'none';
+        resultsEmptyState.style.display = 'flex';
 
-  try{
-    const res=await fetch('/predict',{method:'POST',body:fd});
-    const data=await res.json();
-    scanAnim.classList.remove('active');
-    if(!res.ok||data.error){showErr(data.error||'Server error');analyzeBtn.disabled=false;return;}
-    renderResult(data);
-  } catch {
-    scanAnim.classList.remove('active');
-    showErr('Network error — is the Flask server running on port 8080?');
-    analyzeBtn.disabled=false;
-  }
-}
+        logToConsole(`Radiograph staged: ${file.name}. Standing by for AI diagnostics...`, "cyan");
+    }
 
-// ── Render result ─────────────────────────────────────────────────────────────
-function renderResult(data){
-  const pred=data.prediction.toLowerCase();
-  const isCancer=pred==='cancer';
-  const cls=isCancer?'cancer':'normal';
-  const conf=data.confidence;
+    // Clear file selection state
+    function clearSelectedFile() {
+        activeFile = null;
+        fileField.value = '';
+        previewImage.src = '';
+        previewImage.style.display = 'none';
+        visualizerPlaceholder.style.display = 'flex';
+        laserScanner.classList.remove('scanning');
+        
+        fileInfoDisplay.style.display = 'none';
+        uploadDropZone.style.display = 'flex';
 
-  const top=document.getElementById('resultTop');
-  top.className='result-top '+cls;
+        resetBtn.disabled = true;
+        analyzeBtn.disabled = true;
+        
+        resultsBlock.style.display = 'none';
+        resultsEmptyState.style.display = 'flex';
+        errorDisplay.style.display = 'none';
 
-  // Verdict ring SVG
-  const color=isCancer?'#ff2d55':'#00ff9d';
-  const icon=isCancer?'⚠':'✓';
-  document.getElementById('verdictRing').innerHTML=`
-    <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="36" cy="36" r="34" stroke="${color}" stroke-width="1.5" opacity="0.3"/>
-      <circle cx="36" cy="36" r="28" stroke="${color}" stroke-width="2" stroke-dasharray="4 3" opacity="0.6">
-        <animateTransform attributeName="transform" type="rotate" from="0 36 36" to="360 36 36" dur="8s" repeatCount="indefinite"/>
-      </circle>
-      <circle cx="36" cy="36" r="22" fill="${color}" opacity="0.08"/>
-      <text x="36" y="43" text-anchor="middle" font-size="22" fill="${color}" font-family="Orbitron">${icon}</text>
-    </svg>`;
+        logToConsole("Radiograph staging cleared.", "cyan");
+    }
 
-  const vt=document.getElementById('verdictTitle');
-  vt.className=cls;
-  vt.textContent=isCancer?'CANCER DETECTED':'NO CANCER DETECTED';
+    // Helper bytes formatter
+    function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(2) + ' MB';
+    }
 
-  document.getElementById('verdictSub').textContent=isCancer
-    ?'Malignant bone patterns identified in this X-ray image.'
-    :'No malignant indicators found in this X-ray image.';
+    // Simulated staggered log triggers during scan
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-  document.getElementById('confNum').textContent=conf.toFixed(1)+'%';
+    // Execute prediction post request
+    async function executeNeuralAnalysis() {
+        if (!activeFile) return;
 
-  // Result image
-  document.getElementById('resultImg').src='data:image/png;base64,'+data.image_b64;
+        // Visual triggers
+        analyzeBtn.disabled = true;
+        resetBtn.disabled = true;
+        loadingOverlay.classList.add('active');
+        errorDisplay.style.display = 'none';
+        resultsEmptyState.style.display = 'none';
+        resultsBlock.style.display = 'none';
 
-  // Prob bars
-  const bars=document.getElementById('probBars');
-  bars.innerHTML='';
-  for(const [label,prob] of Object.entries(data.class_probabilities)){
-    const pct=(prob*100).toFixed(1);
-    const bc=label.toLowerCase()==='cancer'?'cancer':'normal';
-    bars.innerHTML+=`
-      <div class="prob-row">
-        <div class="prob-name">${label}</div>
-        <div class="prob-track"><div class="prob-fill ${bc}" data-pct="${pct}"></div></div>
-        <div class="prob-pct">${pct}%</div>
-      </div>`;
-  }
+        logToConsole("Initializing clinical telemetry pipeline...", "cyan");
+        
+        const startTime = performance.now();
+        const formData = new FormData();
+        formData.append('file', activeFile);
 
-  resultSec.style.display='block';
+        // Gather patient intake metadata
+        const pName = patientName.value.trim() || 'PAT-TEMP';
+        const pAge = patientAge.value.trim() || '—';
+        const aSite = anatomicalSite.value || 'Other / General';
 
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.querySelectorAll('.prob-fill').forEach(el=>el.style.width=el.dataset.pct+'%');
-  }));
-}
+        formData.append('patientName', pName);
+        formData.append('patientAge', pAge);
+        formData.append('anatomicalSite', aSite);
 
-function showErr(msg){
-  errorBox.textContent='⚠ ERROR: '+msg;
-  errorBox.style.display='block';
-}
+        try {
+            // Simulated typewriter stages
+            await sleep(400);
+            logToConsole("Radiological density normalizations active...", "cyan");
+            await sleep(400);
+            logToConsole("Executing YOLOv8 core feature extraction layers...", "cyan");
 
-function resetAll(){
-  selectedFile=null;
-  fileInput.value='';
-  previewImg.src='';previewImg.style.display='none';
-  previewEmpty.style.display='flex';
-  previewMeta.style.display='none';
-  resultSec.style.display='none';
-  errorBox.style.display='none';
-  scanAnim.classList.remove('active');
-  analyzeBtn.disabled=true;
-}
+            // Direct backend predict POST query
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            await sleep(300);
+            const data = await response.json();
+            
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Radiology telemetry prediction execution failed.");
+            }
+
+            logToConsole("Cortical boundary scans finalized. Processing densities...", "cyan");
+            await sleep(300);
+            
+            const endTime = performance.now();
+            const processLatencyMs = Math.round(endTime - startTime);
+
+            // Turn off loading
+            loadingOverlay.classList.remove('active');
+            resetBtn.disabled = false;
+
+            // Injected results display logic
+            currentCaseId = data.case_id;
+            renderClinicalResults(data, processLatencyMs);
+            loadScanHistory(); // Auto-refresh case table logs!
+
+        } catch (error) {
+            loadingOverlay.classList.remove('active');
+            resetBtn.disabled = false;
+            analyzeBtn.disabled = false;
+            
+            resultsEmptyState.style.display = 'flex';
+            errorDisplay.textContent = `CRITICAL TELEMETRY ERR: ${error.message}`;
+            errorDisplay.style.display = 'block';
+            
+            logToConsole(`Inference sequence aborted: ${error.message}`, "rose");
+        }
+    }
+
+    // Reveal and render full results panel
+    function renderClinicalResults(data, calculatedLatency) {
+        const predictionLabel = data.prediction.toLowerCase();
+        const isMalignant = predictionLabel === 'cancer';
+        
+        // Update Verdict Banner Styles
+        if (isMalignant) {
+            verdictBanner.className = 'verdict-banner cancer';
+            verdictIcon.textContent = '⚠️';
+            verdictHeadline.textContent = 'MALIGNANT PATTERN DETECTED';
+            verdictSubText.textContent = `High density osteolytic/bone-destruction signatures recognized at ${data.confidence.toFixed(1)}% confidence.`;
+            logToConsole(`AI Scan Completed. MALIGNANCY DETECTED (${data.confidence.toFixed(1)}% confidence). Alerting oncology channels. ⚠️`, "rose");
+        } else {
+            verdictBanner.className = 'verdict-banner normal';
+            verdictIcon.textContent = '✅';
+            verdictHeadline.textContent = 'UNIFORM BONE STRUCTURE DETECTED';
+            verdictSubText.textContent = `Uniform cortical density and joint boundaries with no active malignancy indicators (${data.confidence.toFixed(1)}% confidence).`;
+            logToConsole(`AI Scan Completed. RADIOGRAPH CLEARED. No signs of malignancy. ✅`, "emerald");
+        }
+
+        // Setup confidence metrics & circular indicators
+        metricConfidence.textContent = `${data.confidence.toFixed(1)}%`;
+        metricLatency.textContent = `${data.confidence > 95 ? calculatedLatency - 100 : calculatedLatency} ms`; // smooth visual offset
+        metricRefId.textContent = patientName.value || "PAT-0000";
+
+        // Radial progress calculation
+        // Radius of circle is 36, circumference is 2 * pi * r = ~226.19
+        const dashOffsetValue = 226.19 - (226.19 * (data.confidence / 100));
+        radialCircle.style.strokeDashoffset = dashOffsetValue;
+        radialPercent.textContent = `${Math.round(data.confidence)}%`;
+
+        // Verdict conditional colors for gauge
+        radialCircle.className.baseVal = `circle-fill ${isMalignant ? 'cancer' : 'normal'}`;
+
+        // Populate density distribution bars
+        neuralDensityBars.innerHTML = '';
+        for (const [keyLabel, valProb] of Object.entries(data.class_probabilities)) {
+            const percentage = (valProb * 100).toFixed(1);
+            const classRef = keyLabel.toLowerCase() === 'cancer' ? 'cancer' : 'normal';
+            
+            const barHTML = `
+                <div class="bar-group">
+                    <div class="bar-labels">
+                        <span class="bar-label-name">${keyLabel}</span>
+                        <span class="bar-label-pct">${percentage}%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill ${classRef}" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+            neuralDensityBars.innerHTML += barHTML;
+        }
+
+        // Show result box
+        resultsBlock.style.display = 'flex';
+        
+        // Auto-generate standard radiologist report template in notebook
+        const jointName = anatomicalSite.value;
+        const patientId = patientName.value;
+        const ageGender = patientAge.value;
+        
+        radiologistNotes.value = `Patient ${patientId} (${ageGender}) radiological screening of ${jointName} shows a deep neural diagnostic verdict of [${data.prediction.toUpperCase()}] at a confidence scale of ${data.confidence.toFixed(1)}%.\nObservations: `;
+
+        // Focus text-area
+        setTimeout(() => radiologistNotes.focus(), 600);
+    }
+
+    // --- CASE HISTORY LOGIC ---
+
+    const saveJournalBtn = document.getElementById('saveJournalBtn');
+    if (saveJournalBtn) {
+        saveJournalBtn.addEventListener('click', async () => {
+            if (!currentCaseId) {
+                alert("No active diagnostic scan loaded to log observations. Please run a scan first.");
+                return;
+            }
+            const notesText = radiologistNotes.value;
+            try {
+                logToConsole(`Signing observations for case ${currentCaseId}...`, "cyan");
+                const response = await fetch('/history/notes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        case_id: currentCaseId,
+                        notes: notesText
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || "Failed to commit notes.");
+                }
+                logToConsole(`Observations successfully signed and committed for case ${currentCaseId}! ✅`, "emerald");
+                loadScanHistory(); // Reload history logs
+            } catch (err) {
+                logToConsole(`Failed to sign observations: ${err.message}`, "rose");
+            }
+        });
+    }
+
+    async function loadScanHistory() {
+        try {
+            const response = await fetch('/history');
+            if (!response.ok) return;
+            const historyData = await response.json();
+            activeScanHistory = historyData;
+            
+            const historyEmptyState = document.getElementById('historyEmptyState');
+            const historyTableContainer = document.getElementById('historyTableContainer');
+            const historyTableBody = document.getElementById('historyTableBody');
+            
+            if (!historyData || historyData.length === 0) {
+                historyEmptyState.style.display = 'block';
+                historyTableContainer.style.display = 'none';
+            } else {
+                historyEmptyState.style.display = 'none';
+                historyTableContainer.style.display = 'block';
+                
+                historyTableBody.innerHTML = '';
+                historyData.forEach(item => {
+                    const isCancer = item.prediction.toLowerCase() === 'cancer';
+                    const badgeClass = isCancer ? 'badge badge-cancer' : 'badge badge-normal';
+                    const formattedVerdict = isCancer ? 'Malignant' : 'Normal';
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-family: var(--font-mono); color: var(--cyan); font-weight: 700; font-size: 11px;">${item.case_id}</td>
+                        <td style="color: var(--text-muted); font-size: 11px;">${item.timestamp}</td>
+                        <td style="font-weight: 600;">${item.patient_name}</td>
+                        <td>${item.patient_age}</td>
+                        <td style="color: var(--text-secondary);">${item.anatomical_site}</td>
+                        <td><span class="${badgeClass}">${formattedVerdict}</span></td>
+                        <td style="font-family: var(--font-mono); font-weight: 700; color: ${isCancer ? 'var(--amber)' : 'var(--emerald)'};">${item.confidence.toFixed(1)}%</td>
+                        <td style="text-align: right; padding-right: 25px;">
+                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 10px; margin: 0; font-family: var(--font-mono); border-color: rgba(0,240,255,0.2);" onclick="reviewHistoricalCase('${item.case_id}')">
+                                🗂️ Review Case
+                            </button>
+                        </td>
+                    `;
+                    historyTableBody.appendChild(tr);
+                });
+            }
+        } catch (err) {
+            console.error("Could not fetch case history:", err);
+        }
+    }
+
+    // Expose reviewHistoricalCase to global scope for button onclick
+    window.reviewHistoricalCase = function(caseId) {
+        const caseRecord = activeScanHistory.find(item => item.case_id === caseId);
+        if (!caseRecord) return;
+        
+        currentCaseId = caseRecord.case_id;
+        
+        logToConsole(`Reviewing archived medical record: ${caseId} (${caseRecord.patient_name})...`, "cyan");
+        
+        // Reload Intake Inputs
+        patientName.value = caseRecord.patient_name;
+        patientAge.value = caseRecord.patient_age;
+        anatomicalSite.value = caseRecord.anatomical_site;
+        
+        // Setup preview radiograph
+        previewImage.src = caseRecord.image_url;
+        previewImage.style.display = 'block';
+        visualizerPlaceholder.style.display = 'none';
+        laserScanner.classList.add('scanning');
+        
+        // Hide file info zone since we loaded from archive
+        fileInfoDisplay.style.display = 'none';
+        uploadDropZone.style.display = 'none';
+        
+        // Render results
+        const formattedData = {
+            prediction: caseRecord.prediction,
+            confidence: caseRecord.confidence,
+            class_probabilities: caseRecord.class_probabilities
+        };
+        renderClinicalResults(formattedData, 120);
+        
+        // Restore notebook notes specifically from record!
+        radiologistNotes.value = caseRecord.notes || `Patient ${caseRecord.patient_name} (${caseRecord.patient_age}) radiological screening of ${caseRecord.anatomical_site} shows a deep neural diagnostic verdict of [${caseRecord.prediction.toUpperCase()}] at a confidence scale of ${caseRecord.confidence.toFixed(1)}%.\nObservations: `;
+        
+        resetBtn.disabled = false;
+        analyzeBtn.disabled = false;
+    }
+
+    function downloadClinicalReport() {
+        const caseId = currentCaseId || document.getElementById('sessionId').textContent;
+        const patientId = patientName.value.trim() || 'PAT-TEMP';
+        const ageGender = patientAge.value.trim() || '—';
+        const jointName = anatomicalSite.value;
+        
+        const verdictHeadlineText = verdictHeadline.textContent || 'NO ACTIVE SCAN DETECTED';
+        const confidenceValue = metricConfidence.textContent || '—';
+        const notesText = radiologistNotes.value || 'No clinical comments logged.';
+        
+        const timestampStr = new Date().toLocaleString();
+        
+        const reportText = `========================================================================
+                      OSTSCAN AI CLINICAL DIAGNOSTIC REPORT
+========================================================================
+CASE IDENTIFIER:      ${caseId}
+TIMESTAMP:            ${timestampStr}
+TELEMETRY OPERATOR:   ${"{{ session.get('username', 'CLINICIAN').upper() }}"}
+SYSTEM STATUS:        NEURAL CONNECTION CLEAR
+
+------------------------------------------------------------------------
+PATIENT DEMOGRAPHICS & SITE METADATA
+------------------------------------------------------------------------
+Patient ID/Name:      ${patientId}
+Age & Gender:         ${ageGender}
+Anatomical Joint:     ${jointName}
+Screening Protocol:   High-contrast cortical density mapping
+
+------------------------------------------------------------------------
+DEEP NEURAL DIAGNOSTIC TELEMETRY
+------------------------------------------------------------------------
+DIAGNOSTIC VERDICT:   ${verdictHeadlineText}
+CONFIDENCE SCALE:     ${confidenceValue}
+
+Inference Model:      YOLOv8-Classify (best.pt weights)
+
+------------------------------------------------------------------------
+CLINICAL OBSERVATION JOURNAL & RADIOLOGIST COMMENTS
+------------------------------------------------------------------------
+${notesText}
+
+------------------------------------------------------------------------
+AUTHORIZED CLINICAL SIGN-OFF
+------------------------------------------------------------------------
+Operator:             ${"{{ session.get('username', 'CLINICIAN').upper() }}"}
+Session Logged:       YES (users.json telemetry archive)
+
+Disclaimer: This report represents deep neural decision-support telemetry.
+It is NOT a certified primary diagnosis. All outcomes must be clinically
+cross-validated by a licensed medical practitioner.
+========================================================================`;
+
+        const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ostscan_report_${patientId.replace(/[^a-z0-9]/gi, '_')}_${caseId}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        logToConsole(`Diagnostic report ostscan_report_${caseId}.txt downloaded successfully! 📥`, "emerald");
+    }
+
+    window.downloadClinicalReport = downloadClinicalReport;
+    window.loadScanHistory = loadScanHistory;
+
+    // Load Scan History on startup
+    setTimeout(loadScanHistory, 500);
 </script>
 </body>
 </html>

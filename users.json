@@ -1,0 +1,99 @@
+{
+    "doctor@clinical.com": {
+        "name": "Dr. Avinash Pandey",
+        "password": "clinical2026"
+    },
+    "prachipandey1528@gmail.com": {
+        "name": "prachi",
+        "password": "prachi15",
+        "history": [
+            {
+                "case_id": "SCAN-44739",
+                "timestamp": "2026-05-24 23:15:39",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 96.23,
+                "class_probabilities": {
+                    "cancer": 0.9623,
+                    "normal": 0.0377
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779644739.png",
+                "notes": ""
+            },
+            {
+                "case_id": "SCAN-44954",
+                "timestamp": "2026-05-24 23:19:14",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779644954.jpeg",
+                "notes": ""
+            }
+        ]
+    },
+    "radiologist@clinical.com": {
+        "name": "Dr. Prachi Pandey",
+        "password": "radiology2026",
+        "history": [
+            {
+                "case_id": "SCAN-44554",
+                "timestamp": "2026-05-24 23:12:34",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "normal",
+                "confidence": 89.79,
+                "class_probabilities": {
+                    "cancer": 0.1021,
+                    "normal": 0.8979
+                },
+                "image_url": "/static/uploads/scan_radiologist_clinical_com_1779644554.jpg",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            },
+            {
+                "case_id": "SCAN-44698",
+                "timestamp": "2026-05-24 23:14:58",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "normal",
+                "confidence": 89.79,
+                "class_probabilities": {
+                    "cancer": 0.1021,
+                    "normal": 0.8979
+                },
+                "image_url": "/static/uploads/scan_radiologist_clinical_com_1779644698.jpg",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            }
+        ]
+    },
+    "pihupandey1528@gmail.com": {
+        "name": "pihu pandey",
+        "password": "pihu15",
+        "history": [
+            {
+                "case_id": "SCAN-45045",
+                "timestamp": "2026-05-24 23:20:45",
+                "patient_name": "PAT-4819-A",
+                "patient_age": "34 F",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_pihupandey1528_gmail_com_1779645045.jpeg",
+                "notes": ""
+            }
+        ]
+    }
+}
