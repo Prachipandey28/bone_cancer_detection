@@ -1,760 +1,865 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OsteoScan — Bone Cancer Detection</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OsteoScan AI — Bone Cancer Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+:root{
+  --ink:#03080f;
+  --deep:#050d18;
+  --panel:#081525;
+  --glass:rgba(8,21,37,0.85);
+  --rim:#0e2a44;
+  --cyan:#00f5ff;
+  --cyan2:#00a8b5;
+  --amber:#ffb700;
+  --red:#ff2d55;
+  --green:#00ff9d;
+  --text:#b8d4e8;
+  --muted:#3d6070;
+  --orb:'Orbitron',monospace;
+  --syne:'Syne',sans-serif;
+}
 
-  <style>
-    /* ── Design tokens ─────────────────────────────────────────── */
-    :root {
-      --bg:        #060c14;
-      --surface:   #0d1a26;
-      --surface2:  #122033;
-      --border:    #1e3347;
-      --accent:    #00d4ff;
-      --accent2:   #0077aa;
-      --danger:    #ff4d6d;
-      --safe:      #00e5a0;
-      --text:      #c8dce8;
-      --muted:     #5a7a8e;
-      --mono:      'Space Mono', monospace;
-      --sans:      'DM Sans', sans-serif;
-    }
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--syne);
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+}
 
-    /* ── Reset ──────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+/* ── Custom cursor ── */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  border:1.5px solid var(--cyan);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .15s,height .15s,border-color .15s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(0,245,255,.3);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:all .08s linear;
+}
+body:hover #cursor{width:14px;height:14px}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+/* ── Animated BG ── */
+.bg-canvas{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+}
+.bg-canvas svg{width:100%;height:100%;opacity:.18}
 
-    /* ── Background grid ────────────────────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
+.scanline{
+  position:fixed;top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  z-index:2;
+  animation:scan 6s linear infinite;
+  opacity:.4;
+}
+@keyframes scan{
+  0%{top:0;opacity:.5}
+  100%{top:100vh;opacity:.1}
+}
 
-    /* ── Layout ─────────────────────────────────────────────────── */
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-    }
+.noise{
+  position:fixed;inset:0;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.025;pointer-events:none;
+}
 
-    /* ── Header ─────────────────────────────────────────────────── */
-    header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 56px;
-      animation: fadeDown .6s ease both;
-    }
+/* ── Layout ── */
+.wrap{
+  position:relative;z-index:3;
+  max-width:980px;margin:0 auto;
+  padding:40px 24px 100px;
+}
 
-    .logo-icon {
-      width: 52px; height: 52px;
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 0 32px rgba(0,212,255,.25);
-      flex-shrink: 0;
-    }
+/* ── Header ── */
+header{
+  display:flex;align-items:center;gap:20px;
+  margin-bottom:64px;
+  animation:slideDown .7s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}
 
-    .logo-text h1 {
-      font-family: var(--mono);
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.5px;
-    }
+.logo-mark{
+  position:relative;
+  width:56px;height:56px;flex-shrink:0;
+}
+.logo-mark svg{width:100%;height:100%}
+.logo-mark::after{
+  content:'';position:absolute;inset:-6px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,245,255,.15),transparent 70%);
+  animation:pulse-ring 3s ease-in-out infinite;
+}
+@keyframes pulse-ring{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:.4}}
 
-    .logo-text p {
-      font-size: 12px;
-      color: var(--muted);
-      font-family: var(--mono);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
+.logo-words h1{
+  font-family:var(--orb);
+  font-size:20px;font-weight:700;
+  color:#fff;letter-spacing:2px;
+  text-shadow:0 0 20px rgba(0,245,255,.5);
+}
+.logo-words span{
+  font-size:11px;letter-spacing:3px;
+  color:var(--muted);text-transform:uppercase;
+  font-family:var(--orb);
+}
 
-    .status-pill {
-      margin-left: auto;
-      display: flex; align-items: center; gap: 6px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-    }
+.header-right{margin-left:auto;display:flex;align-items:center;gap:16px}
 
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--safe);
-      box-shadow: 0 0 8px var(--safe);
-      animation: pulse 2s infinite;
-    }
-    .dot.offline { background: var(--danger); box-shadow: 0 0 8px var(--danger); animation: none; }
+.sys-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:4px;
+  padding:8px 16px;
+  font-family:var(--orb);font-size:10px;
+  letter-spacing:1px;color:var(--muted);
+}
+.sys-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:blink 2s ease-in-out infinite;
+}
+.sys-dot.warn{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.sys-dot.err{background:var(--red);box-shadow:0 0 8px var(--red);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-    /* ── Upload zone ─────────────────────────────────────────────── */
-    .upload-card {
-      background: var(--surface);
-      border: 2px dashed var(--border);
-      border-radius: 20px;
-      padding: 56px 32px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color .3s, background .3s, transform .2s;
-      animation: fadeUp .6s ease .1s both;
-      position: relative;
-      overflow: hidden;
-    }
+/* ── Hero tagline ── */
+.hero{
+  margin-bottom:52px;
+  animation:slideUp .8s cubic-bezier(.16,1,.3,1) .1s both;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 
-    .upload-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(0,212,255,.07), transparent 70%);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity .4s;
-    }
+.hero h2{
+  font-family:var(--orb);
+  font-size:clamp(28px,4vw,48px);
+  font-weight:900;
+  line-height:1.1;
+  letter-spacing:-1px;
+  color:#fff;
+}
+.hero h2 .accent{
+  color:var(--cyan);
+  text-shadow:0 0 40px rgba(0,245,255,.6);
+}
+.hero p{
+  margin-top:16px;
+  max-width:520px;
+  font-size:15px;
+  line-height:1.7;
+  color:var(--muted);
+  font-weight:300;
+}
 
-    .upload-card:hover, .upload-card.drag-over {
-      border-color: var(--accent);
-      background: var(--surface2);
-      transform: translateY(-2px);
-    }
+/* ── Main grid ── */
+.main-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  animation:slideUp .9s cubic-bezier(.16,1,.3,1) .2s both;
+}
+@media(max-width:680px){.main-grid{grid-template-columns:1fr}}
 
-    .upload-card:hover::after, .upload-card.drag-over::after { opacity: 1; }
+/* ── Upload panel ── */
+.upload-panel{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:12px;
+  overflow:hidden;
+  position:relative;
+}
 
-    .upload-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.panel-label{
+  padding:14px 20px;
+  border-bottom:1px solid var(--rim);
+  font-family:var(--orb);
+  font-size:9px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.panel-label::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+}
 
-    .upload-card h2 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-    }
+.drop-zone{
+  padding:40px 24px;
+  text-align:center;
+  cursor:pointer;
+  position:relative;
+  transition:background .3s;
+  min-height:280px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;
+}
+.drop-zone:hover,.drop-zone.drag-over{
+  background:rgba(0,245,255,.03);
+}
+.drop-zone::before{
+  content:'';position:absolute;inset:16px;
+  border:1px dashed rgba(0,245,255,.15);
+  border-radius:8px;
+  pointer-events:none;
+  transition:border-color .3s;
+}
+.drop-zone:hover::before,.drop-zone.drag-over::before{
+  border-color:rgba(0,245,255,.4);
+}
 
-    .upload-card p {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
+.xray-icon{
+  width:80px;height:80px;
+  position:relative;
+}
+.xray-icon svg{width:100%;height:100%}
 
-    .upload-card p span {
-      color: var(--accent);
-      font-family: var(--mono);
-      font-size: 11px;
-    }
+.drop-zone h3{
+  font-family:var(--orb);font-size:13px;
+  font-weight:600;letter-spacing:1px;color:#fff;
+}
+.drop-zone p{
+  font-size:12px;color:var(--muted);line-height:1.6;
+}
+.drop-zone p em{
+  font-style:normal;color:var(--cyan);
+  font-family:var(--orb);font-size:10px;letter-spacing:1px;
+}
 
-    #fileInput { display: none; }
+#fileInput{display:none}
 
-    .btn-analyze {
-      margin-top: 28px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      color: #000;
-      font-family: var(--mono);
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: .5px;
-      padding: 14px 32px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: opacity .2s, transform .2s, box-shadow .3s;
-      box-shadow: 0 4px 20px rgba(0,212,255,.25);
-    }
+.btn-scan{
+  margin-top:8px;
+  display:inline-flex;align-items:center;gap:10px;
+  background:transparent;
+  border:1px solid var(--cyan);
+  color:var(--cyan);
+  font-family:var(--orb);font-size:11px;
+  letter-spacing:2px;font-weight:600;
+  padding:12px 28px;
+  border-radius:4px;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:color .3s,box-shadow .3s;
+  text-transform:uppercase;
+}
+.btn-scan::before{
+  content:'';position:absolute;inset:0;
+  background:var(--cyan);
+  transform:translateX(-101%);
+  transition:transform .3s cubic-bezier(.16,1,.3,1);
+  z-index:0;
+}
+.btn-scan:hover{color:#000;box-shadow:0 0 30px rgba(0,245,255,.3)}
+.btn-scan:hover::before{transform:none}
+.btn-scan span{position:relative;z-index:1}
+.btn-scan:disabled{opacity:.3;cursor:not-allowed}
+.btn-scan:disabled::before{display:none}
+.btn-scan:disabled:hover{color:var(--cyan);box-shadow:none}
 
-    .btn-analyze:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,212,255,.4); }
-    .btn-analyze:active { transform: translateY(0); }
-    .btn-analyze:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+/* ── Preview panel ── */
+.preview-panel{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
 
-    /* ── Preview ─────────────────────────────────────────────────── */
-    #previewSection {
-      display: none;
-      margin-top: 32px;
-      animation: fadeUp .4s ease both;
-    }
+.preview-body{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  min-height:280px;
+  position:relative;
+}
 
-    .preview-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
+#previewImg{
+  max-width:100%;max-height:260px;
+  object-fit:contain;
+  border-radius:6px;
+  display:none;
+  filter:brightness(1.1) contrast(1.05);
+}
 
-    #previewImg {
-      width: 180px;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-      background: var(--surface2);
-    }
+.preview-empty{
+  display:flex;flex-direction:column;align-items:center;
+  gap:10px;color:var(--muted);
+  font-family:var(--orb);font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;
+}
+.preview-empty svg{opacity:.2}
 
-    .preview-meta { flex: 1; }
+/* ── Scan animation overlay ── */
+.scan-anim{
+  position:absolute;inset:0;
+  pointer-events:none;
+  display:none;
+  align-items:center;justify-content:center;
+  background:rgba(5,13,24,.9);
+  flex-direction:column;gap:16px;
+}
+.scan-anim.active{display:flex}
 
-    .preview-meta h3 {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
+.scan-bar{
+  width:200px;height:2px;
+  background:var(--rim);border-radius:1px;
+  overflow:hidden;
+}
+.scan-fill{
+  height:100%;width:0;
+  background:linear-gradient(90deg,var(--cyan2),var(--cyan));
+  border-radius:1px;
+  animation:fill 2.5s ease-in-out infinite;
+}
+@keyframes fill{0%{width:0}60%{width:100%}100%{width:100%}}
 
-    #fileName {
-      font-size: 15px;
-      color: #fff;
-      font-weight: 500;
-      word-break: break-all;
-    }
+.scan-anim p{
+  font-family:var(--orb);font-size:10px;
+  letter-spacing:3px;color:var(--cyan);
+  text-transform:uppercase;
+  animation:flicker 1.5s ease-in-out infinite;
+}
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:.5}}
 
-    #fileSize {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
+/* ── Result section ── */
+#resultSection{
+  margin-top:20px;
+  display:none;
+  animation:slideUp .6s cubic-bezier(.16,1,.3,1) both;
+}
 
-    /* ── Result panel ───────────────────────────────────────────── */
-    #resultSection {
-      display: none;
-      margin-top: 28px;
-      animation: fadeUp .5s ease both;
-    }
+.result-wrap{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:12px;
+  overflow:hidden;
+}
 
-    .result-card {
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
+.result-top{
+  padding:28px 32px;
+  display:flex;align-items:center;gap:24px;
+  border-bottom:1px solid var(--rim);
+  position:relative;overflow:hidden;
+}
+.result-top::after{
+  content:'';position:absolute;inset:0;
+  opacity:.06;pointer-events:none;
+}
+.result-top.cancer::after{background:var(--red)}
+.result-top.normal::after{background:var(--green)}
 
-    .result-header {
-      padding: 24px 28px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+.verdict-ring{
+  width:72px;height:72px;flex-shrink:0;
+  position:relative;
+}
+.verdict-ring svg{width:100%;height:100%}
 
-    .result-header.cancer { background: linear-gradient(135deg, rgba(255,77,109,.18), rgba(255,77,109,.05)); border-bottom: 1px solid rgba(255,77,109,.3); }
-    .result-header.normal { background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,229,160,.04)); border-bottom: 1px solid rgba(0,229,160,.25); }
+.verdict-info h2{
+  font-family:var(--orb);
+  font-size:22px;font-weight:700;
+  letter-spacing:1px;
+}
+.verdict-info h2.cancer{
+  color:var(--red);text-shadow:0 0 30px rgba(255,45,85,.5);
+}
+.verdict-info h2.normal{
+  color:var(--green);text-shadow:0 0 30px rgba(0,255,157,.4);
+}
+.verdict-info p{
+  margin-top:6px;font-size:13px;color:var(--muted);
+  max-width:340px;line-height:1.5;
+}
 
-    .verdict-badge {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      flex-shrink: 0;
-    }
+.conf-block{margin-left:auto;text-align:right}
+.conf-num{
+  font-family:var(--orb);font-size:38px;font-weight:900;
+  color:#fff;line-height:1;letter-spacing:-1px;
+}
+.conf-label{
+  font-family:var(--orb);font-size:9px;letter-spacing:2px;
+  color:var(--muted);text-transform:uppercase;margin-top:4px;
+}
 
-    .verdict-badge.cancer { background: rgba(255,77,109,.2); border: 2px solid var(--danger); }
-    .verdict-badge.normal { background: rgba(0,229,160,.15); border: 2px solid var(--safe); }
+/* ── Prob bars ── */
+.prob-section{padding:24px 32px}
+.prob-section h3{
+  font-family:var(--orb);font-size:9px;
+  letter-spacing:2px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:20px;
+}
 
-    .verdict-text h2 {
-      font-family: var(--mono);
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+.prob-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.prob-row:last-child{margin-bottom:0}
+.prob-name{
+  font-family:var(--orb);font-size:11px;
+  letter-spacing:1px;color:var(--text);
+  width:90px;flex-shrink:0;text-transform:capitalize;
+}
+.prob-track{
+  flex:1;height:4px;background:var(--rim);
+  border-radius:2px;overflow:hidden;position:relative;
+}
+.prob-fill{
+  height:100%;border-radius:2px;
+  width:0;transition:width 1.2s cubic-bezier(.16,1,.3,1);
+}
+.prob-fill.cancer{background:linear-gradient(90deg,#8b0024,var(--red))}
+.prob-fill.normal{background:linear-gradient(90deg,#006644,var(--green))}
+.prob-pct{
+  font-family:var(--orb);font-size:11px;
+  color:var(--muted);width:44px;text-align:right;flex-shrink:0;
+}
 
-    .verdict-text h2.cancer { color: var(--danger); }
-    .verdict-text h2.normal { color: var(--safe); }
+/* ── Scanned image ── */
+.result-img-wrap{
+  padding:0 32px 28px;
+}
+#resultImg{
+  width:100%;max-height:300px;
+  object-fit:contain;
+  border-radius:8px;
+  border:1px solid var(--rim);
+  background:#000;
+  filter:brightness(1.1) contrast(1.08);
+}
 
-    .verdict-text p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
+/* ── Error ── */
+#errorBox{
+  display:none;
+  margin-top:16px;
+  background:rgba(255,45,85,.08);
+  border:1px solid rgba(255,45,85,.25);
+  border-radius:8px;
+  padding:14px 20px;
+  font-family:var(--orb);font-size:11px;
+  color:var(--red);letter-spacing:1px;
+  animation:slideUp .3s ease both;
+}
 
-    .conf-wrap { margin-left: auto; text-align: right; }
+/* ── Footer disclaimer ── */
+.disclaimer{
+  margin-top:32px;
+  padding:16px 24px;
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-left:3px solid var(--amber);
+  border-radius:8px;
+  font-size:12px;color:var(--muted);line-height:1.7;
+  animation:slideUp 1s cubic-bezier(.16,1,.3,1) .4s both;
+}
+.disclaimer strong{color:var(--amber)}
 
-    .conf-num {
-      font-family: var(--mono);
-      font-size: 32px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1;
-    }
+/* ── Reset btn ── */
+.btn-reset{
+  background:transparent;border:1px solid var(--rim);
+  color:var(--muted);font-family:var(--orb);font-size:10px;
+  letter-spacing:1px;padding:8px 20px;border-radius:4px;
+  cursor:pointer;margin-top:16px;
+  transition:border-color .2s,color .2s;text-transform:uppercase;
+}
+.btn-reset:hover{border-color:var(--cyan);color:var(--cyan)}
 
-    .conf-label {
-      font-size: 11px;
-      color: var(--muted);
-      font-family: var(--mono);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 4px;
-    }
-
-    /* Class probabilities */
-    .prob-section {
-      padding: 24px 28px;
-      background: var(--surface);
-    }
-
-    .prob-section h3 {
-      font-family: var(--mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
-
-    .prob-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .prob-row:last-child { margin-bottom: 0; }
-
-    .prob-label {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text);
-      width: 80px;
-      flex-shrink: 0;
-      text-transform: capitalize;
-    }
-
-    .prob-bar-bg {
-      flex: 1;
-      height: 6px;
-      background: var(--surface2);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .prob-bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width .8s cubic-bezier(.25,.8,.25,1);
-      width: 0%;
-    }
-
-    .prob-bar-fill.cancer { background: linear-gradient(90deg, #c1003b, var(--danger)); }
-    .prob-bar-fill.normal { background: linear-gradient(90deg, #007a55, var(--safe)); }
-
-    .prob-pct {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      width: 48px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    /* ── Scanned image result ────────────────────────────────────── */
-    .result-image-row {
-      padding: 0 28px 24px;
-      background: var(--surface);
-    }
-
-    #resultImg {
-      width: 100%;
-      max-height: 320px;
-      object-fit: contain;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #000;
-    }
-
-    /* ── Loading spinner ─────────────────────────────────────────── */
-    #loadingSection {
-      display: none;
-      text-align: center;
-      padding: 48px 0;
-      animation: fadeUp .3s ease both;
-    }
-
-    .spinner {
-      width: 48px; height: 48px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    #loadingSection p {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    /* ── Error banner ────────────────────────────────────────────── */
-    #errorBanner {
-      display: none;
-      background: rgba(255,77,109,.1);
-      border: 1px solid rgba(255,77,109,.3);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-top: 20px;
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--danger);
-      animation: fadeUp .3s ease both;
-    }
-
-    /* ── Disclaimer ──────────────────────────────────────────────── */
-    .disclaimer {
-      margin-top: 40px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent2);
-      border-radius: 10px;
-      padding: 16px 20px;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.7;
-      animation: fadeUp .6s ease .3s both;
-    }
-
-    .disclaimer strong { color: var(--text); }
-
-    /* ── Reset link ──────────────────────────────────────────────── */
-    .reset-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 8px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: border-color .2s, color .2s;
-    }
-
-    .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── Animations ──────────────────────────────────────────────── */
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
-    @keyframes fadeUp   { from { opacity: 0; transform: translateY(16px);  } to { opacity: 1; transform: none; } }
-    @keyframes spin     { to { transform: rotate(360deg); } }
-    @keyframes pulse    { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-
-    @media (max-width: 580px) {
-      .preview-wrap { flex-direction: column; }
-      #previewImg { width: 100%; height: 200px; }
-      .result-header { flex-wrap: wrap; }
-      .conf-wrap { margin-left: 0; }
-    }
-  </style>
+/* ── Corner decorations ── */
+.corner{position:fixed;width:60px;height:60px;pointer-events:none;z-index:2}
+.corner.tl{top:16px;left:16px;border-top:1px solid rgba(0,245,255,.2);border-left:1px solid rgba(0,245,255,.2)}
+.corner.tr{top:16px;right:16px;border-top:1px solid rgba(0,245,255,.2);border-right:1px solid rgba(0,245,255,.2)}
+.corner.bl{bottom:16px;left:16px;border-bottom:1px solid rgba(0,245,255,.2);border-left:1px solid rgba(0,245,255,.2)}
+.corner.br{bottom:16px;right:16px;border-bottom:1px solid rgba(0,245,255,.2);border-right:1px solid rgba(0,245,255,.2)}
+</style>
 </head>
-
 <body>
-<div class="container">
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Corner decorations -->
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+
+<!-- Scan line -->
+<div class="scanline"></div>
+<div class="noise"></div>
+
+<!-- Animated background grid -->
+<div class="bg-canvas">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+        <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#00f5ff" stroke-width="0.4"/>
+      </pattern>
+      <radialGradient id="fade" cx="50%" cy="50%" r="70%">
+        <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="1440" height="900" fill="url(#grid)"/>
+    <rect width="1440" height="900" fill="url(#fade)"/>
+    <!-- Decorative circles -->
+    <circle cx="720" cy="450" r="300" fill="none" stroke="#00f5ff" stroke-width="0.3" opacity="0.3"/>
+    <circle cx="720" cy="450" r="500" fill="none" stroke="#00f5ff" stroke-width="0.2" opacity="0.15"/>
+  </svg>
+</div>
+
+<div class="wrap">
 
   <!-- Header -->
   <header>
-    <div class="logo-icon">🦴</div>
-    <div class="logo-text">
-      <h1>OsteoScan</h1>
-      <p>Bone Cancer Detection · YOLOv8</p>
+    <div class="logo-mark">
+      <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="28" cy="28" r="27" stroke="#00f5ff" stroke-width="1" opacity="0.4"/>
+        <circle cx="28" cy="28" r="20" stroke="#00f5ff" stroke-width="0.5" opacity="0.3"/>
+        <!-- Bone icon -->
+        <circle cx="18" cy="18" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
+        <circle cx="38" cy="18" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
+        <circle cx="18" cy="38" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
+        <circle cx="38" cy="38" r="5" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
+        <rect x="20" y="15" width="16" height="6" rx="3" fill="#00f5ff" opacity="0.9"/>
+        <rect x="20" y="35" width="16" height="6" rx="3" fill="#00f5ff" opacity="0.9"/>
+        <rect x="15" y="20" width="6" height="16" rx="3" fill="#00f5ff" opacity="0.9"/>
+        <rect x="35" y="20" width="6" height="16" rx="3" fill="#00f5ff" opacity="0.9"/>
+        <rect x="22" y="22" width="12" height="12" rx="2" fill="#00f5ff" opacity="0.15"/>
+      </svg>
     </div>
-    <div class="status-pill">
-      <div class="dot" id="statusDot"></div>
-      <span id="statusText">Checking...</span>
+    <div class="logo-words">
+      <h1>OSTEOSCAN</h1>
+      <span>AI · Bone Cancer Detection System</span>
+    </div>
+    <div class="header-right">
+      <div class="sys-pill">
+        <div class="sys-dot" id="statusDot"></div>
+        <span id="statusText">INITIALIZING</span>
+      </div>
     </div>
   </header>
 
-  <!-- Upload Card -->
-  <div class="upload-card" id="dropZone">
-    <span class="upload-icon">🩻</span>
-    <h2>Upload an X-ray Image</h2>
-    <p>
-      Drag &amp; drop or click to select a bone X-ray<br/>
-      <span>Supported: JPG · PNG · BMP · WEBP · max 16 MB</span>
-    </p>
-    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.webp" />
-    <br/>
-    <button class="btn-analyze" id="analyzeBtn" disabled>
-      <span>⚡</span> Analyze X-ray
-    </button>
+  <!-- Hero -->
+  <div class="hero">
+    <h2>Detect <span class="accent">Bone Cancer</span><br/>with AI Precision</h2>
+    <p>Upload an X-ray image and our YOLOv8 deep learning model will analyze it for malignant bone patterns in seconds.</p>
   </div>
 
-  <!-- Preview -->
-  <div id="previewSection">
-    <div class="preview-wrap">
-      <img id="previewImg" src="" alt="Preview" />
-      <div class="preview-meta">
-        <h3>Selected File</h3>
-        <div id="fileName">—</div>
-        <div id="fileSize">—</div>
-        <button class="reset-btn" onclick="resetAll()">✕ Clear &amp; reset</button>
+  <!-- Main Grid -->
+  <div class="main-grid">
+
+    <!-- Upload Panel -->
+    <div class="upload-panel">
+      <div class="panel-label">INPUT · X-RAY SCAN</div>
+      <div class="drop-zone" id="dropZone">
+        <div class="xray-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="8" width="60" height="64" rx="4" stroke="#00f5ff" stroke-width="1.5" opacity="0.5"/>
+            <!-- X-ray cross -->
+            <line x1="40" y1="20" x2="40" y2="60" stroke="#00f5ff" stroke-width="1" opacity="0.8"/>
+            <line x1="20" y1="40" x2="60" y2="40" stroke="#00f5ff" stroke-width="1" opacity="0.8"/>
+            <!-- Bone shapes -->
+            <circle cx="30" cy="30" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
+            <circle cx="50" cy="30" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
+            <circle cx="30" cy="50" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
+            <circle cx="50" cy="50" r="4" fill="none" stroke="#00f5ff" stroke-width="1.2" opacity="0.6"/>
+            <rect x="26" y="27" width="28" height="6" rx="3" fill="#00f5ff" opacity="0.3"/>
+            <rect x="26" y="47" width="28" height="6" rx="3" fill="#00f5ff" opacity="0.3"/>
+            <rect x="23" y="30" width="6" height="20" rx="3" fill="#00f5ff" opacity="0.3"/>
+            <rect x="51" y="30" width="6" height="20" rx="3" fill="#00f5ff" opacity="0.3"/>
+            <!-- Upload arrow -->
+            <path d="M40 68 L40 74 M36 70 L40 66 L44 70" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+          </svg>
+        </div>
+        <h3>DROP X-RAY HERE</h3>
+        <p>Drag &amp; drop or click to select<br/><em>JPG · PNG · BMP · WEBP · MAX 16MB</em></p>
+        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.webp"/>
+        <button class="btn-scan" id="analyzeBtn" disabled>
+          <span>⬡ INITIATE SCAN</span>
+        </button>
       </div>
     </div>
-  </div>
 
-  <!-- Loading -->
-  <div id="loadingSection">
-    <div class="spinner"></div>
-    <p>Running inference — please wait…</p>
-  </div>
+    <!-- Preview Panel -->
+    <div class="preview-panel">
+      <div class="panel-label">PREVIEW · LOADED IMAGE</div>
+      <div class="preview-body" id="previewBody">
+        <div class="preview-empty" id="previewEmpty">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="6" y="4" width="36" height="40" rx="3" stroke="#3d6070" stroke-width="1.5"/>
+            <line x1="14" y1="16" x2="34" y2="16" stroke="#3d6070" stroke-width="1.5"/>
+            <line x1="14" y1="24" x2="34" y2="24" stroke="#3d6070" stroke-width="1.5"/>
+            <line x1="14" y1="32" x2="26" y2="32" stroke="#3d6070" stroke-width="1.5"/>
+          </svg>
+          <span>Awaiting Image</span>
+        </div>
+        <img id="previewImg" src="" alt="Preview"/>
+        <!-- Scan animation -->
+        <div class="scan-anim" id="scanAnim">
+          <svg width="60" height="60" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="28" fill="none" stroke="#00f5ff" stroke-width="1" stroke-dasharray="4 4" opacity="0.5">
+              <animateTransform attributeName="transform" type="rotate" from="0 30 30" to="360 30 30" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="30" cy="30" r="18" fill="none" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.7">
+              <animateTransform attributeName="transform" type="rotate" from="360 30 30" to="0 30 30" dur="2.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="30" cy="30" r="4" fill="#00f5ff" opacity="0.8">
+              <animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.8;0.3;0.8" dur="1.5s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+          <div class="scan-bar"><div class="scan-fill"></div></div>
+          <p>Analyzing Neural Patterns</p>
+        </div>
+      </div>
+      <div style="padding:0 20px 16px;display:none" id="previewMeta">
+        <div style="font-family:var(--orb);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px">File</div>
+        <div style="font-size:13px;color:#fff;font-weight:500" id="fileName">—</div>
+        <div style="font-family:var(--orb);font-size:10px;color:var(--muted);margin-top:2px" id="fileSize">—</div>
+        <button class="btn-reset" onclick="resetAll()">✕ CLEAR</button>
+      </div>
+    </div>
+
+  </div><!-- /main-grid -->
 
   <!-- Error -->
-  <div id="errorBanner"></div>
+  <div id="errorBox"></div>
 
-  <!-- Result -->
+  <!-- Result Section -->
   <div id="resultSection">
-    <div class="result-card">
-      <div class="result-header" id="resultHeader">
-        <div class="verdict-badge" id="verdictBadge"></div>
-        <div class="verdict-text">
+    <div class="result-wrap">
+
+      <div class="result-top" id="resultTop">
+        <div class="verdict-ring" id="verdictRing"></div>
+        <div class="verdict-info">
           <h2 id="verdictTitle"></h2>
           <p id="verdictSub"></p>
         </div>
-        <div class="conf-wrap">
+        <div class="conf-block">
           <div class="conf-num" id="confNum"></div>
           <div class="conf-label">Confidence</div>
         </div>
       </div>
 
-      <div class="result-image-row">
-        <img id="resultImg" src="" alt="Analyzed image" />
+      <div class="result-img-wrap">
+        <img id="resultImg" src="" alt="Result"/>
       </div>
 
       <div class="prob-section">
-        <h3>Class Probabilities</h3>
+        <h3>Class Probability Distribution</h3>
         <div id="probBars"></div>
       </div>
-    </div>
 
-    <button class="reset-btn" onclick="resetAll()">↩ Analyze another image</button>
+    </div>
+    <button class="btn-reset" onclick="resetAll()">↩ SCAN ANOTHER IMAGE</button>
   </div>
 
   <!-- Disclaimer -->
   <div class="disclaimer">
-    <strong>⚕️ Medical Disclaimer:</strong>
-    This tool is intended for <strong>research and educational purposes only</strong>.
-    It is <em>not</em> a certified medical device and must not be used as a substitute
-    for professional medical diagnosis. Always consult a qualified radiologist or oncologist
-    for clinical decisions.
+    <strong>⚕ Medical Disclaimer:</strong>
+    This tool is for <strong>research and educational purposes only</strong> and is not a certified medical device.
+    It must not replace professional radiological or oncological diagnosis. Always consult a qualified physician.
   </div>
 
-</div>
+</div><!-- /wrap -->
 
 <script>
-  // ── state ──────────────────────────────────────────────────────────────────
-  let selectedFile = null;
+// ── Cursor ──────────────────────────────────────────────────────────────────
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
 
-  // ── DOM refs ───────────────────────────────────────────────────────────────
-  const dropZone    = document.getElementById('dropZone');
-  const fileInput   = document.getElementById('fileInput');
-  const analyzeBtn  = document.getElementById('analyzeBtn');
-  const previewSec  = document.getElementById('previewSection');
-  const previewImg  = document.getElementById('previewImg');
-  const fileName    = document.getElementById('fileName');
-  const fileSize    = document.getElementById('fileSize');
-  const loadingSec  = document.getElementById('loadingSection');
-  const errorBanner = document.getElementById('errorBanner');
-  const resultSec   = document.getElementById('resultSection');
-  const statusDot   = document.getElementById('statusDot');
-  const statusText  = document.getElementById('statusText');
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
 
-  // ── health check ───────────────────────────────────────────────────────────
-  async function checkHealth() {
-    try {
-      const res = await fetch('/health');
-      const data = await res.json();
-      if (data.model_loaded) {
-        statusDot.classList.remove('offline');
-        statusText.textContent = 'Model ready';
-      } else {
-        statusDot.classList.add('offline');
-        statusText.textContent = 'Model not loaded';
-      }
-    } catch {
-      statusDot.classList.add('offline');
-      statusText.textContent = 'Server offline';
+function animRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+// ── State ────────────────────────────────────────────────────────────────────
+let selectedFile=null;
+
+const dropZone   = document.getElementById('dropZone');
+const fileInput  = document.getElementById('fileInput');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const previewImg = document.getElementById('previewImg');
+const previewEmpty = document.getElementById('previewEmpty');
+const previewMeta  = document.getElementById('previewMeta');
+const scanAnim   = document.getElementById('scanAnim');
+const errorBox   = document.getElementById('errorBox');
+const resultSec  = document.getElementById('resultSection');
+const statusDot  = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+
+// ── Health check ─────────────────────────────────────────────────────────────
+async function checkHealth(){
+  try{
+    const r=await fetch('/health');
+    const d=await r.json();
+    if(d.model_loaded){
+      statusDot.className='sys-dot';
+      statusText.textContent='SYSTEM ONLINE';
+    } else {
+      statusDot.className='sys-dot warn';
+      statusText.textContent='MODEL NOT LOADED';
     }
+  } catch {
+    statusDot.className='sys-dot err';
+    statusText.textContent='SERVER OFFLINE';
   }
-  checkHealth();
+}
+checkHealth();
 
-  // ── drag & drop ────────────────────────────────────────────────────────────
-  dropZone.addEventListener('click', () => fileInput.click());
+// ── Drag & Drop ───────────────────────────────────────────────────────────────
+dropZone.addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over')});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop',e=>{
+  e.preventDefault();dropZone.classList.remove('drag-over');
+  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change',()=>{if(fileInput.files[0]) handleFile(fileInput.files[0])});
 
-  dropZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropZone.classList.add('drag-over');
-  });
+function handleFile(f){
+  selectedFile=f;
+  document.getElementById('fileName').textContent=f.name;
+  document.getElementById('fileSize').textContent=fmtBytes(f.size);
+  const reader=new FileReader();
+  reader.onload=e=>{
+    previewImg.src=e.target.result;
+    previewImg.style.display='block';
+    previewEmpty.style.display='none';
+  };
+  reader.readAsDataURL(f);
+  previewMeta.style.display='block';
+  analyzeBtn.disabled=false;
+  errorBox.style.display='none';
+  resultSec.style.display='none';
+}
 
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+function fmtBytes(b){
+  if(b<1024) return b+' B';
+  if(b<1048576) return (b/1024).toFixed(1)+' KB';
+  return (b/1048576).toFixed(2)+' MB';
+}
 
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f) handleFile(f);
-  });
+// ── Analyze ───────────────────────────────────────────────────────────────────
+analyzeBtn.addEventListener('click', analyze);
 
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) handleFile(fileInput.files[0]);
-  });
+async function analyze(){
+  if(!selectedFile) return;
+  analyzeBtn.disabled=true;
+  scanAnim.classList.add('active');
+  resultSec.style.display='none';
+  errorBox.style.display='none';
 
-  // ── file selection ─────────────────────────────────────────────────────────
-  function handleFile(f) {
-    selectedFile = f;
-    fileName.textContent = f.name;
-    fileSize.textContent = formatBytes(f.size);
+  const fd=new FormData();
+  fd.append('file',selectedFile);
 
-    const reader = new FileReader();
-    reader.onload = e => { previewImg.src = e.target.result; };
-    reader.readAsDataURL(f);
-
-    previewSec.style.display = 'block';
-    analyzeBtn.disabled = false;
-    errorBanner.style.display = 'none';
-    resultSec.style.display = 'none';
+  try{
+    const res=await fetch('/predict',{method:'POST',body:fd});
+    const data=await res.json();
+    scanAnim.classList.remove('active');
+    if(!res.ok||data.error){showErr(data.error||'Server error');analyzeBtn.disabled=false;return;}
+    renderResult(data);
+  } catch {
+    scanAnim.classList.remove('active');
+    showErr('Network error — is the Flask server running on port 8080?');
+    analyzeBtn.disabled=false;
   }
+}
 
-  function formatBytes(bytes) {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  }
+// ── Render result ─────────────────────────────────────────────────────────────
+function renderResult(data){
+  const pred=data.prediction.toLowerCase();
+  const isCancer=pred==='cancer';
+  const cls=isCancer?'cancer':'normal';
+  const conf=data.confidence;
 
-  // ── analyze ────────────────────────────────────────────────────────────────
-  analyzeBtn.addEventListener('click', analyze);
+  const top=document.getElementById('resultTop');
+  top.className='result-top '+cls;
 
-  async function analyze() {
-    if (!selectedFile) return;
+  // Verdict ring SVG
+  const color=isCancer?'#ff2d55':'#00ff9d';
+  const icon=isCancer?'⚠':'✓';
+  document.getElementById('verdictRing').innerHTML=`
+    <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="36" cy="36" r="34" stroke="${color}" stroke-width="1.5" opacity="0.3"/>
+      <circle cx="36" cy="36" r="28" stroke="${color}" stroke-width="2" stroke-dasharray="4 3" opacity="0.6">
+        <animateTransform attributeName="transform" type="rotate" from="0 36 36" to="360 36 36" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="36" cy="36" r="22" fill="${color}" opacity="0.08"/>
+      <text x="36" y="43" text-anchor="middle" font-size="22" fill="${color}" font-family="Orbitron">${icon}</text>
+    </svg>`;
 
-    analyzeBtn.disabled = true;
-    loadingSec.style.display = 'block';
-    resultSec.style.display = 'none';
-    errorBanner.style.display = 'none';
+  const vt=document.getElementById('verdictTitle');
+  vt.className=cls;
+  vt.textContent=isCancer?'CANCER DETECTED':'NO CANCER DETECTED';
 
-    const fd = new FormData();
-    fd.append('file', selectedFile);
+  document.getElementById('verdictSub').textContent=isCancer
+    ?'Malignant bone patterns identified in this X-ray image.'
+    :'No malignant indicators found in this X-ray image.';
 
-    try {
-      const res = await fetch('/predict', { method: 'POST', body: fd });
-      const data = await res.json();
+  document.getElementById('confNum').textContent=conf.toFixed(1)+'%';
 
-      loadingSec.style.display = 'none';
+  // Result image
+  document.getElementById('resultImg').src='data:image/png;base64,'+data.image_b64;
 
-      if (!res.ok || data.error) {
-        showError(data.error || 'Server error');
-        analyzeBtn.disabled = false;
-        return;
-      }
-
-      renderResult(data);
-    } catch (err) {
-      loadingSec.style.display = 'none';
-      showError('Network error — is the Flask server running?');
-      analyzeBtn.disabled = false;
-    }
-  }
-
-  // ── render result ──────────────────────────────────────────────────────────
-  function renderResult(data) {
-    const pred    = data.prediction.toLowerCase();
-    const isCancer = pred === 'cancer';
-    const conf    = data.confidence;
-    const cls     = isCancer ? 'cancer' : 'normal';
-
-    // Header
-    const hdr = document.getElementById('resultHeader');
-    hdr.className = `result-header ${cls}`;
-
-    document.getElementById('verdictBadge').className = `verdict-badge ${cls}`;
-    document.getElementById('verdictBadge').textContent = isCancer ? '⚠️' : '✅';
-
-    const vt = document.getElementById('verdictTitle');
-    vt.className = cls;
-    vt.textContent = isCancer ? 'Cancer Detected' : 'No Cancer Detected';
-
-    document.getElementById('verdictSub').textContent =
-      isCancer
-        ? 'The model flagged malignant bone patterns in this X-ray.'
-        : 'The model found no malignant indicators in this X-ray.';
-
-    document.getElementById('confNum').textContent = conf.toFixed(1) + '%';
-
-    // Result image
-    document.getElementById('resultImg').src = 'data:image/png;base64,' + data.image_b64;
-
-    // Probability bars
-    const bars = document.getElementById('probBars');
-    bars.innerHTML = '';
-    for (const [label, prob] of Object.entries(data.class_probabilities)) {
-      const pct = (prob * 100).toFixed(1);
-      const barCls = label.toLowerCase() === 'cancer' ? 'cancer' : 'normal';
-      bars.innerHTML += `
-        <div class="prob-row">
-          <div class="prob-label">${label}</div>
-          <div class="prob-bar-bg">
-            <div class="prob-bar-fill ${barCls}" data-pct="${pct}"></div>
-          </div>
-          <div class="prob-pct">${pct}%</div>
-        </div>`;
-    }
-
-    resultSec.style.display = 'block';
-
-    // Animate bars after paint
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document.querySelectorAll('.prob-bar-fill').forEach(el => {
-          el.style.width = el.dataset.pct + '%';
-        });
-      });
-    });
+  // Prob bars
+  const bars=document.getElementById('probBars');
+  bars.innerHTML='';
+  for(const [label,prob] of Object.entries(data.class_probabilities)){
+    const pct=(prob*100).toFixed(1);
+    const bc=label.toLowerCase()==='cancer'?'cancer':'normal';
+    bars.innerHTML+=`
+      <div class="prob-row">
+        <div class="prob-name">${label}</div>
+        <div class="prob-track"><div class="prob-fill ${bc}" data-pct="${pct}"></div></div>
+        <div class="prob-pct">${pct}%</div>
+      </div>`;
   }
 
-  // ── error ──────────────────────────────────────────────────────────────────
-  function showError(msg) {
-    errorBanner.textContent = '⚠ ' + msg;
-    errorBanner.style.display = 'block';
-  }
+  resultSec.style.display='block';
 
-  // ── reset ──────────────────────────────────────────────────────────────────
-  function resetAll() {
-    selectedFile = null;
-    fileInput.value = '';
-    previewImg.src = '';
-    previewSec.style.display = 'none';
-    resultSec.style.display = 'none';
-    errorBanner.style.display = 'none';
-    loadingSec.style.display = 'none';
-    analyzeBtn.disabled = true;
-  }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll('.prob-fill').forEach(el=>el.style.width=el.dataset.pct+'%');
+  }));
+}
+
+function showErr(msg){
+  errorBox.textContent='⚠ ERROR: '+msg;
+  errorBox.style.display='block';
+}
+
+function resetAll(){
+  selectedFile=null;
+  fileInput.value='';
+  previewImg.src='';previewImg.style.display='none';
+  previewEmpty.style.display='flex';
+  previewMeta.style.display='none';
+  resultSec.style.display='none';
+  errorBox.style.display='none';
+  scanAnim.classList.remove('active');
+  analyzeBtn.disabled=true;
+}
 </script>
 </body>
 </html>
