@@ -174,7 +174,7 @@ bone_cancer_detection Repository
 
 🙏 Acknowledgements
 
-Special thanks to my friend Mohit for helping in model training and supporting this project.
+Special thanks to my friend  for helping in model training and supporting this project.
 
 🤝 Contributing
 
