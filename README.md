@@ -46,6 +46,7 @@ Lightweight REST API pipeline
 /health endpoint checks server & model status
 
 🏗️ System Architecture
+
 bone_cancer_detection/
 │
 ├── app.py
