@@ -780,6 +780,61 @@
             color: #fff !important;
         }
 
+        /* 🚨 EMERGENCY ALERT ACTIVE MODE STYLING 🚨 */
+        body.emergency-active::before {
+            background-image: 
+                linear-gradient(rgba(244, 63, 94, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(244, 63, 94, 0.05) 1px, transparent 1px);
+        }
+
+        body.emergency-active::after {
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(244, 63, 94, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(12, 3, 5, 1) 0%, rgba(3, 1, 2, 1) 100%);
+            animation: emergencyVignette 1.5s infinite ease-in-out;
+        }
+
+        @keyframes emergencyVignette {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; box-shadow: inset 0 0 80px rgba(244, 63, 94, 0.25); }
+        }
+
+        body.emergency-active .glass-card {
+            border-color: rgba(244, 63, 94, 0.3) !important;
+            box-shadow: 0 8px 32px rgba(244, 63, 94, 0.08), 0 0 15px rgba(244, 63, 94, 0.05) !important;
+        }
+
+        body.emergency-active .glass-card:hover {
+            border-color: rgba(244, 63, 94, 0.5) !important;
+        }
+
+        body.emergency-active .status-dot {
+            background: var(--rose) !important;
+            box-shadow: 0 0 15px var(--rose) !important;
+            animation: emergencyStatusDot 0.8s infinite ease-in-out !important;
+        }
+
+        @keyframes emergencyStatusDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.5; }
+        }
+
+        body.emergency-active .brand-logo {
+            border-color: var(--rose) !important;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.3) !important;
+            background: rgba(244, 63, 94, 0.1) !important;
+        }
+
+        body.emergency-active .brand-logo::after {
+            background: var(--rose) !important;
+        }
+
+        body.emergency-active .brand-text h1 span {
+            color: var(--rose) !important;
+            border-color: var(--rose) !important;
+        }
+
         /* RIGHT PANEL: Live AI Diagnostics & Class Probability */
         .insights-card {
             transition: opacity 0.3s;
@@ -1467,6 +1522,7 @@
     let lastSpokenTelemetryEN = '';
     let lastSpokenTelemetryHI = '';
     let voiceLanguage = 'en';
+    let emergencyAlarmInterval = null;
 
     const systemStatusDot = document.getElementById('systemStatusDot');
     const systemStatusText = document.getElementById('systemStatusText');
@@ -1589,6 +1645,9 @@
         fileInfoDisplay.style.display = 'flex';
         uploadDropZone.style.display = 'none';
 
+        // Clear emergency warnings on new file staging
+        clearEmergencyAlert();
+
         const fileReader = new FileReader();
         fileReader.onload = (e) => {
             previewImage.src = e.target.result;
@@ -1638,6 +1697,9 @@
         currentOriginalUrl = '';
         currentHeatmapUrl = '';
         document.getElementById('viewControls').style.display = 'none';
+        
+        // Clear emergency alerts
+        clearEmergencyAlert();
 
         logToConsole("Radiograph staging cleared.", "cyan");
     }
@@ -1741,6 +1803,72 @@
 
     // Reveal and render full results panel
     // Premium AI Voice Assistant using Web Speech API
+    // 🚨 Web Audio API Synthesizer for High-Tech Emergency Sonar Chirps
+    function playEmergencyAudioPing() {
+        try {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+            const audioCtx = new AudioContextClass();
+            
+            // Distress Sonar Chirp - clean sine wave sweeping down exponentially
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5 note
+            osc.frequency.exponentialRampToValueAtTime(110.00, audioCtx.currentTime + 1.2); // Glide down to A2
+            
+            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.3);
+        } catch (e) {
+            console.warn("Failed to synthesize emergency sonar alert:", e);
+        }
+    }
+
+    function triggerEmergencyAlert() {
+        // Enforce active class visual pulser
+        document.body.classList.add('emergency-active');
+        
+        systemStatusDot.className = 'status-dot'; // Body overrides to rose/emergency
+        systemStatusText.textContent = '🚨 EMERGENCY SYSTEM ALERT 🚨';
+        systemStatusText.style.color = 'var(--rose)';
+        
+        logToConsole("🚨 [CRITICAL ALERT] DEEP NEURAL THREAT LEVEL EXCEEDED!", "rose");
+        logToConsole("🚨 [ONCOLOGY URGENCY ROUTINGS INTERCEPTED] BROADCASTING CLINICAL THREAT MATRIX...", "rose");
+        
+        // Initial alarm ping
+        playEmergencyAudioPing();
+        
+        // Clear any prior alarms
+        if (emergencyAlarmInterval) {
+            clearInterval(emergencyAlarmInterval);
+        }
+        
+        // Loop alarm chime every 3.5 seconds
+        emergencyAlarmInterval = setInterval(playEmergencyAudioPing, 3500);
+    }
+
+    function clearEmergencyAlert() {
+        // Remove pulse styling
+        document.body.classList.remove('emergency-active');
+        
+        // Stop audio loops
+        if (emergencyAlarmInterval) {
+            clearInterval(emergencyAlarmInterval);
+            emergencyAlarmInterval = null;
+        }
+        
+        // Restore standard console status text
+        systemStatusText.style.color = '';
+        executeTelemetryHealthCheck(); // Triggers status refresh
+    }
+
     function setVoiceLanguage(lang) {
         voiceLanguage = lang;
         const btnEN = document.getElementById('btnLangEN');
@@ -1834,6 +1962,13 @@
                 "Neural diagnostics complete. Warning. Potential malignant pattern identified.",
                 "न्यूरल जाँच पूरी हुई। चेतावनी। कैंसर के लक्षण पाए गए हैं।"
             );
+            
+            // Trigger emergency warning pulse and audio ping if confidence is high (>= 60%)
+            if (data.confidence >= 60.0) {
+                triggerEmergencyAlert();
+            } else {
+                clearEmergencyAlert();
+            }
         } else {
             verdictBanner.className = 'verdict-banner normal';
             verdictIcon.textContent = '✅';
@@ -1846,7 +1981,11 @@
                 "Neural diagnostics complete. Uniform bone structure detected.",
                 "न्यूरल जाँच पूरी हुई। सामान्य हड्डी की संरचना पाई गई है।"
             );
+            
+            // Clear emergency warnings
+            clearEmergencyAlert();
         }
+
 
         // Setup confidence metrics & circular indicators
         metricConfidence.textContent = `${data.confidence.toFixed(1)}%`;
