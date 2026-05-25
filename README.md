@@ -1,3 +1,6 @@
+<img width="1536" height="1024" alt="ChatGPT Image May 25, 2026, 06_27_27 PM" src="https://github.com/user-attachments/assets/de1a90f4-0b57-4494-8639-b308fdeddccb" />
+<img width="274" height="401" alt="Screenshot 2026-05-25 at 6 25 30 PM" src="https://github.com/user-attachments/assets/2ca86a57-9dbb-4c78-8678-831796a2e2d7" />
+<img width="211" height="404" alt="Screenshot 2026-05-25 at 6 25 08 PM" src="https://github.com/user-attachments/assets/b97f6445-0f55-48e3-aa9b-b899bbfa8685" />
 🦴 OsteoScan — AI-Powered Bone Cancer Detection System
 <p align="center"> <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python"/> <img src="https://img.shields.io/badge/Flask-Web%20Framework-black?style=for-the-badge&logo=flask"/> <img src="https://img.shields.io/badge/YOLOv8-Deep%20Learning-red?style=for-the-badge"/> <img src="https://img.shields.io/badge/AI-Healthcare-green?style=for-the-badge"/> <img src="https://img.shields.io/badge/Open%20Source-Project-orange?style=for-the-badge"/> </p> <h3 align="center"> 🧠 Intelligent Bone Cancer Detection using Deep Learning & Medical Imaging </h3> <p align="center"> Built with <b>YOLOv8</b>, <b>Flask</b>, and <b>AI-powered Medical Imaging</b> to assist in bone cancer prediction from X-ray scans. </p>
 📌 Overview
@@ -47,30 +50,15 @@ Lightweight REST API pipeline
 
 🏗️ System Architecture
 
-bone_cancer_detection/
-│
-├── app.py
-├── users.json
-├── server.log
-├── README.md
-├── .gitignore
-│
-├── templates/
-│   └── index.html
-│
-├── static/
-│   └── uploads/
-│
-├── weights/
-│   └── best.pt
-│
-└── scratch/
+<img width="1536" height="1024" alt="ChatGPT Image May 25, 2026, 06_27_27 PM" src="https://github.com/user-attachments/assets/5c222c11-a4a3-4ea5-a3e2-4b9a5062ddec" />
 
 
 🔄 Application Workflow
+
 <img width="550" height="600" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/6f292791-d4a9-4582-b63e-28c5d2b6fe74" />
 
 🧠 AI Model Workflow
+
 <img width="3458" height="130" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/6c3f1a29-3316-439f-b5fc-66048be875b7" />
 
 ⚙️ Technology Stack
