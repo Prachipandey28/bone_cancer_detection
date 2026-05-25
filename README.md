@@ -64,7 +64,7 @@ bone_cancer_detection/
 │
 └── scratch/
 🔄 Application Workflow
-<img width="950" height="1000" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/6f292791-d4a9-4582-b63e-28c5d2b6fe74" />
+<img width="550" height="600" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/6f292791-d4a9-4582-b63e-28c5d2b6fe74" />
 
 🧠 AI Model Workflow
 <img width="3458" height="130" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/6c3f1a29-3316-439f-b5fc-66048be875b7" />
