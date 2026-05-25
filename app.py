@@ -302,6 +302,34 @@ def history_notes():
     return jsonify({"error": "Case record not found."}), 404
 
 
+@app.route("/history/delete", methods=["POST"])
+def history_delete():
+    if not session.get("logged_in"):
+        return jsonify({"error": "Unauthorized session. Please login."}), 401
+        
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing payload"}), 400
+        
+    case_id = data.get("case_id")
+    if not case_id:
+        return jsonify({"error": "Case ID is required"}), 400
+        
+    email = session.get("email")
+    users = load_users()
+    
+    if email in users and "history" in users[email]:
+        history_list = users[email]["history"]
+        updated_history = [record for record in history_list if record["case_id"] != case_id]
+        
+        if len(updated_history) < len(history_list):
+            users[email]["history"] = updated_history
+            save_users(users)
+            return jsonify({"status": "success", "message": f"Case record {case_id} deleted successfully."})
+            
+    return jsonify({"error": "Case record not found."}), 404
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
     if not session.get("logged_in"):

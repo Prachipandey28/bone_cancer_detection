@@ -8,21 +8,6 @@
         "password": "prachi15",
         "history": [
             {
-                "case_id": "SCAN-44739",
-                "timestamp": "2026-05-24 23:15:39",
-                "patient_name": "PAT-0092-K",
-                "patient_age": "28 M",
-                "anatomical_site": "Proximal Femur",
-                "prediction": "cancer",
-                "confidence": 96.23,
-                "class_probabilities": {
-                    "cancer": 0.9623,
-                    "normal": 0.0377
-                },
-                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779644739.png",
-                "notes": ""
-            },
-            {
                 "case_id": "SCAN-44954",
                 "timestamp": "2026-05-24 23:19:14",
                 "patient_name": "PAT-0092-K",

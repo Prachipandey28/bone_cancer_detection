@@ -774,6 +774,12 @@
             transform: scale(1.08);
         }
 
+        .btn-delete:hover {
+            border-color: var(--rose) !important;
+            background: rgba(244, 63, 94, 0.1) !important;
+            color: #fff !important;
+        }
+
         /* RIGHT PANEL: Live AI Diagnostics & Class Probability */
         .insights-card {
             transition: opacity 0.3s;
@@ -1984,9 +1990,12 @@
                         <td style="color: var(--text-secondary);">${item.anatomical_site}</td>
                         <td><span class="${badgeClass}">${formattedVerdict}</span></td>
                         <td style="font-family: var(--font-mono); font-weight: 700; color: ${isCancer ? 'var(--amber)' : 'var(--emerald)'};">${item.confidence.toFixed(1)}%</td>
-                        <td style="text-align: right; padding-right: 25px;">
-                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 10px; margin: 0; font-family: var(--font-mono); border-color: rgba(0,240,255,0.2);" onclick="reviewHistoricalCase('${item.case_id}')">
-                                🗂️ Review Case
+                        <td style="text-align: right; padding-right: 25px; white-space: nowrap;">
+                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 10px; margin: 0 4px 0 0; font-family: var(--font-mono); border-color: rgba(0,240,255,0.2);" onclick="reviewHistoricalCase('${item.case_id}')">
+                                🗂️ Review
+                            </button>
+                            <button class="btn btn-outline btn-delete" style="padding: 4px 10px; font-size: 10px; margin: 0; font-family: var(--font-mono); border-color: rgba(244,63,94,0.3); color: var(--rose);" onclick="deleteHistoricalCase('${item.case_id}')">
+                                🗑️ Delete
                             </button>
                         </td>
                     `;
@@ -2053,6 +2062,40 @@
         resetBtn.disabled = false;
         analyzeBtn.disabled = false;
     }
+
+    async function deleteHistoricalCase(caseId) {
+        if (!confirm(`Are you sure you want to delete case record ${caseId}? This action cannot be undone.`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/history/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ case_id: caseId })
+            });
+            const data = await response.json();
+            
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Failed to delete record.");
+            }
+            
+            logToConsole(`Case record ${caseId} deleted from database.`, "rose");
+            
+            // If the deleted case was currently loaded, clear visualizer!
+            if (currentCaseId === caseId) {
+                clearSelectedFile();
+            }
+            
+            loadScanHistory(); // Refresh logs table dynamically!
+        } catch (err) {
+            console.error("Failed to delete case:", err);
+            logToConsole(`Failed to delete case: ${err.message}`, "rose");
+        }
+    }
+    window.deleteHistoricalCase = deleteHistoricalCase;
 
     function downloadClinicalReport() {
         const caseId = currentCaseId || document.getElementById('sessionId').textContent;
