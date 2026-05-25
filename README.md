@@ -185,6 +185,18 @@ file=<image_file>
 
 ---
 
+## 📸 UI Screenshots
+
+### 🏠 Home Page
+<img width="1423" height="807" alt="Screenshot 2026-05-25 at 6 39 43 PM" src="https://github.com/user-attachments/assets/dcdd9cb8-2fce-42cc-b640-c25e113864f1" />
+
+### 📤 Upload & Predict
+<img width="1388" height="622" alt="Screenshot 2026-05-25 at 6 41 59 PM" src="https://github.com/user-attachments/assets/e403cffc-4898-4626-8c3a-7ee499b45af9" />
+
+### ✅ Prediction Result
+<img width="1433" height="801" alt="Screenshot 2026-05-25 at 6 40 35 PM" src="https://github.com/user-attachments/assets/a9b1d751-fc2e-4693-b241-c2bfd413ed91" />
+
+
 ## 📊 Supported File Formats
 
 | Format | Supported |
