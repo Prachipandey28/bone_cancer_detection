@@ -44,6 +44,7 @@ Runtime upload directory creation
 Lightweight REST API pipeline
 🛡️ Health Monitoring
 /health endpoint checks server & model status
+
 🏗️ System Architecture
 bone_cancer_detection/
 │
@@ -63,6 +64,8 @@ bone_cancer_detection/
 │   └── best.pt
 │
 └── scratch/
+
+
 🔄 Application Workflow
 <img width="550" height="600" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/6f292791-d4a9-4582-b63e-28c5d2b6fe74" />
 
