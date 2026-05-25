@@ -108,7 +108,9 @@ Response
     "normal": 0.0563
   }
 }
+
 📸 Prediction Flow Diagram
+
 <img width="2178" height="894" alt="mermaid-diagram (2)" src="https://github.com/user-attachments/assets/f11fb251-6aa9-48c2-9dbd-2200b58b046c" />
 
 📊 Supported File Formats
