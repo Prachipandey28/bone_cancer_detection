@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
 
+    <!-- jsPDF Library for Professional Reports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         :root {
             --bg-darker: #03070d;
@@ -1714,6 +1717,48 @@
     }
 
     // Reveal and render full results panel
+    // Premium AI Voice Assistant using Web Speech API
+    function speakClinicalTelemetry(text) {
+        if (!('speechSynthesis' in window)) {
+            console.warn("Speech synthesis not supported in this browser.");
+            return;
+        }
+        
+        // Cancel any ongoing speech first
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Try to find a premium, robotic/clinical sounding voice
+        const voices = window.speechSynthesis.getVoices();
+        let selectedVoice = null;
+        
+        // Preferred en-US voices for high-quality clinical tone
+        const preferredVoices = [
+            "Google US English",
+            "Microsoft David",
+            "Samantha",
+            "Daniel",
+            "en-US"
+        ];
+        
+        for (const pref of preferredVoices) {
+            selectedVoice = voices.find(v => v.name.includes(pref) || v.lang.startsWith(pref));
+            if (selectedVoice) break;
+        }
+        
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+        }
+        
+        // Set speech parameters for premium, calm AI feel
+        utterance.rate = 0.95; // Slightly slower, calm cadence
+        utterance.pitch = 0.9; // Slightly lower, professional clinical resonance
+        utterance.volume = 1.0;
+        
+        window.speechSynthesis.speak(utterance);
+    }
+
     function renderClinicalResults(data, calculatedLatency) {
         const predictionLabel = data.prediction.toLowerCase();
         const isMalignant = predictionLabel === 'cancer';
@@ -1725,12 +1770,18 @@
             verdictHeadline.textContent = 'MALIGNANT PATTERN DETECTED';
             verdictSubText.textContent = `High density osteolytic/bone-destruction signatures recognized at ${data.confidence.toFixed(1)}% confidence.`;
             logToConsole(`AI Scan Completed. MALIGNANCY DETECTED (${data.confidence.toFixed(1)}% confidence). Alerting oncology channels. ⚠️`, "rose");
+            
+            // Speak Malignant telemetry
+            speakClinicalTelemetry("Neural diagnostics complete. Warning. Potential malignant pattern identified.");
         } else {
             verdictBanner.className = 'verdict-banner normal';
             verdictIcon.textContent = '✅';
             verdictHeadline.textContent = 'UNIFORM BONE STRUCTURE DETECTED';
             verdictSubText.textContent = `Uniform cortical density and joint boundaries with no active malignancy indicators (${data.confidence.toFixed(1)}% confidence).`;
             logToConsole(`AI Scan Completed. RADIOGRAPH CLEARED. No signs of malignancy. ✅`, "emerald");
+            
+            // Speak Normal telemetry
+            speakClinicalTelemetry("Neural diagnostics complete. Uniform bone structure detected.");
         }
 
         // Setup confidence metrics & circular indicators
@@ -1951,63 +2002,218 @@
         const ageGender = patientAge.value.trim() || '—';
         const jointName = anatomicalSite.value;
         
-        const verdictHeadlineText = verdictHeadline.textContent || 'NO ACTIVE SCAN DETECTED';
-        const confidenceValue = metricConfidence.textContent || '—';
-        const notesText = radiologistNotes.value || 'No clinical comments logged.';
+        const verdictHeadlineText = (verdictHeadline.textContent || 'NO ACTIVE SCAN').trim();
+        const confidenceValue = (metricConfidence.textContent || '—').trim();
+        const notesText = (radiologistNotes.value || 'No clinical comments logged.').trim();
+        const clinicianName = "{{ session.get('username', 'Clinician').upper() }}";
         
         const timestampStr = new Date().toLocaleString();
         
-        const reportText = `========================================================================
-                      OSTSCAN AI CLINICAL DIAGNOSTIC REPORT
-========================================================================
-CASE IDENTIFIER:      ${caseId}
-TIMESTAMP:            ${timestampStr}
-TELEMETRY OPERATOR:   ${"{{ session.get('username', 'CLINICIAN').upper() }}"}
-SYSTEM STATUS:        NEURAL CONNECTION CLEAR
-
-------------------------------------------------------------------------
-PATIENT DEMOGRAPHICS & SITE METADATA
-------------------------------------------------------------------------
-Patient ID/Name:      ${patientId}
-Age & Gender:         ${ageGender}
-Anatomical Joint:     ${jointName}
-Screening Protocol:   High-contrast cortical density mapping
-
-------------------------------------------------------------------------
-DEEP NEURAL DIAGNOSTIC TELEMETRY
-------------------------------------------------------------------------
-DIAGNOSTIC VERDICT:   ${verdictHeadlineText}
-CONFIDENCE SCALE:     ${confidenceValue}
-
-Inference Model:      YOLOv8-Classify (best.pt weights)
-
-------------------------------------------------------------------------
-CLINICAL OBSERVATION JOURNAL & RADIOLOGIST COMMENTS
-------------------------------------------------------------------------
-${notesText}
-
-------------------------------------------------------------------------
-AUTHORIZED CLINICAL SIGN-OFF
-------------------------------------------------------------------------
-Operator:             ${"{{ session.get('username', 'CLINICIAN').upper() }}"}
-Session Logged:       YES (users.json telemetry archive)
-
-Disclaimer: This report represents deep neural decision-support telemetry.
-It is NOT a certified primary diagnosis. All outcomes must be clinically
-cross-validated by a licensed medical practitioner.
-========================================================================`;
-
-        const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `ostscan_report_${patientId.replace(/[^a-z0-9]/gi, '_')}_${caseId}.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        // 1. Initialize jsPDF (A4 page format: 210mm x 297mm)
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
         
-        logToConsole(`Diagnostic report ostscan_report_${caseId}.txt downloaded successfully! 📥`, "emerald");
+        // 2. Set margins and bounds
+        const marginX = 20;
+        let posY = 20;
+        const pageWidth = 210;
+        const contentWidth = pageWidth - (marginX * 2); // 170mm
+        
+        // 3. Header Title Block
+        doc.setFillColor(11, 26, 48); // Deep Navy Blue (#0b1a30)
+        doc.rect(marginX, posY, contentWidth, 22, 'F');
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.text("OSTSCAN AI — BONE RADIOGRAPHY DIAGNOSTIC REPORT", marginX + 6, posY + 9);
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(0, 240, 255); // Cyan color Accent
+        doc.text("CLINICAL DECISION SUPPORT REPORT  |  TELEMETRY PROTOCOL", marginX + 6, posY + 16);
+        posY += 22;
+        
+        // Horizontal spacing line
+        posY += 8;
+        
+        // 4. Case Metadata Grid
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(11, 26, 48);
+        doc.text("CASE METADATA & PATIENT INTAKE", marginX, posY);
+        posY += 4;
+        
+        doc.setDrawColor(226, 232, 240); // Light border grey
+        doc.setLineWidth(0.3);
+        doc.line(marginX, posY, marginX + contentWidth, posY);
+        posY += 6;
+        
+        // Metadata text block (2 columns)
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9.5);
+        doc.setTextColor(71, 85, 105); // Slate
+        
+        // Column 1
+        doc.text(`Patient ID / Ref: `, marginX, posY);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(15, 23, 42); // slate-900
+        doc.text(patientId, marginX + 32, posY);
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Age & Gender: `, marginX, posY + 6);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text(ageGender, marginX + 32, posY + 6);
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Anatomical Joint: `, marginX, posY + 12);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text(jointName, marginX + 32, posY + 12);
+        
+        // Column 2
+        doc.setFont('Helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Case Identifier: `, marginX + 90, posY);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text(caseId, marginX + 122, posY);
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Report Date: `, marginX + 90, posY + 6);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text(timestampStr, marginX + 122, posY + 6);
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Telemetry Status: `, marginX + 90, posY + 12);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(16, 185, 129); // emerald-500
+        doc.text("NEURAL COMPLETE", marginX + 122, posY + 12);
+        
+        posY += 20;
+        
+        // 5. AI Telemetry Verdict Banner
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(11, 26, 48);
+        doc.text("DEEP NEURAL DIAGNOSTIC OUTCOME", marginX, posY);
+        posY += 4;
+        
+        doc.line(marginX, posY, marginX + contentWidth, posY);
+        posY += 6;
+        
+        // Draw Banner Card
+        const isMalignant = verdictHeadlineText.toLowerCase().includes('malignant') || verdictHeadlineText.toLowerCase().includes('cancer');
+        const cardBgColor = isMalignant ? [254, 226, 226] : [209, 250, 229]; // light red / light green
+        const cardBorderColor = isMalignant ? [248, 113, 113] : [52, 211, 153];
+        const cardTextColor = isMalignant ? [220, 38, 38] : [5, 150, 105];
+        
+        doc.setFillColor(cardBgColor[0], cardBgColor[1], cardBgColor[2]);
+        doc.setDrawColor(cardBorderColor[0], cardBorderColor[1], cardBorderColor[2]);
+        doc.setLineWidth(0.5);
+        doc.rect(marginX, posY, contentWidth, 24, 'FD');
+        
+        // Banner Text
+        doc.setTextColor(cardTextColor[0], cardTextColor[1], cardTextColor[2]);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.text(verdictHeadlineText, marginX + 6, posY + 9);
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(51, 65, 85); // slate-700
+        doc.text(`Inference Model: YOLOv8 Classification Staging Core (best.pt)`, marginX + 6, posY + 15);
+        doc.text(`Confidence Rating: `, marginX + 6, posY + 19.5);
+        doc.setFont('Helvetica', 'bold');
+        doc.setTextColor(cardTextColor[0], cardTextColor[1], cardTextColor[2]);
+        doc.text(confidenceValue, marginX + 38, posY + 19.5);
+        
+        posY += 24;
+        posY += 8;
+        
+        // 6. Clinical Observations Journal
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(11, 26, 48);
+        doc.text("CLINICAL OBSERVATION JOURNAL & OBSERVATIONS", marginX, posY);
+        posY += 4;
+        
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.3);
+        doc.line(marginX, posY, marginX + contentWidth, posY);
+        posY += 6;
+        
+        // Draw Observation Notes box
+        doc.setFillColor(248, 250, 252);
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(marginX, posY, contentWidth, 65, 'FD');
+        
+        // Write Observations text (wrapped)
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9.5);
+        doc.setTextColor(15, 23, 42); // slate-900
+        
+        // Wrap text
+        const wrappedNotes = doc.splitTextToSize(notesText, contentWidth - 12);
+        doc.text(wrappedNotes, marginX + 6, posY + 8);
+        
+        posY += 65;
+        posY += 10;
+        
+        // 7. Clinical Sign-Off Block
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(11, 26, 48);
+        doc.text("AUTHORIZED SIGN-OFF", marginX, posY);
+        posY += 4;
+        
+        doc.line(marginX, posY, marginX + contentWidth, posY);
+        posY += 15;
+        
+        // Draw Sign lines
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(100, 116, 139); // slate-500
+        doc.text("Clinician/Radiologist Signature", marginX + 10, posY);
+        doc.line(marginX + 10, posY - 6, marginX + 60, posY - 6);
+        
+        doc.text("Archived Session Authorization Stamp", marginX + 100, posY);
+        doc.line(marginX + 100, posY - 6, marginX + 160, posY - 6);
+        
+        // Write active session stamp text
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(11, 26, 48);
+        doc.text(`STAMP: OSTSCAN-${caseId}`, marginX + 102, posY - 8);
+        
+        // 8. Footer Disclaimer
+        posY = 273;
+        doc.setDrawColor(241, 245, 249);
+        doc.line(marginX, posY, marginX + contentWidth, posY);
+        posY += 4;
+        
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(148, 163, 184); // slate-400
+        const disclaimerText = "Disclaimer: This diagnostic report represents deep neural decision-support telemetry. It is NOT a certified primary clinical diagnosis. All prediction outcomes and classification details must be professionally cross-validated and signed off by a licensed medical practitioner prior to oncology staging or clinical action.";
+        const wrappedDisclaimer = doc.splitTextToSize(disclaimerText, contentWidth);
+        doc.text(wrappedDisclaimer, marginX, posY, { align: 'left' });
+        
+        // 9. Save PDF
+        const safeName = patientId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        doc.save(`ostscan_report_${safeName}_${caseId}.pdf`);
+        
+        logToConsole(`Professional diagnostic report ostscan_report_${caseId}.pdf generated and downloaded successfully! 📥`, "emerald");
     }
 
     function setViewMode(mode) {
