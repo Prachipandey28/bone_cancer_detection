@@ -728,6 +728,44 @@
             background: rgba(0, 240, 255, 0.03);
         }
 
+        /* View Toggle Controls for Grad-CAM Heatmap */
+        .view-controls {
+            display: none;
+            align-items: center;
+            background: rgba(3, 7, 13, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 2px;
+            gap: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-family: var(--font-header);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .btn-toggle:hover {
+            color: #fff;
+        }
+
+        .btn-toggle.active {
+            background: var(--cyan);
+            color: #03070d;
+            box-shadow: 0 2px 8px rgba(0, 240, 255, 0.25);
+        }
+
         /* RIGHT PANEL: Live AI Diagnostics & Class Probability */
         .insights-card {
             transition: opacity 0.3s;
@@ -1156,8 +1194,12 @@
 
         <!-- COLUMN 2: Medical Viewer (Center) -->
         <div class="glass-card visualizer-card">
-            <div class="card-header">
+            <div class="card-header" style="justify-content: space-between; align-items: center; display: flex; flex-wrap: wrap; gap: 10px;">
                 <div class="card-title">Radiological Visualizer</div>
+                <div class="view-controls" id="viewControls">
+                    <button class="btn-toggle active" id="btnViewOriginal" onclick="setViewMode('original')">Original</button>
+                    <button class="btn-toggle" id="btnViewHeatmap" onclick="setViewMode('heatmap')">AI Heatmap</button>
+                </div>
                 <div class="card-subtitle">STEP 02</div>
             </div>
             
@@ -1167,9 +1209,6 @@
                 <div class="hud-corner tr"></div>
                 <div class="hud-corner bl"></div>
                 <div class="hud-corner br"></div>
-                <div class="hud-reticle" style="top: calc(50% - 30px); left: calc(50% - 30px);">
-                    <div class="hud-reticle-circle"></div>
-                </div>
 
                 <!-- Laser Scan Line -->
                 <div class="laser-sweep" id="laserScanner"></div>
@@ -1273,7 +1312,7 @@
                     <div class="notes-notebook">
                         <div class="notes-notebook-hdr">
                             <span>Clinical Observation Journal</span>
-                            <span style="font-size: 10px; color: var(--text-muted);">Self-Saving</span>
+                            <span id="saveStatusIndicator" style="font-size: 10px; color: var(--text-muted);">Self-Saving</span>
                         </div>
                         <textarea class="notebook-input" id="radiologistNotes" placeholder="Radiologist: Input clinical notes, observations, or case confirmation details here..."></textarea>
                     </div>
@@ -1400,6 +1439,8 @@
 <script>
     let currentCaseId = null;
     let activeScanHistory = [];
+    let currentOriginalUrl = '';
+    let currentHeatmapUrl = '';
 
     const systemStatusDot = document.getElementById('systemStatusDot');
     const systemStatusText = document.getElementById('systemStatusText');
@@ -1525,9 +1566,16 @@
         const fileReader = new FileReader();
         fileReader.onload = (e) => {
             previewImage.src = e.target.result;
+            previewImage.style.filter = 'brightness(1.05) contrast(1.1) grayscale(1)'; // Set greyscale clinical default
             previewImage.style.display = 'block';
             visualizerPlaceholder.style.display = 'none';
             laserScanner.classList.add('scanning');
+            
+            // Set original URL state
+            currentOriginalUrl = e.target.result;
+            currentHeatmapUrl = '';
+            // Hide view controls since we haven't predicted yet
+            document.getElementById('viewControls').style.display = 'none';
         };
         fileReader.readAsDataURL(file);
 
@@ -1559,6 +1607,11 @@
         resultsBlock.style.display = 'none';
         resultsEmptyState.style.display = 'flex';
         errorDisplay.style.display = 'none';
+
+        // Clear Grad-CAM states
+        currentOriginalUrl = '';
+        currentHeatmapUrl = '';
+        document.getElementById('viewControls').style.display = 'none';
 
         logToConsole("Radiograph staging cleared.", "cyan");
     }
@@ -1633,9 +1686,19 @@
             resetBtn.disabled = false;
 
             // Injected results display logic
+            currentOriginalUrl = data.image_url;
+            currentHeatmapUrl = data.heatmap_url;
             currentCaseId = data.case_id;
             renderClinicalResults(data, processLatencyMs);
             loadScanHistory(); // Auto-refresh case table logs!
+
+            if (currentHeatmapUrl) {
+                document.getElementById('viewControls').style.display = 'flex';
+                document.getElementById('btnViewOriginal').classList.add('active');
+                document.getElementById('btnViewHeatmap').classList.remove('active');
+            } else {
+                document.getElementById('viewControls').style.display = 'none';
+            }
 
         } catch (error) {
             loadingOverlay.classList.remove('active');
@@ -1720,35 +1783,62 @@
 
     // --- CASE HISTORY LOGIC ---
 
-    const saveJournalBtn = document.getElementById('saveJournalBtn');
-    if (saveJournalBtn) {
-        saveJournalBtn.addEventListener('click', async () => {
-            if (!currentCaseId) {
-                alert("No active diagnostic scan loaded to log observations. Please run a scan first.");
-                return;
+    const saveStatusIndicator = document.getElementById('saveStatusIndicator');
+    let saveTimeout = null;
+
+    async function saveClinicalNotes() {
+        if (!currentCaseId) return;
+        
+        const notesText = radiologistNotes.value;
+        if (saveStatusIndicator) {
+            saveStatusIndicator.textContent = "Saving... ⏳";
+            saveStatusIndicator.style.color = "var(--cyan)";
+        }
+
+        try {
+            const response = await fetch('/history/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    case_id: currentCaseId,
+                    notes: notesText
+                })
+            });
+            const data = await response.json();
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Failed to commit notes.");
             }
-            const notesText = radiologistNotes.value;
-            try {
-                logToConsole(`Signing observations for case ${currentCaseId}...`, "cyan");
-                const response = await fetch('/history/notes', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        case_id: currentCaseId,
-                        notes: notesText
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok || data.error) {
-                    throw new Error(data.error || "Failed to commit notes.");
-                }
-                logToConsole(`Observations successfully signed and committed for case ${currentCaseId}! ✅`, "emerald");
-                loadScanHistory(); // Reload history logs
-            } catch (err) {
-                logToConsole(`Failed to sign observations: ${err.message}`, "rose");
+            if (saveStatusIndicator) {
+                saveStatusIndicator.textContent = "Saved ✅";
+                saveStatusIndicator.style.color = "var(--emerald)";
             }
+            loadScanHistory(); // Reload history logs table to reflect updated notes
+        } catch (err) {
+            console.error("Self-saving observations failed:", err);
+            if (saveStatusIndicator) {
+                saveStatusIndicator.textContent = "Save failed ❌";
+                saveStatusIndicator.style.color = "var(--rose)";
+            }
+            logToConsole(`Failed to sign observations: ${err.message}`, "rose");
+        }
+    }
+
+    // Debounced and blur-triggered auto-saving
+    if (radiologistNotes) {
+        radiologistNotes.addEventListener('input', () => {
+            if (saveStatusIndicator) {
+                saveStatusIndicator.textContent = "Unsaved Changes... ✍️";
+                saveStatusIndicator.style.color = "var(--amber)";
+            }
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveClinicalNotes, 1000); // Debounce save by 1 second of inactivity
+        });
+
+        radiologistNotes.addEventListener('blur', () => {
+            clearTimeout(saveTimeout);
+            saveClinicalNotes(); // Immediately save when user leaves the observations notebook
         });
     }
 
@@ -1814,10 +1904,22 @@
         anatomicalSite.value = caseRecord.anatomical_site;
         
         // Setup preview radiograph
-        previewImage.src = caseRecord.image_url;
+        currentOriginalUrl = caseRecord.image_url;
+        currentHeatmapUrl = caseRecord.heatmap_url || '';
+        
+        previewImage.src = currentOriginalUrl;
+        previewImage.style.filter = 'brightness(1.05) contrast(1.1) grayscale(1)'; // Reset to clinical greyscale
         previewImage.style.display = 'block';
         visualizerPlaceholder.style.display = 'none';
         laserScanner.classList.add('scanning');
+        
+        if (currentHeatmapUrl) {
+            document.getElementById('viewControls').style.display = 'flex';
+            document.getElementById('btnViewOriginal').classList.add('active');
+            document.getElementById('btnViewHeatmap').classList.remove('active');
+        } else {
+            document.getElementById('viewControls').style.display = 'none';
+        }
         
         // Hide file info zone since we loaded from archive
         fileInfoDisplay.style.display = 'none';
@@ -1833,6 +1935,11 @@
         
         // Restore notebook notes specifically from record!
         radiologistNotes.value = caseRecord.notes || `Patient ${caseRecord.patient_name} (${caseRecord.patient_age}) radiological screening of ${caseRecord.anatomical_site} shows a deep neural diagnostic verdict of [${caseRecord.prediction.toUpperCase()}] at a confidence scale of ${caseRecord.confidence.toFixed(1)}%.\nObservations: `;
+        
+        if (saveStatusIndicator) {
+            saveStatusIndicator.textContent = "Saved ✅";
+            saveStatusIndicator.style.color = "var(--emerald)";
+        }
         
         resetBtn.disabled = false;
         analyzeBtn.disabled = false;
@@ -1903,6 +2010,32 @@ cross-validated by a licensed medical practitioner.
         logToConsole(`Diagnostic report ostscan_report_${caseId}.txt downloaded successfully! 📥`, "emerald");
     }
 
+    function setViewMode(mode) {
+        if (!currentOriginalUrl) return;
+        
+        const btnViewOriginal = document.getElementById('btnViewOriginal');
+        const btnViewHeatmap = document.getElementById('btnViewHeatmap');
+        
+        if (mode === 'original') {
+            previewImage.src = currentOriginalUrl;
+            previewImage.style.filter = 'brightness(1.05) contrast(1.1) grayscale(1)'; // Enforce clinical greyscale
+            btnViewOriginal.classList.add('active');
+            btnViewHeatmap.classList.remove('active');
+            logToConsole("Viewing original radiograph scan.", "cyan");
+        } else if (mode === 'heatmap') {
+            if (currentHeatmapUrl) {
+                previewImage.src = currentHeatmapUrl;
+                previewImage.style.filter = 'brightness(1.05) contrast(1.1)'; // Remove grayscale to show color heatmap!
+                btnViewOriginal.classList.remove('active');
+                btnViewHeatmap.classList.add('active');
+                logToConsole("Viewing AI deep neural Grad-CAM heatmap.", "cyan");
+            } else {
+                logToConsole("No deep neural heatmap available for this scan.", "rose");
+            }
+        }
+    }
+
+    window.setViewMode = setViewMode;
     window.downloadClinicalReport = downloadClinicalReport;
     window.loadScanHistory = loadScanHistory;
 

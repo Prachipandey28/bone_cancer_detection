@@ -66,6 +66,179 @@
                 },
                 "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779645861.jpeg",
                 "notes": ""
+            },
+            {
+                "case_id": "SCAN-47720",
+                "timestamp": "2026-05-25 00:05:20",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779647720.jpg",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            },
+            {
+                "case_id": "SCAN-86261",
+                "timestamp": "2026-05-25 10:47:41",
+                "patient_name": "PAT-1928-C",
+                "patient_age": "62 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779686261.jpeg",
+                "notes": "Patient PAT-1928-C (62 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-87033",
+                "timestamp": "2026-05-25 11:00:33",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687033.jpeg",
+                "notes": "Patient PAT-3712-Z (73 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 64.7%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-87378",
+                "timestamp": "2026-05-25 11:06:18",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687378.jpg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687378.png",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            },
+            {
+                "case_id": "SCAN-87387",
+                "timestamp": "2026-05-25 11:06:27",
+                "patient_name": "VERIFY-TEST-PATIENT",
+                "patient_age": "45 M",
+                "anatomical_site": "Distal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687387.jpg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687387.png",
+                "notes": ""
+            },
+            {
+                "case_id": "SCAN-87432",
+                "timestamp": "2026-05-25 11:07:12",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687432.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687432.png",
+                "notes": "Patient PAT-3712-Z (73 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-87557",
+                "timestamp": "2026-05-25 11:09:17",
+                "patient_name": "VERIFY-TEST-PATIENT",
+                "patient_age": "45 M",
+                "anatomical_site": "Distal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687557.jpg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687557.png",
+                "notes": ""
+            },
+            {
+                "case_id": "SCAN-87714",
+                "timestamp": "2026-05-25 11:11:55",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687714.jpg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687714.png",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            },
+            {
+                "case_id": "SCAN-87741",
+                "timestamp": "2026-05-25 11:12:21",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687741.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687741.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 64.7%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-87833",
+                "timestamp": "2026-05-25 11:13:53",
+                "patient_name": "PAT-9988-X",
+                "patient_age": "52 F",
+                "anatomical_site": "Pelvic Ring",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687833.jpg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687833.png",
+                "notes": "Pelvic cortical boundaries are intact. Normal joint density profiles mapped. Clear of tumor features."
+            },
+            {
+                "case_id": "SCAN-87865",
+                "timestamp": "2026-05-25 11:14:25",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687865.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687865.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 64.7%.\nObservations:"
             }
         ]
     },
@@ -123,6 +296,72 @@
                 },
                 "image_url": "/static/uploads/scan_pihupandey1528_gmail_com_1779645045.jpeg",
                 "notes": ""
+            }
+        ]
+    },
+    "palakpandey1528@gmail.com": {
+        "name": "palak",
+        "password": "palak15",
+        "history": [
+            {
+                "case_id": "SCAN-47759",
+                "timestamp": "2026-05-25 00:05:59",
+                "patient_name": "PAT-1928-C",
+                "patient_age": "62 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_palakpandey1528_gmail_com_1779647759.jpeg",
+                "notes": "Patient PAT-1928-C (62 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 64.7%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-47781",
+                "timestamp": "2026-05-25 00:06:22",
+                "patient_name": "PAT-1928-C",
+                "patient_age": "62 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 96.23,
+                "class_probabilities": {
+                    "cancer": 0.9623,
+                    "normal": 0.0377
+                },
+                "image_url": "/static/uploads/scan_palakpandey1528_gmail_com_1779647781.png",
+                "notes": "Patient PAT-1928-C (62 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 96.2%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-47840",
+                "timestamp": "2026-05-25 00:07:21",
+                "patient_name": "PAT-1928-C",
+                "patient_age": "62 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_palakpandey1528_gmail_com_1779647840.jpeg",
+                "notes": "Patient PAT-1928-C (62 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 64.7%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-47851",
+                "timestamp": "2026-05-25 00:07:31",
+                "patient_name": "PAT-1928-C",
+                "patient_age": "62 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_palakpandey1528_gmail_com_1779647851.jpeg",
+                "notes": "Patient PAT-1928-C (62 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:"
             }
         ]
     }
