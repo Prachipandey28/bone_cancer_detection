@@ -769,6 +769,11 @@
             box-shadow: 0 2px 8px rgba(0, 240, 255, 0.25);
         }
 
+        .btn-voice-repeat:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: scale(1.08);
+        }
+
         /* RIGHT PANEL: Live AI Diagnostics & Class Probability */
         .insights-card {
             transition: opacity 0.3s;
@@ -1247,8 +1252,12 @@
 
         <!-- COLUMN 3: Clinical AI Insights & Results -->
         <div class="glass-card insights-card" id="insightsPanel">
-            <div class="card-header">
+            <div class="card-header" style="justify-content: space-between; align-items: center; display: flex; flex-wrap: wrap; gap: 10px;">
                 <div class="card-title">Neural Diagnostic Insights</div>
+                <div class="view-controls" id="langControls" style="display: flex;">
+                    <button class="btn-toggle active" id="btnLangEN" onclick="setVoiceLanguage('en')">EN</button>
+                    <button class="btn-toggle" id="btnLangHI" onclick="setVoiceLanguage('hi')">HI</button>
+                </div>
                 <div class="card-subtitle">STEP 03</div>
             </div>
             <div class="card-body" style="gap: 16px;">
@@ -1269,12 +1278,17 @@
                 <div class="diagnostic-result" id="resultsBlock">
                     
                     <!-- Core diagnosis verdict banner -->
-                    <div class="verdict-banner" id="verdictBanner">
-                        <div class="verdict-icon-lg" id="verdictIcon">⚠️</div>
-                        <div class="verdict-details">
-                            <h3 id="verdictHeadline">MALIGNANT SIGNATURE DETECTED</h3>
-                            <p id="verdictSubText">Significant indicators of osteosarcoma/malignancy found.</p>
+                    <div class="verdict-banner" id="verdictBanner" style="position: relative; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                            <div class="verdict-icon-lg" id="verdictIcon">⚠️</div>
+                            <div class="verdict-details">
+                                <h3 id="verdictHeadline">MALIGNANT SIGNATURE DETECTED</h3>
+                                <p id="verdictSubText">Significant indicators of osteosarcoma/malignancy found.</p>
+                            </div>
                         </div>
+                        <button class="btn-voice-repeat" id="btnVoiceRepeat" onclick="repeatTelemetryVoice()" title="Repeat Voice Telemetry" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: inherit; cursor: pointer; transition: all 0.2s ease; outline: none; flex-shrink: 0;">
+                            🔊
+                        </button>
                     </div>
 
                     <!-- Neural confidence radial gauge and metrics -->
@@ -1444,6 +1458,9 @@
     let activeScanHistory = [];
     let currentOriginalUrl = '';
     let currentHeatmapUrl = '';
+    let lastSpokenTelemetryEN = '';
+    let lastSpokenTelemetryHI = '';
+    let voiceLanguage = 'en';
 
     const systemStatusDot = document.getElementById('systemStatusDot');
     const systemStatusText = document.getElementById('systemStatusText');
@@ -1718,7 +1735,41 @@
 
     // Reveal and render full results panel
     // Premium AI Voice Assistant using Web Speech API
-    function speakClinicalTelemetry(text) {
+    function setVoiceLanguage(lang) {
+        voiceLanguage = lang;
+        const btnEN = document.getElementById('btnLangEN');
+        const btnHI = document.getElementById('btnLangHI');
+        
+        if (lang === 'en') {
+            btnEN.classList.add('active');
+            btnHI.classList.remove('active');
+            logToConsole("Voice assistant language set to English.", "cyan");
+        } else if (lang === 'hi') {
+            btnEN.classList.remove('active');
+            btnHI.classList.add('active');
+            logToConsole("Voice assistant language set to Hindi (हिंदी).", "cyan");
+        }
+        
+        // Re-speak current announcement in new language immediately
+        if (lastSpokenTelemetryEN && lastSpokenTelemetryHI) {
+            repeatTelemetryVoice();
+        }
+    }
+    window.setVoiceLanguage = setVoiceLanguage;
+
+    function repeatTelemetryVoice() {
+        if (lastSpokenTelemetryEN && lastSpokenTelemetryHI) {
+            speakClinicalTelemetry(lastSpokenTelemetryEN, lastSpokenTelemetryHI);
+        } else {
+            logToConsole("No clinical voice telemetry queued to repeat.", "rose");
+        }
+    }
+    window.repeatTelemetryVoice = repeatTelemetryVoice;
+
+    function speakClinicalTelemetry(textEn, textHi) {
+        lastSpokenTelemetryEN = textEn;
+        lastSpokenTelemetryHI = textHi;
+        
         if (!('speechSynthesis' in window)) {
             console.warn("Speech synthesis not supported in this browser.");
             return;
@@ -1727,35 +1778,36 @@
         // Cancel any ongoing speech first
         window.speechSynthesis.cancel();
         
-        const utterance = new SpeechSynthesisUtterance(text);
+        const activeText = voiceLanguage === 'hi' ? textHi : textEn;
+        const utterance = new SpeechSynthesisUtterance(activeText);
         
-        // Try to find a premium, robotic/clinical sounding voice
         const voices = window.speechSynthesis.getVoices();
         let selectedVoice = null;
         
-        // Preferred en-US voices for high-quality clinical tone
-        const preferredVoices = [
-            "Google US English",
-            "Microsoft David",
-            "Samantha",
-            "Daniel",
-            "en-US"
-        ];
-        
-        for (const pref of preferredVoices) {
-            selectedVoice = voices.find(v => v.name.includes(pref) || v.lang.startsWith(pref));
-            if (selectedVoice) break;
+        if (voiceLanguage === 'hi') {
+            // Find a Hindi voice (lang starting with hi or name containing Hindi/Lekha)
+            selectedVoice = voices.find(v => v.lang.startsWith('hi') || v.name.toLowerCase().includes('hindi') || v.name.toLowerCase().includes('lekha'));
+            utterance.rate = 0.90; // Slower rate for Hindi clarity
+            utterance.pitch = 0.95;
+        } else {
+            // en-US voice
+            const preferredVoices = ["Google US English", "Microsoft David", "Samantha", "Daniel", "en-US"];
+            for (const pref of preferredVoices) {
+                selectedVoice = voices.find(v => v.name.includes(pref) || v.lang.startsWith(pref));
+                if (selectedVoice) break;
+            }
+            utterance.rate = 0.95;
+            utterance.pitch = 0.9;
         }
         
         if (selectedVoice) {
             utterance.voice = selectedVoice;
+            utterance.lang = selectedVoice.lang;
+        } else {
+            utterance.lang = voiceLanguage === 'hi' ? 'hi-IN' : 'en-US';
         }
         
-        // Set speech parameters for premium, calm AI feel
-        utterance.rate = 0.95; // Slightly slower, calm cadence
-        utterance.pitch = 0.9; // Slightly lower, professional clinical resonance
         utterance.volume = 1.0;
-        
         window.speechSynthesis.speak(utterance);
     }
 
@@ -1772,7 +1824,10 @@
             logToConsole(`AI Scan Completed. MALIGNANCY DETECTED (${data.confidence.toFixed(1)}% confidence). Alerting oncology channels. ⚠️`, "rose");
             
             // Speak Malignant telemetry
-            speakClinicalTelemetry("Neural diagnostics complete. Warning. Potential malignant pattern identified.");
+            speakClinicalTelemetry(
+                "Neural diagnostics complete. Warning. Potential malignant pattern identified.",
+                "न्यूरल जाँच पूरी हुई। चेतावनी। कैंसर के लक्षण पाए गए हैं।"
+            );
         } else {
             verdictBanner.className = 'verdict-banner normal';
             verdictIcon.textContent = '✅';
@@ -1781,7 +1836,10 @@
             logToConsole(`AI Scan Completed. RADIOGRAPH CLEARED. No signs of malignancy. ✅`, "emerald");
             
             // Speak Normal telemetry
-            speakClinicalTelemetry("Neural diagnostics complete. Uniform bone structure detected.");
+            speakClinicalTelemetry(
+                "Neural diagnostics complete. Uniform bone structure detected.",
+                "न्यूरल जाँच पूरी हुई। सामान्य हड्डी की संरचना पाई गई है।"
+            );
         }
 
         // Setup confidence metrics & circular indicators
