@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>OstScan AI — Case {{ record.case_id }} Workspace</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg-darker: #03070d;
+            --bg-dark: #070e17;
+            --bg-panel: rgba(13, 25, 41, 0.7);
+            --bg-panel-hover: rgba(18, 35, 58, 0.85);
+            --border-glow: rgba(0, 240, 255, 0.15);
+            --border-glow-active: rgba(0, 240, 255, 0.4);
+            
+            /* Accents */
+            --cyan: #00f0ff;
+            --cyan-dim: #00a8b5;
+            --emerald: #10b981;
+            --emerald-bg: rgba(16, 185, 129, 0.1);
+            --rose: #f43f5e;
+            --rose-bg: rgba(244, 63, 94, 0.1);
+            --amber: #f59e0b;
+            
+            /* Typography */
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-header: 'Space Grotesk', sans-serif;
+            --font-mono: 'Orbitron', monospace;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background-color: var(--bg-darker);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Tech Background Mesh & Scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.03) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(7, 14, 23, 1) 0%, rgba(3, 7, 13, 1) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dashboard-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header Navigation */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .brand-text h1 {
+            font-family: var(--font-header);
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .brand-text p {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        /* Language controls */
+        .view-controls {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2px;
+            gap: 2px;
+            display: flex;
+        }
+
+        .btn-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-family: var(--font-header);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-toggle.active {
+            background: var(--cyan);
+            color: #03070d;
+            box-shadow: 0 2px 8px rgba(0, 240, 255, 0.25);
+        }
+
+        /* Grid Workspace */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-family: var(--font-header);
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--cyan);
+            letter-spacing: 1px;
+        }
+
+        /* Image preview area */
+        .visualizer-viewport {
+            position: relative;
+            background: #000;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewport-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Radiograph display toggle controls */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            font-family: var(--font-header);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--cyan);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 240, 255, 0.08);
+            border-color: var(--cyan);
+        }
+
+        .btn-outline.active {
+            background: var(--cyan);
+            color: #03070d;
+            border-color: var(--cyan);
+        }
+
+        .btn-primary {
+            background: var(--cyan);
+            border: 1px solid var(--cyan);
+            color: #03070d;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Case metadata items */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            background: rgba(3, 7, 13, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Verdict styling */
+        .verdict-banner {
+            padding: 14px 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .verdict-banner.cancer {
+            background: var(--rose-bg);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            color: var(--rose);
+        }
+
+        .verdict-banner.normal {
+            background: var(--emerald-bg);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--emerald);
+        }
+
+        .verdict-headline {
+            font-family: var(--font-header);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .verdict-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Gemini Suggestions Box styling */
+        .gemini-segment {
+            background: rgba(3, 7, 13, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .gemini-sec-title {
+            font-family: var(--font-header);
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gemini-bullet {
+            position: relative;
+            padding-left: 14px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-top: 4px;
+        }
+
+        .gemini-bullet::before {
+            content: '▪';
+            position: absolute;
+            left: 2px;
+            top: -1px;
+            font-size: 12px;
+        }
+
+        .precaution::before { color: var(--amber); }
+        .recommendation::before { color: var(--emerald); }
+
+        .back-link {
+            font-family: var(--font-header);
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+            width: fit-content;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--cyan);
+            transform: translateX(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    
+    <!-- Top back link -->
+    <a href="/" class="back-link">↩ BACK TO MAIN DASHBOARD</a>
+
+    <header>
+        <div class="brand">
+            <div class="brand-logo">✨</div>
+            <div class="brand-text">
+                <h1>Gemini AI Clinical Workspace</h1>
+                <p>Case ID: {{ record.case_id }} • Comprehensive Medical Suggestions</p>
+            </div>
+        </div>
+        
+        <!-- Multi-lingual control toggle -->
+        <div class="view-controls">
+            <button class="btn-toggle active" id="btnLangEN" onclick="toggleLanguage('en')">EN</button>
+            <button class="btn-toggle" id="btnLangHI" onclick="toggleLanguage('hi')">हिंदी (HI)</button>
+        </div>
+    </header>
+
+    <div class="workspace-grid">
+        
+        <!-- Left Side: Visual Clinical Data -->
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">🔬 Radiological Radiograph</div>
+                <div class="card-subtitle">TELEMETRY VIEW</div>
+            </div>
+            
+            <div class="visualizer-viewport">
+                <!-- Main radiograph image -->
+                <img id="clinicalRadiograph" class="viewport-image" src="{{ record.image_url }}" alt="Radiology Scan" style="filter: grayscale(1) brightness(1.05) contrast(1.1);"/>
+            </div>
+            
+            <!-- View Mode Toggles (only if heatmap is present) -->
+            {% if record.heatmap_url %}
+            <div class="action-bar" style="justify-content: center;">
+                <button class="btn btn-outline active" id="btnOriginal" onclick="setView('original')">Original Scan</button>
+                <button class="btn btn-outline" id="btnHeatmap" onclick="setView('heatmap')">AI Grad-CAM Heatmap</button>
+            </div>
+            {% endif %}
+
+            <!-- Case Metadata & Patient Intake -->
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <span class="meta-label">Patient ID/Name</span>
+                    <span class="meta-value">{{ record.patient_name }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Age & Gender</span>
+                    <span class="meta-value">{{ record.patient_age }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Anatomical Site</span>
+                    <span class="meta-value">{{ record.anatomical_site }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Scan Timestamp</span>
+                    <span class="meta-value">{{ record.timestamp }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Gemini Clinical Insights suggestion box -->
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title" style="color: var(--cyan);">✨ Gemini AI Clinical Assistant</div>
+                <div class="card-subtitle" id="geminiModeText">ONLINE</div>
+            </div>
+
+            <!-- Staging classification status -->
+            {% set is_cancer = record.prediction.lower() == 'cancer' %}
+            <div class="verdict-banner {% if is_cancer %}cancer{% else %}normal{% endif %}">
+                <span style="font-size: 20px;">{% if is_cancer %}⚠️{% else %}✅{% endif %}</span>
+                <div class="verdict-details">
+                    <h4 class="verdict-headline">{% if is_cancer %}MALIGNANT PATTERN SIGNATURES DETECTED{% else %}UNIFORM BONE STRUCTURE CONFIRMED{% endif %}</h4>
+                    <p class="verdict-desc">{{ record.prediction.upper() }} classification verified at {{ record.confidence }}% confidence scale.</p>
+                </div>
+            </div>
+
+            <!-- Dynamic multilingual suggestions box container -->
+            <div class="gemini-segment">
+                
+                <!-- Observations Segment -->
+                <div class="seg-block">
+                    <h5 class="gemini-sec-title" style="color: var(--text-primary);">👁️ Medical Observations</h5>
+                    <p id="geminiObsText" style="font-size: 11px; padding-left: 6px; border-left: 2px solid var(--cyan); line-height: 1.4; color: var(--text-primary); margin-top: 6px;"></p>
+                </div>
+
+                <!-- Precautions Segment -->
+                <div class="seg-block" style="margin-top: 8px;">
+                    <h5 class="gemini-sec-title" style="color: var(--amber);">⚠️ Critical Precautions</h5>
+                    <ul id="geminiPrecList" style="list-style-type: none; padding-left: 4px; display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+                        <!-- Bullet items -->
+                    </ul>
+                </div>
+
+                <!-- Recommendations Segment -->
+                <div class="seg-block" style="margin-top: 8px;">
+                    <h5 class="gemini-sec-title" style="color: var(--emerald);">📋 Clinical Recommendations</h5>
+                    <ul id="geminiRecList" style="list-style-type: none; padding-left: 4px; display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+                        <!-- Bullet items -->
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Action buttons -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
+                <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Print Suggestions Workspace Worksheet
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Interactive Javascript for toggles, view changes, and live multi-lingual translation -->
+<script>
+    // Grab the stored insights directly rendered by Flask backend (safely serialized)
+    const rawInsights = {{ record.gemini_analysis | tojson | safe }};
+    let activeLanguage = 'en';
+
+    const clinicalRadiograph = document.getElementById('clinicalRadiograph');
+    const btnOriginal = document.getElementById('btnOriginal');
+    const btnHeatmap = document.getElementById('btnHeatmap');
+
+    const geminiObsText = document.getElementById('geminiObsText');
+    const geminiPrecList = document.getElementById('geminiPrecList');
+    const geminiRecList = document.getElementById('geminiRecList');
+    const geminiModeText = document.getElementById('geminiModeText');
+
+    // Radiograph view switcher
+    function setView(mode) {
+        if (mode === 'original') {
+            clinicalRadiograph.src = "{{ record.image_url }}";
+            clinicalRadiograph.style.filter = "grayscale(1) brightness(1.05) contrast(1.1)";
+            btnOriginal.classList.add('active');
+            btnHeatmap.classList.remove('active');
+        } else if (mode === 'heatmap') {
+            clinicalRadiograph.src = "{{ record.heatmap_url }}";
+            clinicalRadiograph.style.filter = "brightness(1.05) contrast(1.1)"; // Remove grayscale to show color heatmap
+            btnOriginal.classList.remove('active');
+            btnHeatmap.classList.add('active');
+        }
+    }
+
+    // Dynamic Hindi/English translation switcher
+    function renderMultilingualInsights() {
+        if (!rawInsights) {
+            geminiObsText.textContent = "Clinical suggestions data not available. Run new scan.";
+            return;
+        }
+
+        // Check if insights are nested (dual-language schema)
+        let dataBlock = rawInsights;
+        if (rawInsights.en && rawInsights.hi) {
+            dataBlock = activeLanguage === 'hi' ? rawInsights.hi : rawInsights.en;
+        }
+
+        geminiModeText.textContent = rawInsights.simulated ? "SIMULATION MODE" : "ONLINE STAGING ACTIVE";
+        geminiModeText.style.color = rawInsights.simulated ? "var(--amber)" : "var(--emerald)";
+
+        // Observations text
+        geminiObsText.textContent = dataBlock.observations;
+
+        // Precautions bullets
+        geminiPrecList.innerHTML = '';
+        dataBlock.precautions.forEach(prec => {
+            const li = document.createElement('li');
+            li.className = 'gemini-bullet precaution';
+            li.textContent = prec;
+            geminiPrecList.appendChild(li);
+        });
+
+        // Recommendations bullets
+        geminiRecList.innerHTML = '';
+        dataBlock.recommendations.forEach(rec => {
+            const li = document.createElement('li');
+            li.className = 'gemini-bullet recommendation';
+            li.textContent = rec;
+            geminiRecList.appendChild(li);
+        });
+    }
+
+    function toggleLanguage(lang) {
+        activeLanguage = lang;
+        const btnEN = document.getElementById('btnLangEN');
+        const btnHI = document.getElementById('btnLangHI');
+
+        if (lang === 'en') {
+            btnEN.classList.add('active');
+            btnHI.classList.remove('active');
+        } else {
+            btnEN.classList.remove('active');
+            btnHI.classList.add('active');
+        }
+
+        renderMultilingualInsights();
+    }
+
+    // Initialize layout
+    renderMultilingualInsights();
+</script>
+</body>
+</html>

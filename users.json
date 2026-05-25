@@ -8,21 +8,6 @@
         "password": "prachi15",
         "history": [
             {
-                "case_id": "SCAN-44954",
-                "timestamp": "2026-05-24 23:19:14",
-                "patient_name": "PAT-0092-K",
-                "patient_age": "28 M",
-                "anatomical_site": "Proximal Femur",
-                "prediction": "cancer",
-                "confidence": 64.69,
-                "class_probabilities": {
-                    "cancer": 0.6469,
-                    "normal": 0.3531
-                },
-                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779644954.jpeg",
-                "notes": ""
-            },
-            {
                 "case_id": "SCAN-45823",
                 "timestamp": "2026-05-24 23:33:44",
                 "patient_name": "PAT-9988-X",
@@ -127,7 +112,7 @@
                 },
                 "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779687387.jpg",
                 "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779687387.png",
-                "notes": ""
+                "notes": "Patient VERIFY-TEST-PATIENT (45 M) radiological screening of Distal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:"
             },
             {
                 "case_id": "SCAN-87432",
@@ -432,6 +417,444 @@
                 "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779689808.png",
                 "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779689808.png",
                 "notes": "Patient PAT-7362-F (51 F) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 96.2%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-89952",
+                "timestamp": "2026-05-25 11:49:12",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 96.23,
+                "class_probabilities": {
+                    "cancer": 0.9623,
+                    "normal": 0.0377
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779689952.png",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779689952.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 96.2%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-89974",
+                "timestamp": "2026-05-25 11:49:34",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 64.69,
+                "class_probabilities": {
+                    "cancer": 0.6469,
+                    "normal": 0.3531
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779689974.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779689974.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 64.7%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-89989",
+                "timestamp": "2026-05-25 11:49:49",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779689989.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779689989.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-90035",
+                "timestamp": "2026-05-25 11:50:35",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "normal",
+                "confidence": 100.0,
+                "class_probabilities": {
+                    "cancer": 0.0,
+                    "normal": 1.0
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779690035.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779690035.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [NORMAL] at a confidence scale of 100.0%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-90289",
+                "timestamp": "2026-05-25 11:54:50",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 96.23,
+                "class_probabilities": {
+                    "cancer": 0.9623,
+                    "normal": 0.0377
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779690289.png",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779690289.png",
+                "notes": "Patient PAT-3712-Z (73 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 96.2%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-90450",
+                "timestamp": "2026-05-25 11:57:31",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "normal",
+                "confidence": 100.0,
+                "class_probabilities": {
+                    "cancer": 0.0,
+                    "normal": 1.0
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779690450.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779690450.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [NORMAL] at a confidence scale of 100.0%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-95625",
+                "timestamp": "2026-05-25 13:23:46",
+                "patient_name": "PAT-4819-A",
+                "patient_age": "34 F",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779695625.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779695625.png",
+                "notes": "Patient PAT-4819-A (34 F) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:"
+            },
+            {
+                "case_id": "SCAN-95665",
+                "timestamp": "2026-05-25 13:24:26",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779695665.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779695665.png",
+                "notes": "Patient PAT-3712-Z (73 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:",
+                "gemini_analysis": {
+                    "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (73 M), immediate clinical and radiological correlation is indicated.",
+                    "precautions": [
+                        "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                        "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                        "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                        "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                    ],
+                    "recommendations": [
+                        "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                        "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                        "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                        "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                    ],
+                    "simulated": true
+                }
+            },
+            {
+                "case_id": "SCAN-95979",
+                "timestamp": "2026-05-25 13:29:39",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779695979.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779695979.png",
+                "notes": "Patient PAT-3712-Z (73 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:",
+                "gemini_analysis": {
+                    "en": {
+                        "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (73 M), immediate clinical and radiological correlation is indicated.",
+                        "precautions": [
+                            "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                            "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                            "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                            "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                        ],
+                        "recommendations": [
+                            "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                            "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                            "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                            "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                        ]
+                    },
+                    "hi": {
+                        "observations": "\u0921\u0940\u092a \u0928\u094d\u092f\u0942\u0930\u0932 \u0921\u093e\u092f\u0917\u094d\u0928\u094b\u0938\u094d\u091f\u093f\u0915 \u092a\u093e\u0907\u092a\u0932\u093e\u0907\u0928 \u0928\u0947 Proximal Femur \u092a\u0930 59.8% \u0935\u093f\u0936\u094d\u0935\u093e\u0938 \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0918\u093e\u0924\u0915 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0938\u094d\u0935\u0930\u0942\u092a (\u0915\u0948\u0902\u0938\u0930 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923) \u0915\u093e \u092a\u0924\u093e \u0932\u0917\u093e\u092f\u093e \u0939\u0948\u0964 \u0938\u094d\u0915\u0948\u0928 \u0915\u0949\u0930\u094d\u091f\u093f\u0915\u0932 \u0915\u094d\u0937\u0924\u093f \u0914\u0930 \u0911\u0938\u094d\u091f\u093f\u092f\u094b\u0932\u093e\u0907\u091f\u093f\u0915 \u0935\u093f\u0936\u0947\u0937\u0924\u093e\u0913\u0902 \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948 \u091c\u094b \u0909\u091a\u094d\u091a-\u0936\u094d\u0930\u0947\u0923\u0940 \u0915\u0947 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0918\u093e\u0935\u094b\u0902 \u0915\u0940 \u0935\u093f\u0936\u0947\u0937\u0924\u093e \u0939\u0948\u0902\u0964 \u0930\u094b\u0917\u0940 \u0915\u0947 \u091c\u0928\u0938\u093e\u0902\u0916\u094d\u092f\u093f\u0915\u0940\u092f (73 M) \u0915\u094b \u0926\u0947\u0916\u0924\u0947 \u0939\u0941\u090f, \u0924\u0924\u094d\u0915\u093e\u0932 \u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u0914\u0930 \u0930\u0947\u0921\u093f\u092f\u094b\u0932\u0949\u091c\u093f\u0915\u0932 \u0938\u0902\u092c\u0902\u0927 \u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u0915\u0930\u0928\u093e \u0938\u0902\u0915\u0947\u0924\u093f\u0924 \u0939\u0948\u0964",
+                        "precautions": [
+                            "\u0939\u0921\u094d\u0921\u0940 \u091f\u0942\u091f\u0928\u0947 \u0915\u093e \u0916\u0924\u0930\u093e (Pathological Fracture Risk): \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0905\u0902\u0917 \u092a\u0930 \u0935\u091c\u0928 \u0928 \u0921\u093e\u0932\u0947\u0902 \u0914\u0930 \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0906\u0935\u0936\u094d\u092f\u0915 \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0909\u092a\u0915\u0930\u0923 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0915\u0930\u0947\u0902\u0964",
+                            "\u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0915\u0940 \u092e\u093e\u0932\u093f\u0936 (Deep Tissue Massage) \u092f\u093e \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0947 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0916\u093f\u0902\u091a\u093e\u0935 \u0938\u0947 \u092c\u091a\u0947\u0902, \u0924\u093e\u0915\u093f \u0938\u0942\u0915\u094d\u0937\u094d\u092e-\u092b\u094d\u0930\u0948\u0915\u094d\u091a\u0930 \u0915\u0947 \u091c\u094b\u0916\u093f\u092e \u0915\u094b \u0915\u092e \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0947\u0964",
+                            "\u092e\u0930\u0940\u091c \u0915\u0940 \u0915\u0921\u093c\u0940 \u0928\u093f\u0917\u0930\u093e\u0928\u0940 \u0915\u0930\u0947\u0902: \u092c\u0941\u0916\u093e\u0930, \u0935\u091c\u0928 \u092e\u0947\u0902 \u0905\u091a\u093e\u0928\u0915 \u0915\u092e\u0940, \u092f\u093e \u0930\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0947 \u0924\u0947\u091c \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0926\u0930\u094d\u0926 \u091c\u0948\u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092a\u0930 \u0927\u094d\u092f\u093e\u0928 \u0926\u0947\u0902\u0964",
+                            "\u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u091c\u093e\u0901\u091a \u092a\u0942\u0930\u0940 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0940 \u092d\u093e\u0930\u0940 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0915\u0938\u0930\u0924 \u092f\u093e \u0909\u091a\u094d\u091a-\u092a\u094d\u0930\u092d\u093e\u0935 \u0935\u093e\u0932\u0940 \u0917\u0924\u093f\u0935\u093f\u0927\u093f\u092f\u094b\u0902 \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0947 \u092a\u094d\u0930\u0924\u093f\u092c\u0902\u0927\u093f\u0924 \u0915\u0930\u0947\u0902\u0964"
+                        ],
+                        "recommendations": [
+                            "\u0935\u093f\u0938\u094d\u0924\u0943\u0924 \u0928\u0930\u092e \u090a\u0924\u0915 \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f Proximal Femur \u0915\u093e \u0924\u0924\u094d\u0915\u093e\u0932 \u0939\u093e\u0908-\u0930\u093f\u091c\u093c\u0949\u0932\u094d\u092f\u0942\u0936\u0928 \u0915\u0902\u091f\u094d\u0930\u093e\u0938\u094d\u091f-\u090f\u0928\u094d\u0939\u093e\u0902\u0938\u094d\u0921 \u090f\u092e\u0906\u0930\u0906\u0908 (MRI) \u092f\u093e \u0938\u0940\u091f\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0935\u093e\u090f\u0902\u0964",
+                            "\u092c\u0939\u0941-\u0935\u093f\u0937\u092f\u0915 \u091f\u094d\u092f\u0942\u092e\u0930 \u092c\u094b\u0930\u094d\u0921 (MDT) \u0926\u094d\u0935\u093e\u0930\u093e \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 \u0911\u0930\u094d\u0925\u094b\u092a\u0947\u0921\u093f\u0915 \u0911\u0928\u094d\u0915\u094b\u0932\u0949\u091c\u093f\u0938\u094d\u091f (\u0939\u0921\u094d\u0921\u0940 \u0915\u0948\u0902\u0938\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e) \u0915\u0947 \u092a\u093e\u0938 \u0924\u0941\u0930\u0902\u0924 \u0930\u0947\u092b\u0930 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0907\u092e\u0947\u091c-\u0928\u093f\u0930\u094d\u0926\u0947\u0936\u093f\u0924 \u0928\u0947\u0935\u093f\u0917\u0947\u0936\u0928 \u0915\u0947 \u0924\u0939\u0924 \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0918\u093e\u0935 \u0915\u0940 \u0915\u094d\u0932\u0940\u0928\u093f\u0915\u0932 \u0915\u094b\u0930 \u0928\u0940\u0921\u0932 \u092c\u093e\u092f\u094b\u092a\u094d\u0938\u0940 (Biopsy) \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0938\u0940\u0930\u092e \u090f\u0932\u094d\u0915\u0932\u093e\u0907\u0928 \u092b\u0949\u0938\u094d\u092b\u0947\u091f (ALP) \u0914\u0930 \u0932\u0948\u0915\u094d\u091f\u0947\u091f \u0921\u093f\u0939\u093e\u0907\u0921\u094d\u0930\u094b\u091c\u0928\u0947\u091c (LDH) \u0938\u0939\u093f\u0924 \u0935\u094d\u092f\u093e\u092a\u0915 \u0930\u0915\u094d\u0924 \u091c\u093e\u0901\u091a \u0915\u0930\u0935\u093e\u090f\u0902\u0964"
+                        ]
+                    },
+                    "simulated": true
+                }
+            },
+            {
+                "case_id": "SCAN-96240",
+                "timestamp": "2026-05-25 13:34:00",
+                "patient_name": "PAT-4819-A",
+                "patient_age": "34 F",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779696240.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779696240.png",
+                "notes": "",
+                "gemini_analysis": {
+                    "en": {
+                        "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (34 F), immediate clinical and radiological correlation is indicated.",
+                        "precautions": [
+                            "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                            "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                            "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                            "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                        ],
+                        "recommendations": [
+                            "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                            "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                            "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                            "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                        ]
+                    },
+                    "hi": {
+                        "observations": "\u0921\u0940\u092a \u0928\u094d\u092f\u0942\u0930\u0932 \u0921\u093e\u092f\u0917\u094d\u0928\u094b\u0938\u094d\u091f\u093f\u0915 \u092a\u093e\u0907\u092a\u0932\u093e\u0907\u0928 \u0928\u0947 Proximal Femur \u092a\u0930 59.8% \u0935\u093f\u0936\u094d\u0935\u093e\u0938 \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0918\u093e\u0924\u0915 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0938\u094d\u0935\u0930\u0942\u092a (\u0915\u0948\u0902\u0938\u0930 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923) \u0915\u093e \u092a\u0924\u093e \u0932\u0917\u093e\u092f\u093e \u0939\u0948\u0964 \u0938\u094d\u0915\u0948\u0928 \u0915\u0949\u0930\u094d\u091f\u093f\u0915\u0932 \u0915\u094d\u0937\u0924\u093f \u0914\u0930 \u0911\u0938\u094d\u091f\u093f\u092f\u094b\u0932\u093e\u0907\u091f\u093f\u0915 \u0935\u093f\u0936\u0947\u0937\u0924\u093e\u0913\u0902 \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948 \u091c\u094b \u0909\u091a\u094d\u091a-\u0936\u094d\u0930\u0947\u0923\u0940 \u0915\u0947 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0918\u093e\u0935\u094b\u0902 \u0915\u0940 \u0935\u093f\u0936\u0947\u0937\u0924\u093e \u0939\u0948\u0902\u0964 \u0930\u094b\u0917\u0940 \u0915\u0947 \u091c\u0928\u0938\u093e\u0902\u0916\u094d\u092f\u093f\u0915\u0940\u092f (34 F) \u0915\u094b \u0926\u0947\u0916\u0924\u0947 \u0939\u0941\u090f, \u0924\u0924\u094d\u0915\u093e\u0932 \u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u0914\u0930 \u0930\u0947\u0921\u093f\u092f\u094b\u0932\u0949\u091c\u093f\u0915\u0932 \u0938\u0902\u092c\u0902\u0927 \u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u0915\u0930\u0928\u093e \u0938\u0902\u0915\u0947\u0924\u093f\u0924 \u0939\u0948\u0964",
+                        "precautions": [
+                            "\u0939\u0921\u094d\u0921\u0940 \u091f\u0942\u091f\u0928\u0947 \u0915\u093e \u0916\u0924\u0930\u093e (Pathological Fracture Risk): \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0905\u0902\u0917 \u092a\u0930 \u0935\u091c\u0928 \u0928 \u0921\u093e\u0932\u0947\u0902 \u0914\u0930 \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0906\u0935\u0936\u094d\u092f\u0915 \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0909\u092a\u0915\u0930\u0923 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0915\u0930\u0947\u0902\u0964",
+                            "\u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0915\u0940 \u092e\u093e\u0932\u093f\u0936 (Deep Tissue Massage) \u092f\u093e \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0947 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0916\u093f\u0902\u091a\u093e\u0935 \u0938\u0947 \u092c\u091a\u0947\u0902, \u0924\u093e\u0915\u093f \u0938\u0942\u0915\u094d\u0937\u094d\u092e-\u092b\u094d\u0930\u0948\u0915\u094d\u091a\u0930 \u0915\u0947 \u091c\u094b\u0916\u093f\u092e \u0915\u094b \u0915\u092e \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0947\u0964",
+                            "\u092e\u0930\u0940\u091c \u0915\u0940 \u0915\u0921\u093c\u0940 \u0928\u093f\u0917\u0930\u093e\u0928\u0940 \u0915\u0930\u0947\u0902: \u092c\u0941\u0916\u093e\u0930, \u0935\u091c\u0928 \u092e\u0947\u0902 \u0905\u091a\u093e\u0928\u0915 \u0915\u092e\u0940, \u092f\u093e \u0930\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0947 \u0924\u0947\u091c \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0926\u0930\u094d\u0926 \u091c\u0948\u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092a\u0930 \u0927\u094d\u092f\u093e\u0928 \u0926\u0947\u0902\u0964",
+                            "\u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u091c\u093e\u0901\u091a \u092a\u0942\u0930\u0940 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0940 \u092d\u093e\u0930\u0940 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0915\u0938\u0930\u0924 \u092f\u093e \u0909\u091a\u094d\u091a-\u092a\u094d\u0930\u092d\u093e\u0935 \u0935\u093e\u0932\u0940 \u0917\u0924\u093f\u0935\u093f\u0927\u093f\u092f\u094b\u0902 \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0947 \u092a\u094d\u0930\u0924\u093f\u092c\u0902\u0927\u093f\u0924 \u0915\u0930\u0947\u0902\u0964"
+                        ],
+                        "recommendations": [
+                            "\u0935\u093f\u0938\u094d\u0924\u0943\u0924 \u0928\u0930\u092e \u090a\u0924\u0915 \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f Proximal Femur \u0915\u093e \u0924\u0924\u094d\u0915\u093e\u0932 \u0939\u093e\u0908-\u0930\u093f\u091c\u093c\u0949\u0932\u094d\u092f\u0942\u0936\u0928 \u0915\u0902\u091f\u094d\u0930\u093e\u0938\u094d\u091f-\u090f\u0928\u094d\u0939\u093e\u0902\u0938\u094d\u0921 \u090f\u092e\u0906\u0930\u0906\u0908 (MRI) \u092f\u093e \u0938\u0940\u091f\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0935\u093e\u090f\u0902\u0964",
+                            "\u092c\u0939\u0941-\u0935\u093f\u0937\u092f\u0915 \u091f\u094d\u092f\u0942\u092e\u0930 \u092c\u094b\u0930\u094d\u0921 (MDT) \u0926\u094d\u0935\u093e\u0930\u093e \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 \u0911\u0930\u094d\u0925\u094b\u092a\u0947\u0921\u093f\u0915 \u0911\u0928\u094d\u0915\u094b\u0932\u0949\u091c\u093f\u0938\u094d\u091f (\u0939\u0921\u094d\u0921\u0940 \u0915\u0948\u0902\u0938\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e) \u0915\u0947 \u092a\u093e\u0938 \u0924\u0941\u0930\u0902\u0924 \u0930\u0947\u092b\u0930 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0907\u092e\u0947\u091c-\u0928\u093f\u0930\u094d\u0926\u0947\u0936\u093f\u0924 \u0928\u0947\u0935\u093f\u0917\u0947\u0936\u0928 \u0915\u0947 \u0924\u0939\u0924 \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0918\u093e\u0935 \u0915\u0940 \u0915\u094d\u0932\u0940\u0928\u093f\u0915\u0932 \u0915\u094b\u0930 \u0928\u0940\u0921\u0932 \u092c\u093e\u092f\u094b\u092a\u094d\u0938\u0940 (Biopsy) \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0938\u0940\u0930\u092e \u090f\u0932\u094d\u0915\u0932\u093e\u0907\u0928 \u092b\u0949\u0938\u094d\u092b\u0947\u091f (ALP) \u0914\u0930 \u0932\u0948\u0915\u094d\u091f\u0947\u091f \u0921\u093f\u0939\u093e\u0907\u0921\u094d\u0930\u094b\u091c\u0928\u0947\u091c (LDH) \u0938\u0939\u093f\u0924 \u0935\u094d\u092f\u093e\u092a\u0915 \u0930\u0915\u094d\u0924 \u091c\u093e\u0901\u091a \u0915\u0930\u0935\u093e\u090f\u0902\u0964"
+                        ]
+                    },
+                    "simulated": true
+                }
+            },
+            {
+                "case_id": "SCAN-96765",
+                "timestamp": "2026-05-25 13:42:45",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779696765.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779696765.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:",
+                "gemini_analysis": {
+                    "en": {
+                        "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (28 M), immediate clinical and radiological correlation is indicated.",
+                        "precautions": [
+                            "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                            "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                            "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                            "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                        ],
+                        "recommendations": [
+                            "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                            "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                            "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                            "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                        ]
+                    },
+                    "hi": {
+                        "observations": "\u0921\u0940\u092a \u0928\u094d\u092f\u0942\u0930\u0932 \u0921\u093e\u092f\u0917\u094d\u0928\u094b\u0938\u094d\u091f\u093f\u0915 \u092a\u093e\u0907\u092a\u0932\u093e\u0907\u0928 \u0928\u0947 Proximal Femur \u092a\u0930 59.8% \u0935\u093f\u0936\u094d\u0935\u093e\u0938 \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0918\u093e\u0924\u0915 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0938\u094d\u0935\u0930\u0942\u092a (\u0915\u0948\u0902\u0938\u0930 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923) \u0915\u093e \u092a\u0924\u093e \u0932\u0917\u093e\u092f\u093e \u0939\u0948\u0964 \u0938\u094d\u0915\u0948\u0928 \u0915\u0949\u0930\u094d\u091f\u093f\u0915\u0932 \u0915\u094d\u0937\u0924\u093f \u0914\u0930 \u0911\u0938\u094d\u091f\u093f\u092f\u094b\u0932\u093e\u0907\u091f\u093f\u0915 \u0935\u093f\u0936\u0947\u0937\u0924\u093e\u0913\u0902 \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948 \u091c\u094b \u0909\u091a\u094d\u091a-\u0936\u094d\u0930\u0947\u0923\u0940 \u0915\u0947 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0918\u093e\u0935\u094b\u0902 \u0915\u0940 \u0935\u093f\u0936\u0947\u0937\u0924\u093e \u0939\u0948\u0902\u0964 \u0930\u094b\u0917\u0940 \u0915\u0947 \u091c\u0928\u0938\u093e\u0902\u0916\u094d\u092f\u093f\u0915\u0940\u092f (28 M) \u0915\u094b \u0926\u0947\u0916\u0924\u0947 \u0939\u0941\u090f, \u0924\u0924\u094d\u0915\u093e\u0932 \u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u0914\u0930 \u0930\u0947\u0921\u093f\u092f\u094b\u0932\u0949\u091c\u093f\u0915\u0932 \u0938\u0902\u092c\u0902\u0927 \u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u0915\u0930\u0928\u093e \u0938\u0902\u0915\u0947\u0924\u093f\u0924 \u0939\u0948\u0964",
+                        "precautions": [
+                            "\u0939\u0921\u094d\u0921\u0940 \u091f\u0942\u091f\u0928\u0947 \u0915\u093e \u0916\u0924\u0930\u093e (Pathological Fracture Risk): \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0905\u0902\u0917 \u092a\u0930 \u0935\u091c\u0928 \u0928 \u0921\u093e\u0932\u0947\u0902 \u0914\u0930 \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0906\u0935\u0936\u094d\u092f\u0915 \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0909\u092a\u0915\u0930\u0923 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0915\u0930\u0947\u0902\u0964",
+                            "\u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0915\u0940 \u092e\u093e\u0932\u093f\u0936 (Deep Tissue Massage) \u092f\u093e \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0947 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0916\u093f\u0902\u091a\u093e\u0935 \u0938\u0947 \u092c\u091a\u0947\u0902, \u0924\u093e\u0915\u093f \u0938\u0942\u0915\u094d\u0937\u094d\u092e-\u092b\u094d\u0930\u0948\u0915\u094d\u091a\u0930 \u0915\u0947 \u091c\u094b\u0916\u093f\u092e \u0915\u094b \u0915\u092e \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0947\u0964",
+                            "\u092e\u0930\u0940\u091c \u0915\u0940 \u0915\u0921\u093c\u0940 \u0928\u093f\u0917\u0930\u093e\u0928\u0940 \u0915\u0930\u0947\u0902: \u092c\u0941\u0916\u093e\u0930, \u0935\u091c\u0928 \u092e\u0947\u0902 \u0905\u091a\u093e\u0928\u0915 \u0915\u092e\u0940, \u092f\u093e \u0930\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0947 \u0924\u0947\u091c \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0926\u0930\u094d\u0926 \u091c\u0948\u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092a\u0930 \u0927\u094d\u092f\u093e\u0928 \u0926\u0947\u0902\u0964",
+                            "\u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u091c\u093e\u0901\u091a \u092a\u0942\u0930\u0940 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0940 \u092d\u093e\u0930\u0940 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0915\u0938\u0930\u0924 \u092f\u093e \u0909\u091a\u094d\u091a-\u092a\u094d\u0930\u092d\u093e\u0935 \u0935\u093e\u0932\u0940 \u0917\u0924\u093f\u0935\u093f\u0927\u093f\u092f\u094b\u0902 \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0947 \u092a\u094d\u0930\u0924\u093f\u092c\u0902\u0927\u093f\u0924 \u0915\u0930\u0947\u0902\u0964"
+                        ],
+                        "recommendations": [
+                            "\u0935\u093f\u0938\u094d\u0924\u0943\u0924 \u0928\u0930\u092e \u090a\u0924\u0915 \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f Proximal Femur \u0915\u093e \u0924\u0924\u094d\u0915\u093e\u0932 \u0939\u093e\u0908-\u0930\u093f\u091c\u093c\u0949\u0932\u094d\u092f\u0942\u0936\u0928 \u0915\u0902\u091f\u094d\u0930\u093e\u0938\u094d\u091f-\u090f\u0928\u094d\u0939\u093e\u0902\u0938\u094d\u0921 \u090f\u092e\u0906\u0930\u0906\u0908 (MRI) \u092f\u093e \u0938\u0940\u091f\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0935\u093e\u090f\u0902\u0964",
+                            "\u092c\u0939\u0941-\u0935\u093f\u0937\u092f\u0915 \u091f\u094d\u092f\u0942\u092e\u0930 \u092c\u094b\u0930\u094d\u0921 (MDT) \u0926\u094d\u0935\u093e\u0930\u093e \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 \u0911\u0930\u094d\u0925\u094b\u092a\u0947\u0921\u093f\u0915 \u0911\u0928\u094d\u0915\u094b\u0932\u0949\u091c\u093f\u0938\u094d\u091f (\u0939\u0921\u094d\u0921\u0940 \u0915\u0948\u0902\u0938\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e) \u0915\u0947 \u092a\u093e\u0938 \u0924\u0941\u0930\u0902\u0924 \u0930\u0947\u092b\u0930 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0907\u092e\u0947\u091c-\u0928\u093f\u0930\u094d\u0926\u0947\u0936\u093f\u0924 \u0928\u0947\u0935\u093f\u0917\u0947\u0936\u0928 \u0915\u0947 \u0924\u0939\u0924 \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0918\u093e\u0935 \u0915\u0940 \u0915\u094d\u0932\u0940\u0928\u093f\u0915\u0932 \u0915\u094b\u0930 \u0928\u0940\u0921\u0932 \u092c\u093e\u092f\u094b\u092a\u094d\u0938\u0940 (Biopsy) \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0938\u0940\u0930\u092e \u090f\u0932\u094d\u0915\u0932\u093e\u0907\u0928 \u092b\u0949\u0938\u094d\u092b\u0947\u091f (ALP) \u0914\u0930 \u0932\u0948\u0915\u094d\u091f\u0947\u091f \u0921\u093f\u0939\u093e\u0907\u0921\u094d\u0930\u094b\u091c\u0928\u0947\u091c (LDH) \u0938\u0939\u093f\u0924 \u0935\u094d\u092f\u093e\u092a\u0915 \u0930\u0915\u094d\u0924 \u091c\u093e\u0901\u091a \u0915\u0930\u0935\u093e\u090f\u0902\u0964"
+                        ]
+                    },
+                    "simulated": true
+                }
+            },
+            {
+                "case_id": "SCAN-97123",
+                "timestamp": "2026-05-25 13:48:43",
+                "patient_name": "PAT-3712-Z",
+                "patient_age": "73 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779697123.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779697123.png",
+                "notes": "Patient PAT-3712-Z (73 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:",
+                "gemini_analysis": {
+                    "en": {
+                        "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (73 M), immediate clinical and radiological correlation is indicated.",
+                        "precautions": [
+                            "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                            "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                            "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                            "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                        ],
+                        "recommendations": [
+                            "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                            "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                            "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                            "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                        ]
+                    },
+                    "hi": {
+                        "observations": "\u0921\u0940\u092a \u0928\u094d\u092f\u0942\u0930\u0932 \u0921\u093e\u092f\u0917\u094d\u0928\u094b\u0938\u094d\u091f\u093f\u0915 \u092a\u093e\u0907\u092a\u0932\u093e\u0907\u0928 \u0928\u0947 Proximal Femur \u092a\u0930 59.8% \u0935\u093f\u0936\u094d\u0935\u093e\u0938 \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0918\u093e\u0924\u0915 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0938\u094d\u0935\u0930\u0942\u092a (\u0915\u0948\u0902\u0938\u0930 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923) \u0915\u093e \u092a\u0924\u093e \u0932\u0917\u093e\u092f\u093e \u0939\u0948\u0964 \u0938\u094d\u0915\u0948\u0928 \u0915\u0949\u0930\u094d\u091f\u093f\u0915\u0932 \u0915\u094d\u0937\u0924\u093f \u0914\u0930 \u0911\u0938\u094d\u091f\u093f\u092f\u094b\u0932\u093e\u0907\u091f\u093f\u0915 \u0935\u093f\u0936\u0947\u0937\u0924\u093e\u0913\u0902 \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948 \u091c\u094b \u0909\u091a\u094d\u091a-\u0936\u094d\u0930\u0947\u0923\u0940 \u0915\u0947 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0918\u093e\u0935\u094b\u0902 \u0915\u0940 \u0935\u093f\u0936\u0947\u0937\u0924\u093e \u0939\u0948\u0902\u0964 \u0930\u094b\u0917\u0940 \u0915\u0947 \u091c\u0928\u0938\u093e\u0902\u0916\u094d\u092f\u093f\u0915\u0940\u092f (73 M) \u0915\u094b \u0926\u0947\u0916\u0924\u0947 \u0939\u0941\u090f, \u0924\u0924\u094d\u0915\u093e\u0932 \u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u0914\u0930 \u0930\u0947\u0921\u093f\u092f\u094b\u0932\u0949\u091c\u093f\u0915\u0932 \u0938\u0902\u092c\u0902\u0927 \u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u0915\u0930\u0928\u093e \u0938\u0902\u0915\u0947\u0924\u093f\u0924 \u0939\u0948\u0964",
+                        "precautions": [
+                            "\u0939\u0921\u094d\u0921\u0940 \u091f\u0942\u091f\u0928\u0947 \u0915\u093e \u0916\u0924\u0930\u093e (Pathological Fracture Risk): \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0905\u0902\u0917 \u092a\u0930 \u0935\u091c\u0928 \u0928 \u0921\u093e\u0932\u0947\u0902 \u0914\u0930 \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0906\u0935\u0936\u094d\u092f\u0915 \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0909\u092a\u0915\u0930\u0923 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0915\u0930\u0947\u0902\u0964",
+                            "\u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0915\u0940 \u092e\u093e\u0932\u093f\u0936 (Deep Tissue Massage) \u092f\u093e \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0947 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0916\u093f\u0902\u091a\u093e\u0935 \u0938\u0947 \u092c\u091a\u0947\u0902, \u0924\u093e\u0915\u093f \u0938\u0942\u0915\u094d\u0937\u094d\u092e-\u092b\u094d\u0930\u0948\u0915\u094d\u091a\u0930 \u0915\u0947 \u091c\u094b\u0916\u093f\u092e \u0915\u094b \u0915\u092e \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0947\u0964",
+                            "\u092e\u0930\u0940\u091c \u0915\u0940 \u0915\u0921\u093c\u0940 \u0928\u093f\u0917\u0930\u093e\u0928\u0940 \u0915\u0930\u0947\u0902: \u092c\u0941\u0916\u093e\u0930, \u0935\u091c\u0928 \u092e\u0947\u0902 \u0905\u091a\u093e\u0928\u0915 \u0915\u092e\u0940, \u092f\u093e \u0930\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0947 \u0924\u0947\u091c \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0926\u0930\u094d\u0926 \u091c\u0948\u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092a\u0930 \u0927\u094d\u092f\u093e\u0928 \u0926\u0947\u0902\u0964",
+                            "\u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u091c\u093e\u0901\u091a \u092a\u0942\u0930\u0940 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0940 \u092d\u093e\u0930\u0940 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0915\u0938\u0930\u0924 \u092f\u093e \u0909\u091a\u094d\u091a-\u092a\u094d\u0930\u092d\u093e\u0935 \u0935\u093e\u0932\u0940 \u0917\u0924\u093f\u0935\u093f\u0927\u093f\u092f\u094b\u0902 \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0947 \u092a\u094d\u0930\u0924\u093f\u092c\u0902\u0927\u093f\u0924 \u0915\u0930\u0947\u0902\u0964"
+                        ],
+                        "recommendations": [
+                            "\u0935\u093f\u0938\u094d\u0924\u0943\u0924 \u0928\u0930\u092e \u090a\u0924\u0915 \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f Proximal Femur \u0915\u093e \u0924\u0924\u094d\u0915\u093e\u0932 \u0939\u093e\u0908-\u0930\u093f\u091c\u093c\u0949\u0932\u094d\u092f\u0942\u0936\u0928 \u0915\u0902\u091f\u094d\u0930\u093e\u0938\u094d\u091f-\u090f\u0928\u094d\u0939\u093e\u0902\u0938\u094d\u0921 \u090f\u092e\u0906\u0930\u0906\u0908 (MRI) \u092f\u093e \u0938\u0940\u091f\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0935\u093e\u090f\u0902\u0964",
+                            "\u092c\u0939\u0941-\u0935\u093f\u0937\u092f\u0915 \u091f\u094d\u092f\u0942\u092e\u0930 \u092c\u094b\u0930\u094d\u0921 (MDT) \u0926\u094d\u0935\u093e\u0930\u093e \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 \u0911\u0930\u094d\u0925\u094b\u092a\u0947\u0921\u093f\u0915 \u0911\u0928\u094d\u0915\u094b\u0932\u0949\u091c\u093f\u0938\u094d\u091f (\u0939\u0921\u094d\u0921\u0940 \u0915\u0948\u0902\u0938\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e) \u0915\u0947 \u092a\u093e\u0938 \u0924\u0941\u0930\u0902\u0924 \u0930\u0947\u092b\u0930 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0907\u092e\u0947\u091c-\u0928\u093f\u0930\u094d\u0926\u0947\u0936\u093f\u0924 \u0928\u0947\u0935\u093f\u0917\u0947\u0936\u0928 \u0915\u0947 \u0924\u0939\u0924 \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0918\u093e\u0935 \u0915\u0940 \u0915\u094d\u0932\u0940\u0928\u093f\u0915\u0932 \u0915\u094b\u0930 \u0928\u0940\u0921\u0932 \u092c\u093e\u092f\u094b\u092a\u094d\u0938\u0940 (Biopsy) \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0938\u0940\u0930\u092e \u090f\u0932\u094d\u0915\u0932\u093e\u0907\u0928 \u092b\u0949\u0938\u094d\u092b\u0947\u091f (ALP) \u0914\u0930 \u0932\u0948\u0915\u094d\u091f\u0947\u091f \u0921\u093f\u0939\u093e\u0907\u0921\u094d\u0930\u094b\u091c\u0928\u0947\u091c (LDH) \u0938\u0939\u093f\u0924 \u0935\u094d\u092f\u093e\u092a\u0915 \u0930\u0915\u094d\u0924 \u091c\u093e\u0901\u091a \u0915\u0930\u0935\u093e\u090f\u0902\u0964"
+                        ]
+                    },
+                    "simulated": true
+                }
+            },
+            {
+                "case_id": "SCAN-97437",
+                "timestamp": "2026-05-25 13:53:57",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779697437.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779697437.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:",
+                "gemini_analysis": {
+                    "en": {
+                        "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (28 M), immediate clinical and radiological correlation is indicated.",
+                        "precautions": [
+                            "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                            "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                            "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                            "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                        ],
+                        "recommendations": [
+                            "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                            "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                            "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                            "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                        ]
+                    },
+                    "hi": {
+                        "observations": "\u0921\u0940\u092a \u0928\u094d\u092f\u0942\u0930\u0932 \u0921\u093e\u092f\u0917\u094d\u0928\u094b\u0938\u094d\u091f\u093f\u0915 \u092a\u093e\u0907\u092a\u0932\u093e\u0907\u0928 \u0928\u0947 Proximal Femur \u092a\u0930 59.8% \u0935\u093f\u0936\u094d\u0935\u093e\u0938 \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0918\u093e\u0924\u0915 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0938\u094d\u0935\u0930\u0942\u092a (\u0915\u0948\u0902\u0938\u0930 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923) \u0915\u093e \u092a\u0924\u093e \u0932\u0917\u093e\u092f\u093e \u0939\u0948\u0964 \u0938\u094d\u0915\u0948\u0928 \u0915\u0949\u0930\u094d\u091f\u093f\u0915\u0932 \u0915\u094d\u0937\u0924\u093f \u0914\u0930 \u0911\u0938\u094d\u091f\u093f\u092f\u094b\u0932\u093e\u0907\u091f\u093f\u0915 \u0935\u093f\u0936\u0947\u0937\u0924\u093e\u0913\u0902 \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948 \u091c\u094b \u0909\u091a\u094d\u091a-\u0936\u094d\u0930\u0947\u0923\u0940 \u0915\u0947 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0918\u093e\u0935\u094b\u0902 \u0915\u0940 \u0935\u093f\u0936\u0947\u0937\u0924\u093e \u0939\u0948\u0902\u0964 \u0930\u094b\u0917\u0940 \u0915\u0947 \u091c\u0928\u0938\u093e\u0902\u0916\u094d\u092f\u093f\u0915\u0940\u092f (28 M) \u0915\u094b \u0926\u0947\u0916\u0924\u0947 \u0939\u0941\u090f, \u0924\u0924\u094d\u0915\u093e\u0932 \u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u0914\u0930 \u0930\u0947\u0921\u093f\u092f\u094b\u0932\u0949\u091c\u093f\u0915\u0932 \u0938\u0902\u092c\u0902\u0927 \u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u0915\u0930\u0928\u093e \u0938\u0902\u0915\u0947\u0924\u093f\u0924 \u0939\u0948\u0964",
+                        "precautions": [
+                            "\u0939\u0921\u094d\u0921\u0940 \u091f\u0942\u091f\u0928\u0947 \u0915\u093e \u0916\u0924\u0930\u093e (Pathological Fracture Risk): \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0905\u0902\u0917 \u092a\u0930 \u0935\u091c\u0928 \u0928 \u0921\u093e\u0932\u0947\u0902 \u0914\u0930 \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0906\u0935\u0936\u094d\u092f\u0915 \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0909\u092a\u0915\u0930\u0923 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0915\u0930\u0947\u0902\u0964",
+                            "\u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0915\u0940 \u092e\u093e\u0932\u093f\u0936 (Deep Tissue Massage) \u092f\u093e \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0947 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0916\u093f\u0902\u091a\u093e\u0935 \u0938\u0947 \u092c\u091a\u0947\u0902, \u0924\u093e\u0915\u093f \u0938\u0942\u0915\u094d\u0937\u094d\u092e-\u092b\u094d\u0930\u0948\u0915\u094d\u091a\u0930 \u0915\u0947 \u091c\u094b\u0916\u093f\u092e \u0915\u094b \u0915\u092e \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0947\u0964",
+                            "\u092e\u0930\u0940\u091c \u0915\u0940 \u0915\u0921\u093c\u0940 \u0928\u093f\u0917\u0930\u093e\u0928\u0940 \u0915\u0930\u0947\u0902: \u092c\u0941\u0916\u093e\u0930, \u0935\u091c\u0928 \u092e\u0947\u0902 \u0905\u091a\u093e\u0928\u0915 \u0915\u092e\u0940, \u092f\u093e \u0930\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0947 \u0924\u0947\u091c \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0926\u0930\u094d\u0926 \u091c\u0948\u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092a\u0930 \u0927\u094d\u092f\u093e\u0928 \u0926\u0947\u0902\u0964",
+                            "\u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u091c\u093e\u0901\u091a \u092a\u0942\u0930\u0940 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0940 \u092d\u093e\u0930\u0940 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0915\u0938\u0930\u0924 \u092f\u093e \u0909\u091a\u094d\u091a-\u092a\u094d\u0930\u092d\u093e\u0935 \u0935\u093e\u0932\u0940 \u0917\u0924\u093f\u0935\u093f\u0927\u093f\u092f\u094b\u0902 \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0947 \u092a\u094d\u0930\u0924\u093f\u092c\u0902\u0927\u093f\u0924 \u0915\u0930\u0947\u0902\u0964"
+                        ],
+                        "recommendations": [
+                            "\u0935\u093f\u0938\u094d\u0924\u0943\u0924 \u0928\u0930\u092e \u090a\u0924\u0915 \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f Proximal Femur \u0915\u093e \u0924\u0924\u094d\u0915\u093e\u0932 \u0939\u093e\u0908-\u0930\u093f\u091c\u093c\u0949\u0932\u094d\u092f\u0942\u0936\u0928 \u0915\u0902\u091f\u094d\u0930\u093e\u0938\u094d\u091f-\u090f\u0928\u094d\u0939\u093e\u0902\u0938\u094d\u0921 \u090f\u092e\u0906\u0930\u0906\u0908 (MRI) \u092f\u093e \u0938\u0940\u091f\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0935\u093e\u090f\u0902\u0964",
+                            "\u092c\u0939\u0941-\u0935\u093f\u0937\u092f\u0915 \u091f\u094d\u092f\u0942\u092e\u0930 \u092c\u094b\u0930\u094d\u0921 (MDT) \u0926\u094d\u0935\u093e\u0930\u093e \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 \u0911\u0930\u094d\u0925\u094b\u092a\u0947\u0921\u093f\u0915 \u0911\u0928\u094d\u0915\u094b\u0932\u0949\u091c\u093f\u0938\u094d\u091f (\u0939\u0921\u094d\u0921\u0940 \u0915\u0948\u0902\u0938\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e) \u0915\u0947 \u092a\u093e\u0938 \u0924\u0941\u0930\u0902\u0924 \u0930\u0947\u092b\u0930 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0907\u092e\u0947\u091c-\u0928\u093f\u0930\u094d\u0926\u0947\u0936\u093f\u0924 \u0928\u0947\u0935\u093f\u0917\u0947\u0936\u0928 \u0915\u0947 \u0924\u0939\u0924 \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0918\u093e\u0935 \u0915\u0940 \u0915\u094d\u0932\u0940\u0928\u093f\u0915\u0932 \u0915\u094b\u0930 \u0928\u0940\u0921\u0932 \u092c\u093e\u092f\u094b\u092a\u094d\u0938\u0940 (Biopsy) \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0938\u0940\u0930\u092e \u090f\u0932\u094d\u0915\u0932\u093e\u0907\u0928 \u092b\u0949\u0938\u094d\u092b\u0947\u091f (ALP) \u0914\u0930 \u0932\u0948\u0915\u094d\u091f\u0947\u091f \u0921\u093f\u0939\u093e\u0907\u0921\u094d\u0930\u094b\u091c\u0928\u0947\u091c (LDH) \u0938\u0939\u093f\u0924 \u0935\u094d\u092f\u093e\u092a\u0915 \u0930\u0915\u094d\u0924 \u091c\u093e\u0901\u091a \u0915\u0930\u0935\u093e\u090f\u0902\u0964"
+                        ]
+                    },
+                    "simulated": true
+                }
+            },
+            {
+                "case_id": "SCAN-97547",
+                "timestamp": "2026-05-25 13:55:47",
+                "patient_name": "PAT-0092-K",
+                "patient_age": "28 M",
+                "anatomical_site": "Proximal Femur",
+                "prediction": "cancer",
+                "confidence": 59.83,
+                "class_probabilities": {
+                    "cancer": 0.5983,
+                    "normal": 0.4017
+                },
+                "image_url": "/static/uploads/scan_prachipandey1528_gmail_com_1779697547.jpeg",
+                "heatmap_url": "/static/uploads/gradcam_prachipandey1528_gmail_com_1779697547.png",
+                "notes": "Patient PAT-0092-K (28 M) radiological screening of Proximal Femur shows a deep neural diagnostic verdict of [CANCER] at a confidence scale of 59.8%.\nObservations:",
+                "gemini_analysis": {
+                    "en": {
+                        "observations": "The deep neural diagnostic pipeline detected a localized malignant bone pattern at the Proximal Femur with 59.8% confidence. The scan indicates cortical thinning and potentially osteolytic signatures characteristic of high-grade bone lesions. Given the patient's demographic (28 M), immediate clinical and radiological correlation is indicated.",
+                        "precautions": [
+                            "Pathological Fracture Risk: Enforce strict non-weight-bearing or protective support protocols on the affected limb.",
+                            "Avoid physical manipulation or deep tissue massage of the local area to minimize micro-fracture risks.",
+                            "Monitor patient closely for systemic symptoms including low-grade fever, unexplained weight loss, or persistent nocturnal bone pain.",
+                            "Restrict strenuous physical exercises or impact activities until clinical staging is finalized."
+                        ],
+                        "recommendations": [
+                            "Order an urgent High-Resolution Contrast-Enhanced MRI or CT scan of the Proximal Femur for detailed soft-tissue staging.",
+                            "Secure a referral to a certified Orthopedic Oncologist for multidisciplinary tumor board (MDT) staging.",
+                            "Schedule a clinical core needle biopsy of the identified lesion under image-guided navigation.",
+                            "Conduct comprehensive blood workups, including Serum Alkaline Phosphatase (ALP) and Lactate Dehydrogenase (LDH)."
+                        ]
+                    },
+                    "hi": {
+                        "observations": "\u0921\u0940\u092a \u0928\u094d\u092f\u0942\u0930\u0932 \u0921\u093e\u092f\u0917\u094d\u0928\u094b\u0938\u094d\u091f\u093f\u0915 \u092a\u093e\u0907\u092a\u0932\u093e\u0907\u0928 \u0928\u0947 Proximal Femur \u092a\u0930 59.8% \u0935\u093f\u0936\u094d\u0935\u093e\u0938 \u0915\u0947 \u0938\u093e\u0925 \u090f\u0915 \u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0918\u093e\u0924\u0915 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0938\u094d\u0935\u0930\u0942\u092a (\u0915\u0948\u0902\u0938\u0930 \u0915\u0947 \u0932\u0915\u094d\u0937\u0923) \u0915\u093e \u092a\u0924\u093e \u0932\u0917\u093e\u092f\u093e \u0939\u0948\u0964 \u0938\u094d\u0915\u0948\u0928 \u0915\u0949\u0930\u094d\u091f\u093f\u0915\u0932 \u0915\u094d\u0937\u0924\u093f \u0914\u0930 \u0911\u0938\u094d\u091f\u093f\u092f\u094b\u0932\u093e\u0907\u091f\u093f\u0915 \u0935\u093f\u0936\u0947\u0937\u0924\u093e\u0913\u0902 \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948 \u091c\u094b \u0909\u091a\u094d\u091a-\u0936\u094d\u0930\u0947\u0923\u0940 \u0915\u0947 \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0918\u093e\u0935\u094b\u0902 \u0915\u0940 \u0935\u093f\u0936\u0947\u0937\u0924\u093e \u0939\u0948\u0902\u0964 \u0930\u094b\u0917\u0940 \u0915\u0947 \u091c\u0928\u0938\u093e\u0902\u0916\u094d\u092f\u093f\u0915\u0940\u092f (28 M) \u0915\u094b \u0926\u0947\u0916\u0924\u0947 \u0939\u0941\u090f, \u0924\u0924\u094d\u0915\u093e\u0932 \u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u0914\u0930 \u0930\u0947\u0921\u093f\u092f\u094b\u0932\u0949\u091c\u093f\u0915\u0932 \u0938\u0902\u092c\u0902\u0927 \u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u0915\u0930\u0928\u093e \u0938\u0902\u0915\u0947\u0924\u093f\u0924 \u0939\u0948\u0964",
+                        "precautions": [
+                            "\u0939\u0921\u094d\u0921\u0940 \u091f\u0942\u091f\u0928\u0947 \u0915\u093e \u0916\u0924\u0930\u093e (Pathological Fracture Risk): \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0905\u0902\u0917 \u092a\u0930 \u0935\u091c\u0928 \u0928 \u0921\u093e\u0932\u0947\u0902 \u0914\u0930 \u091a\u0932\u0928\u0947-\u092b\u093f\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0906\u0935\u0936\u094d\u092f\u0915 \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0909\u092a\u0915\u0930\u0923 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0915\u0930\u0947\u0902\u0964",
+                            "\u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0915\u0940 \u092e\u093e\u0932\u093f\u0936 (Deep Tissue Massage) \u092f\u093e \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0947 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0916\u093f\u0902\u091a\u093e\u0935 \u0938\u0947 \u092c\u091a\u0947\u0902, \u0924\u093e\u0915\u093f \u0938\u0942\u0915\u094d\u0937\u094d\u092e-\u092b\u094d\u0930\u0948\u0915\u094d\u091a\u0930 \u0915\u0947 \u091c\u094b\u0916\u093f\u092e \u0915\u094b \u0915\u092e \u0915\u093f\u092f\u093e \u091c\u093e \u0938\u0915\u0947\u0964",
+                            "\u092e\u0930\u0940\u091c \u0915\u0940 \u0915\u0921\u093c\u0940 \u0928\u093f\u0917\u0930\u093e\u0928\u0940 \u0915\u0930\u0947\u0902: \u092c\u0941\u0916\u093e\u0930, \u0935\u091c\u0928 \u092e\u0947\u0902 \u0905\u091a\u093e\u0928\u0915 \u0915\u092e\u0940, \u092f\u093e \u0930\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0947 \u0924\u0947\u091c \u0939\u0921\u094d\u0921\u0940 \u0915\u0947 \u0926\u0930\u094d\u0926 \u091c\u0948\u0938\u0947 \u0932\u0915\u094d\u0937\u0923\u094b\u0902 \u092a\u0930 \u0927\u094d\u092f\u093e\u0928 \u0926\u0947\u0902\u0964",
+                            "\u0928\u0948\u0926\u093e\u0928\u093f\u0915 \u091c\u093e\u0901\u091a \u092a\u0942\u0930\u0940 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u093f\u0938\u0940 \u092d\u0940 \u092a\u094d\u0930\u0915\u093e\u0930 \u0915\u0940 \u092d\u093e\u0930\u0940 \u0936\u093e\u0930\u0940\u0930\u093f\u0915 \u0915\u0938\u0930\u0924 \u092f\u093e \u0909\u091a\u094d\u091a-\u092a\u094d\u0930\u092d\u093e\u0935 \u0935\u093e\u0932\u0940 \u0917\u0924\u093f\u0935\u093f\u0927\u093f\u092f\u094b\u0902 \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0947 \u092a\u094d\u0930\u0924\u093f\u092c\u0902\u0927\u093f\u0924 \u0915\u0930\u0947\u0902\u0964"
+                        ],
+                        "recommendations": [
+                            "\u0935\u093f\u0938\u094d\u0924\u0943\u0924 \u0928\u0930\u092e \u090a\u0924\u0915 \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f Proximal Femur \u0915\u093e \u0924\u0924\u094d\u0915\u093e\u0932 \u0939\u093e\u0908-\u0930\u093f\u091c\u093c\u0949\u0932\u094d\u092f\u0942\u0936\u0928 \u0915\u0902\u091f\u094d\u0930\u093e\u0938\u094d\u091f-\u090f\u0928\u094d\u0939\u093e\u0902\u0938\u094d\u0921 \u090f\u092e\u0906\u0930\u0906\u0908 (MRI) \u092f\u093e \u0938\u0940\u091f\u0940 \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0935\u093e\u090f\u0902\u0964",
+                            "\u092c\u0939\u0941-\u0935\u093f\u0937\u092f\u0915 \u091f\u094d\u092f\u0942\u092e\u0930 \u092c\u094b\u0930\u094d\u0921 (MDT) \u0926\u094d\u0935\u093e\u0930\u093e \u091c\u093e\u0901\u091a \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 \u0911\u0930\u094d\u0925\u094b\u092a\u0947\u0921\u093f\u0915 \u0911\u0928\u094d\u0915\u094b\u0932\u0949\u091c\u093f\u0938\u094d\u091f (\u0939\u0921\u094d\u0921\u0940 \u0915\u0948\u0902\u0938\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e) \u0915\u0947 \u092a\u093e\u0938 \u0924\u0941\u0930\u0902\u0924 \u0930\u0947\u092b\u0930 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0907\u092e\u0947\u091c-\u0928\u093f\u0930\u094d\u0926\u0947\u0936\u093f\u0924 \u0928\u0947\u0935\u093f\u0917\u0947\u0936\u0928 \u0915\u0947 \u0924\u0939\u0924 \u092a\u094d\u0930\u092d\u093e\u0935\u093f\u0924 \u0918\u093e\u0935 \u0915\u0940 \u0915\u094d\u0932\u0940\u0928\u093f\u0915\u0932 \u0915\u094b\u0930 \u0928\u0940\u0921\u0932 \u092c\u093e\u092f\u094b\u092a\u094d\u0938\u0940 (Biopsy) \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+                            "\u0938\u0940\u0930\u092e \u090f\u0932\u094d\u0915\u0932\u093e\u0907\u0928 \u092b\u0949\u0938\u094d\u092b\u0947\u091f (ALP) \u0914\u0930 \u0932\u0948\u0915\u094d\u091f\u0947\u091f \u0921\u093f\u0939\u093e\u0907\u0921\u094d\u0930\u094b\u091c\u0928\u0947\u091c (LDH) \u0938\u0939\u093f\u0924 \u0935\u094d\u092f\u093e\u092a\u0915 \u0930\u0915\u094d\u0924 \u091c\u093e\u0901\u091a \u0915\u0930\u0935\u093e\u090f\u0902\u0964"
+                        ]
+                    },
+                    "simulated": true
+                }
             }
         ]
     },

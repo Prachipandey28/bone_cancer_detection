@@ -1161,6 +1161,265 @@
                 box-shadow: none !important;
             }
         }
+
+        /* ✨ Gemini Clinical Assistant CSS HUD Styling */
+        @keyframes gemini-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .gemini-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(0,240,255,0.1);
+            border-top: 2px solid var(--cyan);
+            border-radius: 50%;
+            animation: gemini-spin 1s linear infinite;
+        }
+        .gemini-bullet {
+            position: relative;
+            padding-left: 14px;
+            font-size: 10.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .gemini-bullet::before {
+            content: '▪';
+            position: absolute;
+            left: 2px;
+            top: -1px;
+            color: inherit;
+            font-size: 12px;
+        }
+        .gemini-bullet.precaution::before {
+            color: var(--amber);
+        }
+        .gemini-bullet.recommendation::before {
+            color: var(--emerald);
+        }
+
+        /* 💬 ✨ Floating Gemini Chatbot CSS Styling */
+        .gemini-chat-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-family: var(--font-main);
+        }
+        .btn-chat-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(3, 7, 13, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.25);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--cyan);
+            backdrop-filter: blur(10px);
+        }
+        .btn-chat-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            border-color: var(--cyan);
+            box-shadow: 0 4px 25px rgba(0, 240, 255, 0.4);
+        }
+        .chat-icon {
+            font-size: 20px;
+            filter: drop-shadow(0 0 4px var(--cyan));
+        }
+        @keyframes chat-pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.08); opacity: 0.15; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        .chat-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--cyan);
+            animation: chat-pulse 2s infinite ease-in-out;
+            pointer-events: none;
+        }
+        .gemini-chat-interface {
+            width: 320px;
+            height: 400px;
+            background: rgba(3, 7, 13, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(3, 7, 13, 0.5), 0 0 15px rgba(0, 240, 255, 0.1);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: bottom right;
+        }
+        .gemini-chat-container.collapsed .gemini-chat-interface {
+            transform: scale(0);
+            opacity: 0;
+            height: 0;
+            width: 0;
+            pointer-events: none;
+        }
+        .gemini-chat-container.collapsed .btn-chat-toggle {
+            display: flex;
+        }
+        .gemini-chat-container:not(.collapsed) .btn-chat-toggle {
+            display: none;
+        }
+        
+        .chat-header {
+            background: rgba(11, 26, 48, 0.7);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-header);
+            font-weight: 700;
+            color: var(--cyan);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        .chat-sparkle {
+            font-size: 11px;
+            filter: drop-shadow(0 0 2px var(--cyan));
+        }
+        .chat-status-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--emerald);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px var(--emerald);
+        }
+        .chat-status-text {
+            font-size: 8px;
+            font-family: var(--font-mono);
+            color: var(--emerald);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 4px;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+        .chat-close-btn:hover {
+            color: var(--rose);
+        }
+        
+        .chat-messages-container {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(3, 7, 13, 0.2);
+        }
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+        }
+        .chat-message.ai {
+            align-self: flex-start;
+        }
+        .chat-message.user {
+            align-self: flex-end;
+        }
+        .chat-bubble {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 10.5px;
+            line-height: 1.45;
+            word-wrap: break-word;
+        }
+        .chat-message.ai .chat-bubble {
+            background: rgba(11, 26, 48, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            color: var(--text-secondary);
+            border-top-left-radius: 2px;
+        }
+        .chat-message.user .chat-bubble {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--text-primary);
+            border-top-right-radius: 2px;
+        }
+        .chat-timestamp {
+            font-family: var(--font-mono);
+            font-size: 7.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            padding: 0 4px;
+        }
+        .chat-message.user .chat-timestamp {
+            text-align: right;
+        }
+        
+        .chat-input-bar {
+            padding: 8px 10px;
+            border-top: 1px solid rgba(0, 240, 255, 0.1);
+            background: rgba(3, 7, 13, 0.6);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .chat-input-bar input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 10.5px;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            outline: none;
+            transition: all 0.2s;
+        }
+        .chat-input-bar input:focus {
+            border-color: var(--cyan);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
+        }
+        .chat-input-bar button {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            color: var(--cyan);
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chat-input-bar button:hover {
+            background: var(--cyan);
+            color: #000;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -1386,6 +1645,97 @@
                         </div>
                     </div>
 
+                    <!-- ✨ GEMINI CLINICAL ASSISTANT PANEL -->
+                    <div class="gemini-insights-container" id="geminiInsightsContainer" style="display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 8px; padding: 12px; background: rgba(3, 7, 13, 0.4); margin-bottom: 12px;">
+                        <div class="gemini-insights-hdr" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.1); padding-bottom: 6px; margin-bottom: 6px;">
+                            <span style="font-family: var(--font-header); font-weight: 700; color: var(--cyan); display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1px;">
+                                ✨ GEMINI CLINICAL ASSISTANT
+                            </span>
+                            <span id="geminiStatusIndicator" style="font-size: 9px; font-family: var(--font-mono); font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px;">
+                                OFFLINE
+                            </span>
+                        </div>
+                        
+                        <div class="gemini-insights-content" style="font-size: 11px; line-height: 1.5; color: var(--text-secondary);">
+                            
+                            <!-- Static empty placeholder with click action -->
+                            <div id="geminiStaticPlaceholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center; gap: 8px; color: var(--text-muted);">
+                                <span id="geminiPlaceholderText">Awaiting scan data to run telemetry clinical correlation...</span>
+                                <button class="btn btn-outline" id="btnTriggerGemini" style="width: 100%; padding: 8px; font-size: 11px; border-color: var(--cyan); color: var(--cyan); display: none; margin-top: 4px;" onclick="runGeminiConsultation()">
+                                    ✨ Consult Gemini Clinical AI
+                                </button>
+                            </div>
+
+                            <!-- Loading state -->
+                            <div id="geminiLoading" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; gap: 8px; text-align: center;">
+                                <div class="gemini-spinner"></div>
+                                <span style="font-family: var(--font-mono); font-size: 9px; color: var(--cyan); letter-spacing: 1px;">CONSULTING GEMINI CLINICAL LAYERS...</span>
+                            </div>
+                            
+                            <!-- Dynamic Results Panel -->
+                            <div id="geminiResultsBlock" style="display: none; flex-direction: column; gap: 12px;">
+                                
+                                <!-- Observations Segment -->
+                                <div class="gemini-segment">
+                                    <h5 style="font-family: var(--font-header); font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                                        👁️ Medical Observations
+                                    </h5>
+                                    <p id="geminiObservations" style="color: var(--text-primary); font-size: 10.5px; font-weight: 400; padding-left: 6px; border-left: 2px solid var(--cyan); line-height: 1.4;"></p>
+                                </div>
+                                
+                                <!-- Precautions Segment -->
+                                <div class="gemini-segment">
+                                    <h5 style="font-family: var(--font-header); font-weight: 700; color: var(--amber); margin-bottom: 4px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                                        ⚠️ Critical Precautions
+                                    </h5>
+                                    <ul id="geminiPrecautions" style="list-style-type: none; margin: 0; padding: 0 0 0 4px; display: flex; flex-direction: column; gap: 3px;">
+                                        <!-- Dynamic bullets -->
+                                    </ul>
+                                </div>
+                                
+                                <!-- Recommendations Segment -->
+                                <div class="gemini-segment">
+                                    <h5 style="font-family: var(--font-header); font-weight: 700; color: var(--emerald); margin-bottom: 4px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                                        📋 Clinical Recommendations
+                                    </h5>
+                                    <ul id="geminiRecommendations" style="list-style-type: none; margin: 0; padding: 0 0 0 4px; display: flex; flex-direction: column; gap: 3px;">
+                                        <!-- Dynamic bullets -->
+                                    </ul>
+                                </div>
+                                
+                                <!-- AI Clinical Co-Pilot Chatbot Segment -->
+                                <div class="gemini-segment" style="border-top: 1px solid rgba(0, 240, 255, 0.15); padding-top: 10px; margin-top: 8px;">
+                                    <h5 style="font-family: var(--font-header); font-weight: 700; color: var(--cyan); margin-bottom: 6px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                                        ✨ AI Clinical Co-Pilot
+                                    </h5>
+                                    
+                                    <div id="chatMessages" class="chat-messages-container" style="height: 160px; max-height: 160px; border: 1px solid rgba(0, 240, 255, 0.1); border-radius: 6px; background: rgba(3, 7, 13, 0.5); padding: 8px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px;">
+                                        <div class="chat-message ai">
+                                            <div class="chat-bubble">
+                                                Hello! I am your <strong>OsteoScan AI Co-Pilot</strong>, fully integrated and aware of this case telemetry. How can I assist you with clinical correlations or staging guidelines today?
+                                            </div>
+                                            <div class="chat-timestamp">System</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="chat-input-bar" style="display: flex; gap: 6px; align-items: center; padding: 0; background: none; border: none;">
+                                        <input type="text" id="chatInputField" placeholder="Ask AI Co-Pilot about this case..." onkeydown="handleChatKeyDown(event)" style="flex: 1; padding: 6px 10px; font-size: 10.5px; background: rgba(255,255,255,0.03); border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 4px; color: var(--text-primary); outline: none;" />
+                                        <button id="btnSendChat" onclick="sendChatMessage()" style="background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.25); color: var(--cyan); border-radius: 4px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <span>🚀</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Simulation Indicator Badge -->
+                                <div id="geminiSimulatedWarning" style="display: none; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 4px; padding: 6px; font-size: 9px; color: var(--amber); text-align: center; font-family: var(--font-main); margin-top: 4px; line-height: 1.3;">
+                                    ⚠️ <strong>SIMULATION FALLBACK MODE</strong><br>
+                                    Provide the GEMINI_API_KEY environment variable on your backend server to initialize live Gemini 1.5 Flash connections.
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Radiologist custom case notes notebook -->
                     <div class="notes-notebook">
                         <div class="notes-notebook-hdr">
@@ -1564,7 +1914,19 @@
     const radiologistNotes = document.getElementById('radiologistNotes');
     const errorDisplay = document.getElementById('errorDisplay');
 
+    // Gemini Clinical Assistant DOM Elements
+    const geminiStatusIndicator = document.getElementById('geminiStatusIndicator');
+    const geminiLoading = document.getElementById('geminiLoading');
+    const geminiStaticPlaceholder = document.getElementById('geminiStaticPlaceholder');
+    const geminiResultsBlock = document.getElementById('geminiResultsBlock');
+    const geminiObservations = document.getElementById('geminiObservations');
+    const geminiPrecautions = document.getElementById('geminiPrecautions');
+    const geminiRecommendations = document.getElementById('geminiRecommendations');
+    const geminiSimulatedWarning = document.getElementById('geminiSimulatedWarning');
+    const btnTriggerGemini = document.getElementById('btnTriggerGemini');
+
     let activeFile = null;
+    let currentGeminiInsights = null;
 
     // Generate random clinical ref session details on initialization
     function initializeDiagnosticSession() {
@@ -1884,6 +2246,11 @@
             logToConsole("Voice assistant language set to Hindi (हिंदी).", "cyan");
         }
         
+        // Update Gemini UI text on language change immediately
+        if (currentGeminiInsights) {
+            renderGeminiInsights(currentGeminiInsights, currentGeminiInsights.simulated || false);
+        }
+
         // Re-speak current announcement in new language immediately
         if (lastSpokenTelemetryEN && lastSpokenTelemetryHI) {
             repeatTelemetryVoice();
@@ -1945,7 +2312,126 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    function renderClinicalResults(data, calculatedLatency) {
+    let currentScanData = null;
+
+    async function triggerGeminiAnalysis(predictionData) {
+        geminiLoading.style.display = 'flex';
+        geminiStaticPlaceholder.style.display = 'none';
+        geminiResultsBlock.style.display = 'none';
+        
+        geminiStatusIndicator.textContent = 'CONSULTING...';
+        geminiStatusIndicator.style.color = 'var(--cyan)';
+        
+        const payload = {
+            case_id: currentCaseId,
+            prediction: predictionData.prediction,
+            confidence: predictionData.confidence,
+            class_probabilities: predictionData.class_probabilities,
+            patient_name: patientName.value.trim() || 'PAT-TEMP',
+            patient_age: patientAge.value.trim() || '—',
+            anatomical_site: anatomicalSite.value || 'Other / General'
+        };
+        
+        try {
+            logToConsole("Engaging Gemini oncology clinical reasoning layers...", "cyan");
+            const response = await fetch('/gemini_analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Failed to retrieve Gemini insights.");
+            }
+            
+            currentGeminiInsights = data.insights;
+            renderGeminiInsights(data.insights, data.is_simulated);
+            
+            logToConsole(`Gemini Clinical Assistant complete. Insights successfully loaded. ${data.is_simulated ? '⚠️ [SIMULATED]' : '✅ [LIVE]'}`, "cyan");
+        } catch (err) {
+            console.error("Gemini consultation aborted:", err);
+            geminiLoading.style.display = 'none';
+            geminiStaticPlaceholder.style.display = 'flex';
+            
+            const placeholderText = document.getElementById('geminiPlaceholderText');
+            if (placeholderText) {
+                placeholderText.innerHTML = `<span style="color: var(--rose);">Gemini Consultation Failed: ${err.message}</span>`;
+            }
+            if (btnTriggerGemini) {
+                btnTriggerGemini.style.display = 'block';
+            }
+            
+            geminiStatusIndicator.textContent = 'FAULT';
+            geminiStatusIndicator.style.color = 'var(--rose)';
+            logToConsole(`Gemini Clinical Assistant failed: ${err.message}`, "rose");
+        }
+    }
+
+    function renderGeminiInsights(insights, isSimulated) {
+        geminiLoading.style.display = 'none';
+        geminiStaticPlaceholder.style.display = 'none';
+        geminiResultsBlock.style.display = 'flex';
+        
+        geminiStatusIndicator.textContent = isSimulated ? 'SIMULATED' : 'ONLINE';
+        geminiStatusIndicator.style.color = isSimulated ? 'var(--amber)' : 'var(--emerald)';
+        
+        // Safety check and language selection for dual-language support
+        let activeInsights = insights;
+        if (insights.en && insights.hi) {
+            activeInsights = voiceLanguage === 'hi' ? insights.hi : insights.en;
+        }
+        
+        // Render observations
+        geminiObservations.textContent = activeInsights.observations;
+        
+        // Render precautions
+        geminiPrecautions.innerHTML = '';
+        activeInsights.precautions.forEach(prec => {
+            const li = document.createElement('li');
+            li.className = 'gemini-bullet precaution';
+            li.textContent = prec;
+            geminiPrecautions.appendChild(li);
+        });
+        
+        // Render recommendations
+        geminiRecommendations.innerHTML = '';
+        activeInsights.recommendations.forEach(rec => {
+            const li = document.createElement('li');
+            li.className = 'gemini-bullet recommendation';
+            li.textContent = rec;
+            geminiRecommendations.appendChild(li);
+        });
+        
+        // Show/hide simulation mode banner
+        geminiSimulatedWarning.style.display = isSimulated ? 'block' : 'none';
+    }
+
+    function runGeminiConsultation() {
+        if (currentScanData) {
+            btnTriggerGemini.style.display = 'none';
+            triggerGeminiAnalysis(currentScanData);
+        }
+    }
+    window.runGeminiConsultation = runGeminiConsultation;
+
+    function renderClinicalResults(data, calculatedLatency, savedGeminiInsights = null) {
+        // Reset Chatbot conversations context for each new scan/review session
+        chatHistory = [];
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.innerHTML = `
+                <div class="chat-message ai">
+                    <div class="chat-bubble">
+                        Hello! I am your <strong>OsteoScan AI Co-Pilot</strong>, fully integrated and aware of this case telemetry. How can I assist you with clinical correlations or staging guidelines today?
+                    </div>
+                    <div class="chat-timestamp">System</div>
+                </div>
+            `;
+        }
+
         const predictionLabel = data.prediction.toLowerCase();
         const isMalignant = predictionLabel === 'cancer';
         
@@ -2033,6 +2519,33 @@
 
         // Focus text-area
         setTimeout(() => radiologistNotes.focus(), 600);
+
+        // Handle Gemini assistant clinical insights
+        if (savedGeminiInsights) {
+            currentGeminiInsights = savedGeminiInsights;
+            renderGeminiInsights(savedGeminiInsights, savedGeminiInsights.simulated || false);
+        } else {
+            currentGeminiInsights = null;
+            currentScanData = data;
+            
+            // Show placeholder and "Consult Gemini" trigger button, hide loading/results
+            geminiLoading.style.display = 'none';
+            geminiResultsBlock.style.display = 'none';
+            
+            const placeholderText = document.getElementById('geminiPlaceholderText');
+            if (placeholderText) {
+                placeholderText.textContent = "YOLOv8 Scan Complete. Clinical analysis ready for consult.";
+            }
+            
+            geminiStaticPlaceholder.style.display = 'flex';
+            
+            if (btnTriggerGemini) {
+                btnTriggerGemini.style.display = 'block';
+            }
+            
+            geminiStatusIndicator.textContent = 'READY';
+            geminiStatusIndicator.style.color = 'var(--cyan)';
+        }
     }
 
     // --- CASE HISTORY LOGIC ---
@@ -2188,7 +2701,7 @@
             confidence: caseRecord.confidence,
             class_probabilities: caseRecord.class_probabilities
         };
-        renderClinicalResults(formattedData, 120);
+        renderClinicalResults(formattedData, 120, caseRecord.gemini_analysis);
         
         // Restore notebook notes specifically from record!
         radiologistNotes.value = caseRecord.notes || `Patient ${caseRecord.patient_name} (${caseRecord.patient_age}) radiological screening of ${caseRecord.anatomical_site} shows a deep neural diagnostic verdict of [${caseRecord.prediction.toUpperCase()}] at a confidence scale of ${caseRecord.confidence.toFixed(1)}%.\nObservations: `;
@@ -2378,76 +2891,253 @@
         doc.setTextColor(cardTextColor[0], cardTextColor[1], cardTextColor[2]);
         doc.text(confidenceValue, marginX + 38, posY + 19.5);
         
-        posY += 24;
-        posY += 8;
-        
-        // 6. Clinical Observations Journal
-        doc.setFont('Helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(11, 26, 48);
-        doc.text("CLINICAL OBSERVATION JOURNAL & OBSERVATIONS", marginX, posY);
-        posY += 4;
-        
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.3);
-        doc.line(marginX, posY, marginX + contentWidth, posY);
-        posY += 6;
-        
-        // Draw Observation Notes box
-        doc.setFillColor(248, 250, 252);
-        doc.setDrawColor(226, 232, 240);
-        doc.rect(marginX, posY, contentWidth, 65, 'FD');
-        
-        // Write Observations text (wrapped)
-        doc.setFont('Helvetica', 'normal');
-        doc.setFontSize(9.5);
-        doc.setTextColor(15, 23, 42); // slate-900
-        
-        // Wrap text
-        const wrappedNotes = doc.splitTextToSize(notesText, contentWidth - 12);
-        doc.text(wrappedNotes, marginX + 6, posY + 8);
-        
-        posY += 65;
-        posY += 10;
-        
-        // 7. Clinical Sign-Off Block
-        doc.setFont('Helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(11, 26, 48);
-        doc.text("AUTHORIZED SIGN-OFF", marginX, posY);
-        posY += 4;
-        
-        doc.line(marginX, posY, marginX + contentWidth, posY);
-        posY += 15;
-        
-        // Draw Sign lines
-        doc.setFont('Helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(100, 116, 139); // slate-500
-        doc.text("Clinician/Radiologist Signature", marginX + 10, posY);
-        doc.line(marginX + 10, posY - 6, marginX + 60, posY - 6);
-        
-        doc.text("Archived Session Authorization Stamp", marginX + 100, posY);
-        doc.line(marginX + 100, posY - 6, marginX + 160, posY - 6);
-        
-        // Write active session stamp text
-        doc.setFont('Helvetica', 'bold');
-        doc.setFontSize(8.5);
-        doc.setTextColor(11, 26, 48);
-        doc.text(`STAMP: OSTSCAN-${caseId}`, marginX + 102, posY - 8);
-        
-        // 8. Footer Disclaimer
-        posY = 273;
-        doc.setDrawColor(241, 245, 249);
-        doc.line(marginX, posY, marginX + contentWidth, posY);
-        posY += 4;
-        
-        doc.setFont('Helvetica', 'normal');
-        doc.setFontSize(7.5);
-        doc.setTextColor(148, 163, 184); // slate-400
-        const disclaimerText = "Disclaimer: This diagnostic report represents deep neural decision-support telemetry. It is NOT a certified primary clinical diagnosis. All prediction outcomes and classification details must be professionally cross-validated and signed off by a licensed medical practitioner prior to oncology staging or clinical action.";
-        const wrappedDisclaimer = doc.splitTextToSize(disclaimerText, contentWidth);
-        doc.text(wrappedDisclaimer, marginX, posY, { align: 'left' });
+        if (currentGeminiInsights) {
+            // Safety check and language selection for dual-language support in PDF
+            let activeInsights = currentGeminiInsights;
+            if (currentGeminiInsights.en && currentGeminiInsights.hi) {
+                activeInsights = voiceLanguage === 'hi' ? currentGeminiInsights.hi : currentGeminiInsights.en;
+            }
+
+            // Draw Gemini Clinical Assistant Insights on Page 1!
+            posY += 24;
+            posY += 6;
+            
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(11, 26, 48);
+            doc.text(voiceLanguage === 'hi' ? "✨ जेमिनी एआई क्लीनिकल असिस्टेंट इनसाइट्स" : "✨ GEMINI AI CLINICAL ASSISTANT INSIGHTS", marginX, posY);
+            posY += 4;
+            
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.3);
+            doc.line(marginX, posY, marginX + contentWidth, posY);
+            posY += 6;
+            
+            // Draw Observations Section
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(9.5);
+            doc.setTextColor(11, 26, 48);
+            doc.text(voiceLanguage === 'hi' ? "👁️ मेडिकल ऑब्जर्वेशन (नैदानिक अवलोकन)" : "👁️ Medical Observations", marginX, posY);
+            posY += 4;
+            
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(15, 23, 42); // slate-900
+            
+            const wrappedObservations = doc.splitTextToSize(activeInsights.observations, contentWidth - 4);
+            doc.text(wrappedObservations, marginX + 2, posY);
+            posY += (wrappedObservations.length * 4.5) + 6;
+            
+            // Draw Precautions Section
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(9.5);
+            doc.setTextColor(185, 28, 28); // Amber/Reddish
+            doc.text(voiceLanguage === 'hi' ? "⚠️ महत्वपूर्ण सावधानियां" : "⚠️ Critical Precautions", marginX, posY);
+            posY += 4;
+            
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(15, 23, 42);
+            
+            activeInsights.precautions.forEach(prec => {
+                // Draw a small bullet circle/square
+                doc.setFillColor(185, 28, 28);
+                doc.rect(marginX + 2, posY + 1.2, 1, 1, 'F');
+                
+                const wrappedPrec = doc.splitTextToSize(prec, contentWidth - 10);
+                doc.text(wrappedPrec, marginX + 6, posY + 2.2);
+                posY += (wrappedPrec.length * 4.2) + 1.5;
+            });
+            posY += 4;
+            
+            // Draw Recommendations Section
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(9.5);
+            doc.setTextColor(4, 120, 87); // Emerald/Green
+            doc.text(voiceLanguage === 'hi' ? "📋 नैदानिक सिफारिशें" : "📋 Clinical Recommendations", marginX, posY);
+            posY += 4;
+            
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(15, 23, 42);
+            
+            activeInsights.recommendations.forEach(rec => {
+                // Draw a small bullet circle/square
+                doc.setFillColor(4, 120, 87);
+                doc.rect(marginX + 2, posY + 1.2, 1, 1, 'F');
+                
+                const wrappedRec = doc.splitTextToSize(rec, contentWidth - 10);
+                doc.text(wrappedRec, marginX + 6, posY + 2.2);
+                posY += (wrappedRec.length * 4.2) + 1.5;
+            });
+            
+            // 8. Footer Disclaimer (Page 1)
+            const drawFooterDisclaimer = (pageNumber) => {
+                const footerY = 273;
+                doc.setDrawColor(241, 245, 249);
+                doc.setLineWidth(0.3);
+                doc.line(marginX, footerY, marginX + contentWidth, footerY);
+                
+                doc.setFont('Helvetica', 'normal');
+                doc.setFontSize(7);
+                doc.setTextColor(148, 163, 184); // slate-400
+                const disclaimerText = "Disclaimer: This diagnostic report represents deep neural decision-support telemetry. It is NOT a certified primary clinical diagnosis. All prediction outcomes and classification details must be professionally cross-validated and signed off by a licensed medical practitioner prior to oncology staging or clinical action.";
+                const wrappedDisclaimer = doc.splitTextToSize(disclaimerText, contentWidth);
+                doc.text(wrappedDisclaimer, marginX, footerY + 3.5, { align: 'left' });
+                
+                // Page indicator
+                doc.setFont('Helvetica', 'bold');
+                doc.setFontSize(8);
+                doc.setTextColor(11, 26, 48);
+                doc.text(`Page ${pageNumber} of 2`, marginX + contentWidth - 16, footerY - 2);
+            };
+            
+            drawFooterDisclaimer(1);
+            
+            // Add Page 2!
+            doc.addPage();
+            let posY2 = 20;
+            
+            // Page 2 Mini Header
+            doc.setFillColor(11, 26, 48); // Deep Navy Blue (#0b1a30)
+            doc.rect(marginX, posY2, contentWidth, 12, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text(`OSTSCAN AI — CASE ${caseId} CLINICAL OBSERVATIONS JOURNAL`, marginX + 6, posY2 + 7.5);
+            posY2 += 12;
+            posY2 += 10;
+            
+            // 6. Clinical Observations Journal (Page 2)
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(11, 26, 48);
+            doc.text("CLINICAL OBSERVATION JOURNAL & OBSERVATIONS", marginX, posY2);
+            posY2 += 4;
+            
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.3);
+            doc.line(marginX, posY2, marginX + contentWidth, posY2);
+            posY2 += 6;
+            
+            // Draw Observation Notes box
+            doc.setFillColor(248, 250, 252);
+            doc.setDrawColor(226, 232, 240);
+            doc.rect(marginX, posY2, contentWidth, 90, 'FD');
+            
+            // Write Observations text (wrapped)
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(15, 23, 42); // slate-900
+            
+            // Wrap text
+            const wrappedNotes = doc.splitTextToSize(notesText, contentWidth - 12);
+            doc.text(wrappedNotes, marginX + 6, posY2 + 8);
+            
+            posY2 += 90;
+            posY2 += 15;
+            
+            // 7. Clinical Sign-Off Block (Page 2)
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(11, 26, 48);
+            doc.text("AUTHORIZED SIGN-OFF", marginX, posY2);
+            posY2 += 4;
+            
+            doc.line(marginX, posY2, marginX + contentWidth, posY2);
+            posY2 += 18;
+            
+            // Draw Sign lines
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139); // slate-500
+            doc.text("Clinician/Radiologist Signature", marginX + 10, posY2);
+            doc.line(marginX + 10, posY2 - 6, marginX + 60, posY2 - 6);
+            
+            doc.text("Archived Session Authorization Stamp", marginX + 100, posY2);
+            doc.line(marginX + 100, posY2 - 6, marginX + 160, posY2 - 6);
+            
+            // Write active session stamp text
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(11, 26, 48);
+            doc.text(`STAMP: OSTSCAN-${caseId}`, marginX + 102, posY2 - 8);
+            
+            drawFooterDisclaimer(2);
+        } else {
+            // ORIGINAL 1-PAGE FALLBACK
+            posY += 24;
+            posY += 8;
+            
+            // 6. Clinical Observations Journal
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(11, 26, 48);
+            doc.text("CLINICAL OBSERVATION JOURNAL & OBSERVATIONS", marginX, posY);
+            posY += 4;
+            
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.3);
+            doc.line(marginX, posY, marginX + contentWidth, posY);
+            posY += 6;
+            
+            // Draw Observation Notes box
+            doc.setFillColor(248, 250, 252);
+            doc.setDrawColor(226, 232, 240);
+            doc.rect(marginX, posY, contentWidth, 65, 'FD');
+            
+            // Write Observations text (wrapped)
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(15, 23, 42); // slate-900
+            
+            // Wrap text
+            const wrappedNotes = doc.splitTextToSize(notesText, contentWidth - 12);
+            doc.text(wrappedNotes, marginX + 6, posY + 8);
+            
+            posY += 65;
+            posY += 10;
+            
+            // 7. Clinical Sign-Off Block
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(11, 26, 48);
+            doc.text("AUTHORIZED SIGN-OFF", marginX, posY);
+            posY += 4;
+            
+            doc.line(marginX, posY, marginX + contentWidth, posY);
+            posY += 15;
+            
+            // Draw Sign lines
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139); // slate-500
+            doc.text("Clinician/Radiologist Signature", marginX + 10, posY);
+            doc.line(marginX + 10, posY - 6, marginX + 60, posY - 6);
+            
+            doc.text("Archived Session Authorization Stamp", marginX + 100, posY);
+            doc.line(marginX + 100, posY - 6, marginX + 160, posY - 6);
+            
+            // Write active session stamp text
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(11, 26, 48);
+            doc.text(`STAMP: OSTSCAN-${caseId}`, marginX + 102, posY - 8);
+            
+            // 8. Footer Disclaimer
+            posY = 273;
+            doc.setDrawColor(241, 245, 249);
+            doc.line(marginX, posY, marginX + contentWidth, posY);
+            posY += 4;
+            
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(148, 163, 184); // slate-400
+            const disclaimerText = "Disclaimer: This diagnostic report represents deep neural decision-support telemetry. It is NOT a certified primary clinical diagnosis. All prediction outcomes and classification details must be professionally cross-validated and signed off by a licensed medical practitioner prior to oncology staging or clinical action.";
+            const wrappedDisclaimer = doc.splitTextToSize(disclaimerText, contentWidth);
+            doc.text(wrappedDisclaimer, marginX, posY, { align: 'left' });
+        }
         
         // 9. Save PDF
         const safeName = patientId.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -2484,6 +3174,99 @@
     window.setViewMode = setViewMode;
     window.downloadClinicalReport = downloadClinicalReport;
     window.loadScanHistory = loadScanHistory;
+
+    // --- GEMINI CLINICAL AI CHATBOT LOGIC ---
+    let chatHistory = [];
+    
+    function handleChatKeyDown(event) {
+        if (event.key === 'Enter') {
+            sendChatMessage();
+        }
+    }
+    window.handleChatKeyDown = handleChatKeyDown;
+    
+    async function sendChatMessage() {
+        const inputField = document.getElementById('chatInputField');
+        if (!inputField) return;
+        
+        const message = inputField.value.trim();
+        if (!message) return;
+        
+        inputField.value = '';
+        appendChatMessage("user", message, "Clinician");
+        chatHistory.push({ role: "user", text: message });
+        
+        const chatMessages = document.getElementById('chatMessages');
+        const aiMessageDiv = document.createElement('div');
+        aiMessageDiv.className = 'chat-message ai';
+        aiMessageDiv.innerHTML = `
+            <div class="chat-bubble" style="display:flex; align-items:center; gap:6px;">
+                <div class="gemini-spinner" style="width:12px; height:12px; border-width:1.5px;"></div>
+                <span>Typing...</span>
+            </div>
+            <div class="chat-timestamp">System</div>
+        `;
+        chatMessages.appendChild(aiMessageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        const payload = {
+            message: message,
+            history: chatHistory,
+            current_scan: currentScanData ? {
+                prediction: currentScanData.prediction,
+                confidence: currentScanData.confidence,
+                class_probabilities: currentScanData.class_probabilities,
+                patient_name: patientName.value.trim() || 'PAT-TEMP',
+                patient_age: patientAge.value.trim() || '—',
+                anatomical_site: anatomicalSite.value || 'Other / General'
+            } : null,
+            current_insights: currentGeminiInsights,
+            language: voiceLanguage || 'en'
+        };
+        
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            
+            aiMessageDiv.remove();
+            
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Failed to retrieve response.");
+            }
+            
+            appendChatMessage("ai", data.reply, data.is_simulated ? "Co-Pilot ⚠️" : "Co-Pilot ✅");
+            chatHistory.push({ role: "model", text: data.reply });
+            
+        } catch (err) {
+            console.error("Co-pilot chat failed:", err);
+            aiMessageDiv.remove();
+            appendChatMessage("ai", `Error: ${err.message}`, "System");
+        }
+    }
+    window.sendChatMessage = sendChatMessage;
+    
+    function appendChatMessage(sender, text, label) {
+        const chatMessages = document.getElementById('chatMessages');
+        if (!chatMessages) return;
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `chat-message ${sender}`;
+        
+        const formattedText = text.replace(/\n/g, '<br>');
+        msgDiv.innerHTML = `
+            <div class="chat-bubble">${formattedText}</div>
+            <div class="chat-timestamp">${label}</div>
+        `;
+        
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
     // Load Scan History on startup
     setTimeout(loadScanHistory, 500);
