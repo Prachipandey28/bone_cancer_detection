@@ -25,6 +25,9 @@ import base64
 import datetime
 import traceback
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Prevent Intel OpenMP duplicate library initialization crash on macOS Anaconda environments
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
 
@@ -600,7 +603,7 @@ def gemini_analysis():
         return jsonify({"error": "Missing required fields"}), 400
         
     # Get API key from environment
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY")  
     
     insights = None
     is_simulated = False
@@ -636,7 +639,7 @@ For 'en' (English) and 'hi' (Hindi), generate:
 Maintain a strict, objective, professional medical tone. Do NOT include generic disclaimers in the generated fields, as a global system disclaimer is already rendered on the report.
 """
             
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
             headers = {
                 "Content-Type": "application/json"
             }
@@ -850,10 +853,10 @@ Respond in the active selected language if possible ({'Hindi' if active_language
 
     if api_key:
         try:
-            import urllib.request
-            
+            import requests
+
             contents = []
-            
+
             # Append history in Gemini API contents format
             for turn in chat_history:
                 role = "user" if turn["role"] == "user" else "model"
@@ -861,17 +864,14 @@ Respond in the active selected language if possible ({'Hindi' if active_language
                     "role": role,
                     "parts": [{"text": turn["text"]}]
                 })
-                
+
             contents.append({
                 "role": "user",
                 "parts": [{"text": user_message}]
             })
-            
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-            headers = {
-                "Content-Type": "application/json"
-            }
-            
+
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+
             payload = {
                 "contents": contents,
                 "systemInstruction": {
@@ -882,32 +882,35 @@ Respond in the active selected language if possible ({'Hindi' if active_language
                     "maxOutputTokens": 800
                 }
             }
-            
-            req_data = json.dumps(payload).encode("utf-8")
-            req = urllib.request.Request(url, data=req_data, headers=headers, method="POST")
-            
-            with urllib.request.urlopen(req, timeout=15) as response:
-                res_data = response.read().decode("utf-8")
-                res_json = json.loads(res_data)
-                
-                ai_text = res_json["candidates"][0]["content"]["parts"][0]["text"]
-                return jsonify({
-                    "status": "success",
-                    "reply": ai_text,
-                    "is_simulated": False
-                })
-                
+
+            response = requests.post(url, json=payload, timeout=15)
+
+            print(f"[DEBUG] Gemini status: {response.status_code}")
+            print(f"[DEBUG] Gemini response preview: {response.text[:300]}")
+
+            if response.status_code != 200:
+                raise Exception(f"Gemini returned {response.status_code}: {response.text}")
+
+            res_json = response.json()
+            ai_text = res_json["candidates"][0]["content"]["parts"][0]["text"]
+
+            return jsonify({
+                "status": "success",
+                "reply": ai_text,
+                "is_simulated": False
+            })
+
         except Exception as e:
-            print(f"[WARN] Chat Gemini API failed: {e}. Falling back to simulated chat response.")
+            print(f"[ERROR] Chat Gemini API failed: {e}")
             traceback.print_exc()
-            
+
+    # Fallback to simulated response
     reply = generate_simulated_chat_response(user_message, current_scan, current_insights, active_language)
     return jsonify({
         "status": "success",
         "reply": reply,
         "is_simulated": True
     })
-
 
 # ── entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
