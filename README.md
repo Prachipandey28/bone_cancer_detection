@@ -64,7 +64,11 @@ bone_cancer_detection/
 │
 └── scratch/
 🔄 Application Workflow
+<img width="1027" height="1777" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/6f292791-d4a9-4582-b63e-28c5d2b6fe74" />
+
 🧠 AI Model Workflow
+<img width="3458" height="130" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/6c3f1a29-3316-439f-b5fc-66048be875b7" />
+
 ⚙️ Technology Stack
 Technology	Purpose
 Python	Core Programming
@@ -117,6 +121,8 @@ Response
   }
 }
 📸 Prediction Flow Diagram
+<img width="2178" height="894" alt="mermaid-diagram (2)" src="https://github.com/user-attachments/assets/f11fb251-6aa9-48c2-9dbd-2200b58b046c" />
+
 📊 Supported File Formats
 Format	Supported
 JPG	✅
