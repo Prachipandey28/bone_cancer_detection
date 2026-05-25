@@ -247,11 +247,11 @@ file=<image_file>
 
 ---
 
-## 🙏 Special Thanks
+## Special Thanks
 
 Special thanks to **Mohit Sharma** for helping in the model training process and supporting the development of this project.
 
-🔗 [Mohit Sharma — GitHub](https://github.com/MohitSharma)
+🔗 [Mohit Sharma — GitHub](https://github.com/mohitsharmas97)
 
 ---
 
