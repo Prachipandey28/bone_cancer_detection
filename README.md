@@ -1,115 +1,112 @@
 🦴 OsteoScan — AI-Powered Bone Cancer Detection System
-<p align="center"> <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python" /> <img src="https://img.shields.io/badge/Flask-Web%20Framework-black?style=for-the-badge&logo=flask" /> <img src="https://img.shields.io/badge/YOLOv8-Deep%20Learning-red?style=for-the-badge" /> <img src="https://img.shields.io/badge/AI-Medical%20Imaging-green?style=for-the-badge" /> </p> <p align="center"> <b>Deep Learning-Based Medical Imaging Platform for Bone Cancer Detection using YOLOv8 and Flask</b> </p> <p align="center"> <i>Built for AI Healthcare Research, Medical Imaging Analysis, and Intelligent Diagnostic Assistance</i> </p>
+<p align="center"> <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python"/> <img src="https://img.shields.io/badge/Flask-Web%20Framework-black?style=for-the-badge&logo=flask"/> <img src="https://img.shields.io/badge/YOLOv8-Deep%20Learning-red?style=for-the-badge"/> <img src="https://img.shields.io/badge/AI-Healthcare-green?style=for-the-badge"/> <img src="https://img.shields.io/badge/Open%20Source-Project-orange?style=for-the-badge"/> </p> <h3 align="center"> 🧠 Intelligent Bone Cancer Detection using Deep Learning & Medical Imaging </h3> <p align="center"> Built with <b>YOLOv8</b>, <b>Flask</b>, and <b>AI-powered Medical Imaging</b> to assist in bone cancer prediction from X-ray scans. </p>
 📌 Overview
 
-OsteoScan is an AI-powered web application designed to analyze bone X-ray images and predict whether the scan indicates:
+OsteoScan is an AI-powered healthcare application designed to analyze bone X-ray images and classify them into:
 
 ✅ Cancer Detected
 ✅ Normal Bone Condition
 
-The project combines:
+The system leverages a custom-trained YOLOv8 Deep Learning Model integrated with a Flask-based web application for real-time prediction and visualization.
 
-🧠 YOLOv8 Deep Learning Model
-🌐 Flask Backend
-🎨 Interactive Frontend UI
-📷 Real-Time Image Upload & Prediction
-📊 Confidence Score Visualization
-
-This project was developed to explore the practical application of Artificial Intelligence in healthcare diagnostics using deep learning techniques.
+This project demonstrates the practical application of Artificial Intelligence in healthcare diagnostics, enabling intelligent medical image analysis with confidence scoring and user-friendly interaction.
 
 ✨ Key Features
-🔬 AI-Powered Medical Imaging
+🔬 AI-Based Medical Imaging
 Detects bone cancer patterns from X-ray scans
-Uses trained YOLOv8 model weights (best.pt)
-Generates prediction with confidence percentage
-🌐 Full Stack Architecture
+Uses trained YOLOv8 model (best.pt)
+Provides prediction confidence percentage
+Fast and lightweight inference pipeline
+🌐 Full Stack Web Application
 Flask backend server
-Responsive frontend interface
-Real-time image upload and prediction system
+Interactive frontend UI
+Real-time image upload & prediction
 📷 Smart Image Processing
 
-Supported formats:
+Supported image formats:
 
 JPG
 JPEG
 PNG
 BMP
 WEBP
-📊 Prediction Output
+📊 Prediction Analytics
 
-The application provides:
+The application displays:
 
-Prediction label
-Confidence score
-Class probabilities
-Image preview support
-⚡ Optimized Prediction Pipeline
+Prediction Label
+Confidence Score
+Class Probabilities
+Uploaded Image Preview
+⚡ Optimized Workflow
 Automatic upload handling
-Runtime upload folder creation
-Lightweight API workflow
-🛡️ Health Monitoring Endpoint
-/health endpoint checks model loading status
+Runtime upload directory creation
+Lightweight REST API pipeline
+🛡️ Health Monitoring
+/health endpoint checks server & model status
 🏗️ System Architecture
 bone_cancer_detection/
 │
-├── app.py                 # Flask backend server
-├── users.json             # User data
-├── server.log             # Runtime logs
+├── app.py
+├── users.json
+├── server.log
 ├── README.md
 ├── .gitignore
 │
 ├── templates/
-│   └── index.html         # Frontend UI
+│   └── index.html
 │
 ├── static/
-│   └── uploads/           # Uploaded images
+│   └── uploads/
 │
 ├── weights/
-│   └── best.pt            # YOLOv8 trained model
+│   └── best.pt
 │
 └── scratch/
+🔄 Application Workflow
+🧠 AI Model Workflow
 ⚙️ Technology Stack
 Technology	Purpose
-Python	Core programming language
-Flask	Backend framework
-YOLOv8	Deep learning model
+Python	Core Programming
+Flask	Backend Framework
+YOLOv8	Deep Learning Model
 HTML/CSS/JavaScript	Frontend UI
-Pillow	Image handling
-Ultralytics	YOLOv8 implementation
-🚀 Installation & Deployment
-1️⃣ Clone the Repository
+Pillow	Image Processing
+Ultralytics	YOLOv8 Implementation
+🚀 Installation Guide
+1️⃣ Clone Repository
 git clone https://github.com/Prachipandey28/bone_cancer_detection.git
 
 cd bone_cancer_detection
 2️⃣ Install Dependencies
 pip install flask ultralytics pillow
 
-Or using requirements file:
+OR
 
 pip install -r requirements.txt
 3️⃣ Add Model Weights
 
-Place your trained YOLOv8 model inside:
+Place your trained model inside:
 
 weights/best.pt
-4️⃣ Run the Application
+4️⃣ Run Application
 python app.py
 
-Server starts at:
+Server will start at:
 
 http://localhost:5000
 🌐 REST API Endpoints
 Method	Endpoint	Description
-GET	/	Load frontend UI
-POST	/predict	Upload image & get prediction
-GET	/health	Check model status
+GET	/	Load Frontend UI
+POST	/predict	Upload Image & Get Prediction
+GET	/health	Check Model Status
 📤 Prediction API Example
 Request
 POST /predict
 Content-Type: multipart/form-data
 Form Data
 file=<image_file>
-Response Example
+Response
 {
   "status": "success",
   "prediction": "cancer",
@@ -119,28 +116,7 @@ Response Example
     "normal": 0.0563
   }
 }
-📸 Application Workflow
-Upload X-ray Image
-        ↓
-Flask Backend Receives Image
-        ↓
-YOLOv8 Model Processes Scan
-        ↓
-Prediction Generated
-        ↓
-Result Returned
-        ↓
-Displayed on Frontend
-🧠 Deep Learning Model
-
-The application uses a custom-trained YOLOv8 classification model for detecting cancer patterns in bone X-ray images.
-
-Model Capabilities
-Binary classification:
-Cancer
-Normal
-Fast inference speed
-Medical image analysis using deep learning
+📸 Prediction Flow Diagram
 📊 Supported File Formats
 Format	Supported
 JPG	✅
@@ -152,42 +128,48 @@ WEBP	✅
 
 ⚠️ This project is intended for educational and research purposes only.
 
-It should NOT be used as a substitute for professional medical diagnosis or clinical decision-making.
+It should NOT be used as a substitute for:
 
+Professional medical diagnosis
+Clinical decision-making
+Healthcare consultation
 🚀 Future Enhancements
 📈 Improve model accuracy with larger datasets
 🩺 Multi-class tumor detection
 ☁️ Cloud deployment
-👤 User authentication system
+👤 Authentication system
 📊 Prediction history dashboard
-🧠 Explainable AI visualizations
+🧠 Explainable AI visualization
 📱 Better mobile responsiveness
 👩‍💻 Developer
 👤 Prachi Pandey
 
-B.Tech Artificial Intelligence & Data Science Student
-Passionate about AI, Healthcare Technology, and Machine Learning.
+🎓 B.Tech — Artificial Intelligence & Data Science
+💡 Passionate about:
 
-🔗 GitHub Repository
+Artificial Intelligence
+Healthcare Technology
+Deep Learning
+Medical Imaging
+🙏 Special Thanks
 
-bone_cancer_detection Repository
+Special thanks to my friend Mohit Sharma for helping in the model training process and supporting the development of this project.
 
-🙏 Acknowledgements
-
-Special thanks to my friend https://github.com/mohitsharmas97 for helping in model training and supporting this project.
+🔗 GitHub:
+Mohit Sharma GitHub
 
 🤝 Contributing
 
 Contributions, feature suggestions, and improvements are welcome.
 
-Steps to contribute:
-Fork the repository
-Create a new branch
-Make changes
-Commit your updates
-Push the branch
-Open a Pull Request
-⭐ Project Support
+Steps to Contribute
+1. Fork the repository
+2. Create a new branch
+3. Make changes
+4. Commit your updates
+5. Push the branch
+6. Open a Pull Request
+⭐ Support This Project
 
 If you found this project useful:
 
@@ -198,4 +180,11 @@ If you found this project useful:
 
 This project is open-source and available under the MIT License.
 
+💙 Connect With Me
+🔗 GitHub Repository
+
+OsteoScan Repository
+
 <p align="center"> <b>🦴 AI for Healthcare • Deep Learning • Medical Imaging • Innovation 🚀</b> </p>
+
+Based on your uploaded project content.
